@@ -176,7 +176,7 @@ html{scroll-behavior:smooth}
     
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
       <div id="nameNotice" style="font-size:.72rem;color:var(--mu);font-weight:600;"></div>
-      <button id="bResetOwner" style="background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;">Reset Nama / Cooldown 🔄</button>
+      <button id="bResetOwner" style="display:none;background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;">Reset Nama / Cooldown 🔄</button>
     </div>
     
     <label class="l">Topik Kajian</label>
@@ -366,7 +366,7 @@ if(cv && cx){
 let G={}, cfg={mode:'all',diff:'normal',n:10};
 const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
 let cs='start';
-const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
+const NAVMAP={start:'quiz',quiz:'quiz',res:$('quiz'),on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
 function show(k){
  const c=scr[cs],n=scr[k];if(!n)return;cs=k;
  if($('nav'))$('nav').classList.toggle('off',k==='quiz');
@@ -382,7 +382,7 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== SISTEM KUNCI OWNER & AUTO-RESET COOLDOWN ===== */
+/* ===== SISTEM KUNCI OWNER PERMANEN SELAMANYA & COOLDOWN 15 HARI ===== */
 const OWNER_SECRET_CODE = '/82+791';
 
 function isOwnerDevice() {
@@ -397,41 +397,54 @@ function initNameSystem() {
     if(!nameInput) return;
 
     if(isOwnerDevice()) {
+        // OWNER TERKUNCI PERMANEN SELAMANYA (TIDAK BISA DIUBAH/DIRESET LEBIH LANJUT OLEH USER BIASA)
         nameInput.value = 'KovTheGreat';
         nameInput.disabled = true;
         if(bSetName) bSetName.disabled = true;
-        if(notice) notice.textContent = '👑 Status: Owner Aktif (KovTheGreat)';
-        if(bReset) bReset.style.display = 'inline-block';
+        if(notice) notice.textContent = '👑 Status: KovTheGreat (Terkunci Permanen Selamanya)';
+        if(bReset) bReset.style.display = 'none'; // Tombol reset disembunyikan total demi keamanan owner!
     } else {
-        if(bReset) bReset.style.display = 'inline-block'; // Selalu tampilkan tombol reset biar gampang dibersihin kalau nyangkut
-        
-        // Buka paksa input agar tidak ter-lock cooldown lama
-        nameInput.disabled = false;
-        if(bSetName) bSetName.disabled = false;
+        if(bReset) bReset.style.display = 'inline-block';
         
         let savedName = ls.g('isea_username', '');
+        let lastChange = ls.g('isea_name_time', 0);
+        let now = Date.now();
+        let cooldownLeft = 15 * 24 * 60 * 60 * 1000 - (now - lastChange);
+
         if(savedName && savedName.toLowerCase() !== 'kovthegreat') {
             nameInput.value = savedName;
+            if(cooldownLeft > 0) {
+                nameInput.disabled = true;
+                if(bSetName) bSetName.disabled = true;
+                let days = Math.ceil(cooldownLeft / (1000 * 60 * 60 * 24));
+                if(notice) notice.textContent = `🔒 Nama terkunci. Bisa ganti dalam ${days} hari lagi.`;
+            } else {
+                nameInput.disabled = false;
+                if(bSetName) bSetName.disabled = false;
+                if(notice) notice.textContent = '';
+            }
         } else {
             nameInput.value = '';
+            nameInput.disabled = false;
+            if(bSetName) bSetName.disabled = false;
+            if(notice) notice.textContent = '';
         }
-        if(notice) notice.textContent = '';
 
         if(bSetName) {
             bSetName.onclick = () => {
                 let val = nameInput.value.trim();
                 if(!val) return toast('Nama tidak boleh kosong!');
 
-                // KUNCI OWNER /82+791 (Otomatis tembus cooldown & jadi owner)
+                // JIKA KODE RAHASIA DIMASUKKAN: AKTIFKAN OWNER PERMANEN SELAMANYA
                 if(val === OWNER_SECRET_CODE) {
                     ls.s('is_true_owner', true);
                     ls.s('isea_username', 'KovTheGreat');
-                    toast('👑 Kunci diterima! Berubah jadi KovTheGreat (Owner)');
+                    toast('👑 Berhasil! Anda kini KovTheGreat (Terkunci Permanen)');
                     initNameSystem();
                     return;
                 }
 
-                // BLOKIR JIKA LANGSUNG KETIK KOVTHEGREAT MENTAH
+                // BLOKIR JIKA ADA YANG MENCOBA MENGETIK KOVTHEGREAT SECARA MENTAH
                 if(val.toLowerCase() === 'kovthegreat') {
                     toast('❌ Nama KovTheGreat dilindungi dan khusus Owner!');
                     nameInput.value = '';
@@ -447,19 +460,19 @@ function initNameSystem() {
 
                 ls.s('isea_username', val);
                 ls.s('isea_name_time', Date.now());
-                toast('✅ Nama berhasil disimpan!');
-                if(notice) notice.textContent = '✅ Nama aktif.';
+                nameInput.disabled = true;
+                bSetName.disabled = true;
+                toast('✅ Nama disimpan & kena cooldown 15 hari!');
+                if(notice) notice.textContent = '🔒 Nama terkunci selama 15 hari.';
             };
         }
     }
 
     if(bReset) {
         bReset.onclick = () => {
-            // BERSIHKAN TOTAL SEMUA MEMORI COOLDOWN & NAMA LAMA
-            localStorage.removeItem('is_true_owner');
             localStorage.removeItem('isea_username');
             localStorage.removeItem('isea_name_time');
-            toast('🔄 Cooldown & Nama berhasil di-reset bersih!');
+            toast('🔄 Nama & Cooldown berhasil di-reset!');
             initNameSystem();
         };
     }
@@ -846,7 +859,7 @@ if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)retur
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
  $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
- $('modalCancel').onclick = () => aiModal.classList.remove('active');
+ $('modalCancel').onclick = () => modalKeyInput.value=''; // aman
  $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
 }
 
