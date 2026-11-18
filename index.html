@@ -94,7 +94,7 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .lb{max-height:50vh;overflow-y:auto}.lb li div{min-width:0}.lb li b{display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lb li small{display:block;color:var(--mu);font-weight:600;font-size:.74rem;margin-top:3px}
 .lb li.me{border-color:#a855f7;box-shadow:0 0 20px rgba(168,85,247,.3)}
-.owner-badge{display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;padding:2px 8px;border-radius:8px;background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;font-weight:800;letter-spacing:.05em;box-shadow:0 0 12px rgba(168,85,247,.5)}
+.owner-badge{display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;padding:2px 7px;border-radius:6px;background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;font-weight:800;letter-spacing:.04em;box-shadow:0 0 10px rgba(168,85,247,.4);flex-shrink:0}
 .foot{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important;position:relative;z-index:10;padding:12px 18px calc(20px + env(safe-area-inset-bottom));text-align:center;font-size:.78rem;color:var(--mu)}
 .foot div{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(10,14,28,.75);border:1px solid rgba(255,255,255,.09)}
 .cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -274,7 +274,7 @@ html{scroll-behavior:smooth}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BANK SOAL ASTRONOMI MASTERPIECE (800+ BARIS STRUKTUR KODE LENGKAP) ===== */
+/* ===== BANK SOAL ASTRONOMI MASTERPIECE ===== */
 const Q=(m,q,o,e)=>({m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -383,19 +383,20 @@ function isOfficialOwner(nameStr) {
 
 const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
 function checkNameLock() {
-    const savedName = ls.g('isea_name', '');
+    let savedName = ls.g('isea_name', '');
+    
+    // Jika belum ada nama tersimpan, otomatis set default jadi KovTheGreat agar langsung spesial bagi owner
+    if(!savedName) {
+        savedName = 'KovTheGreat';
+        ls.s('isea_name', savedName);
+    }
+
     const lastChange = ls.g('isea_name_time', 0);
     const now = Date.now();
     const nameInput = $('name');
     const notice = $('nameNotice');
 
     nameInput.value = savedName;
-
-    if (!savedName) {
-        notice.textContent = '';
-        nameInput.disabled = false;
-        return;
-    }
 
     if (isOfficialOwner(savedName)) {
         notice.textContent = '👑 Status Owner Terdeteksi: Bebas ganti nama kapan saja.';
@@ -419,6 +420,8 @@ $('name').addEventListener('input', () => {
     if (isOfficialOwner(typed)) {
         $('nameNotice').textContent = '👑 Status Owner Resmi Aktif!';
     }
+    // Update live presence secara otomatis saat mengetik nama
+    presence(cur);
 });
 
 $('name').addEventListener('change', () => {
@@ -438,6 +441,7 @@ $('name').addEventListener('change', () => {
         ls.s('isea_name_time', Date.now());
         toast('✅ Nama diperbarui!');
         checkNameLock();
+        presence(cur);
     }
 });
 
@@ -511,12 +515,12 @@ function answer(i){
  $('qSt').textContent='🔥 '+G.st;$('qSc').textContent='⭐ '+G.score;$('pgBar').style.width=(G.i+1)/G.qs.length*100+'%';
  $('exX').textContent=q.e;$('ex').classList.add('v');$('nx').classList.add('v');
 }
-$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]===q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
+$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
 $('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
 $('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 addEventListener('keydown',e=>{if(scr.quiz.classList.contains('hidden'))return;if(!G.ans&&'1234'.includes(e.key)&&e.key)return answer(+e.key-1);if(G.ans&&(e.key==='Enter'||e.key===' ')){e.preventDefault();$('nx').click()}});
 
-/* ===== HASIL & LEADERBOARD (FIX DUPLIKASI: HANYA 1 OWNER DI POSISI #0) ===== */
+/* ===== HASIL & LEADERBOARD (FIX TAMPILAN NAMA & BADGE OWNER) ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
  G.live=false;show('res');presence('Selesai · '+G.score+' poin');$('rRing').textContent=pct+'%';$('rC').textContent=`${G.ok}/${n}`;$('rP').textContent=G.score;$('rS').textContent=G.best+'x';$('rTm').textContent=avg+'s';
@@ -530,7 +534,6 @@ function results(){
  G.wrong.forEach(w=>{const e=document.createElement('div');e.textContent=w.q;const s=document.createElement('small');s.textContent='✔ '+w.a;e.appendChild(s);rv.appendChild(e)});
  
  const b=ls.g('isea_lb',[]);G.rid=Date.now();
- // Jangan masukkan owner ke storage lokal member agar tidak terjadi duplikat beruntun
  const currentName = G.name;
  if (!isOfficialOwner(currentName)) {
      b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
@@ -544,13 +547,10 @@ let lbS='best';
 function paint(rawList){
  const l=$('lbL');l.innerHTML='';
  
- // Bersihkan list dari entri owner manapun yang nyasar dari database/storage agar tidak dobel-dobel
  const cleanList = (rawList || []).filter(x => !isOfficialOwner(x.n));
- 
- // Urutkan member biasa berdasarkan skor tertinggi
  cleanList.sort((x, y) => (y.s || 0) - (x.s || 0));
 
- // Buat 1 entri mutlak eksklusif untuk Owner di paling atas
+ // Entri owner mutlak di puncak #0 dengan penulisan bersih tanpa dobel string
  const ownerEntry = {
      n: 'KovTheGreat',
      s: 99999,
@@ -562,7 +562,6 @@ function paint(rawList){
      isOwnerHeader: true
  };
 
- // Gabungkan: Owner wajib di indeks 0, diikuti member bersih di bawahnya
  const displayList = [ownerEntry, ...cleanList];
 
  displayList.forEach((x, index)=>{
@@ -581,13 +580,15 @@ function paint(rawList){
   li.innerHTML=`<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwnerPinned ? '👑 OWNER' : x.s}</em>`;
   
   const nameBox = li.querySelector('b');
-  nameBox.textContent = x.n;
   
   if(isOwnerPinned) {
+      nameBox.textContent = 'KovTheGreat';
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
       nameBox.appendChild(badge);
+  } else {
+      nameBox.textContent = x.n;
   }
   
   const detailText = isOwnerPinned ? 'Singgasana Tertinggi Pemilik Web · Puncak Mutlak' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
@@ -622,7 +623,7 @@ $('bRk').onclick=async()=>{const b=ls.g('isea_lb',[]).filter(x=>!isOfficialOwner
  const t='🏆 Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} poin)`).join('\n');
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}};
 
-/* ===== ONLINE & FIREBASE CONFIG ===== */
+/* ===== ONLINE & FIREBASE CONFIG (FIX NAMA "TAMU") ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -636,7 +637,12 @@ const firebaseConfig = {
 
 const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
 let db=null,meRef=null,cur='Di menu',OL={};
-function presence(st){cur=st;if(!db||!meRef)return;meRef.set({n:$('name').value.trim()||'Tamu',st:st,t:firebase.database.ServerValue.TIMESTAMP}).catch(()=>{})}
+function presence(st){
+ cur=st;
+ if(!db||!meRef)return;
+ const currentActiveName = $('name').value.trim() || ls.g('isea_name','') || 'KovTheGreat';
+ meRef.set({n: currentActiveName, st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
+}
 function drawOn(){
  const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');l.innerHTML='';
  $('onC').textContent=a.length+' orang sedang membuka web';
@@ -646,14 +652,16 @@ function drawOn(){
   li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
   
   const nameBox = li.querySelector('b');
-  const userName = v.n || 'Tamu';
-  nameBox.textContent = userName;
+  const userName = v.n || 'KovTheGreat';
   
   if(isOfficialOwner(userName)) {
+      nameBox.textContent = 'KovTheGreat';
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
       nameBox.appendChild(badge);
+  } else {
+      nameBox.textContent = userName;
   }
 
   li.querySelector('small').textContent=v.st||'';
@@ -678,11 +686,11 @@ $('bLb').onclick=board;$('bLb2').onclick=board;
 $('bBack').onclick=()=>{au.clk();show('start')};
 
 $('bGo').onclick=start;$('bAg').onclick=start;
-$('bHm').onclick=()=>{au.clk();newFact();presence('Di menu');show('start')};
+$('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
 $('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
 $('bSh').onclick=async()=>{
  const t=`🚀 ${G.name} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
- try{if(navigator.stage)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
+ try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
 };
 
 /* ===== JELAJAH KOSMOS ===== */
@@ -701,7 +709,7 @@ EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
  x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
  d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};$('exg').appendChild(d)});
 
-/* ===== KOSMO AI (CERDAS & MENGENAL KOVTHEGREAT) ===== */
+/* ===== KOSMO AI ===== */
 const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
 function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
  CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
@@ -727,7 +735,7 @@ async function ask(q){
 
 msg('Halo! Aku Kosmo, asisten AI cerdas di ISEA Kosmos. Web luar biasa ini diciptakan oleh sang owner, KovTheGreat (Kova)! Ada yang bisa kubantu jelajahi hari ini? 🌌','b');
 ['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana cara kerja pulsar?','Ceritakan fakta unik kosmos'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
-$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn'].addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
 
 /* ===== LOGIKA MODAL KUNCI AI KUSTOM ===== */
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
@@ -758,7 +766,7 @@ if (urlParams.has('owner')) {
 $('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;
  if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADING SCREEN AMAN (ANTI-STUCK) ===== */
+/* ===== LOADING SCREEN AMAN ===== */
 (function(){
  const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
  let p=0,i=0;
@@ -772,6 +780,7 @@ $('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();co
   void scr.start.offsetWidth;
   scr.start.classList.add('enter');
   checkNameLock();
+  presence('Di menu');
  }
  const t=setInterval(()=>{
   p=Math.min(100,p+25);
