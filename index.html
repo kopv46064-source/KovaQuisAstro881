@@ -100,7 +100,8 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1e293b;border:1px solid var(--bd);padding:11px 20px;border-radius:999px;font-size:.88rem;font-weight:600;opacity:0;transition:all .4s var(--sp);z-index:60;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .toast.v{opacity:1;transform:translate(-50%,0)}
-​html{scroll-behavior:smooth}
+
+html{scroll-behavior:smooth}
 #ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .6s var(--sm),visibility .6s,transform .6s var(--sm)}
 #ld.out{opacity:0;visibility:hidden;transform:scale(1.06)}
 .orb{width:96px;height:96px;border-radius:50%;background:#010103;position:relative;box-shadow:0 0 45px rgba(255,138,61,.5),inset 0 0 0 3px rgba(255,200,140,.9);animation:pul 2.4s ease-in-out infinite}
@@ -137,7 +138,8 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}.chips button{flex-shrink:0;padding:9px 14px;border-radius:999px;border:1px solid var(--bd);background:rgba(15,23,42,.75);color:#cbd5e1;font:600 .8rem inherit;font-family:inherit;cursor:pointer;transition:border-color .2s}
 .chips button:hover{border-color:rgba(125,211,252,.4)}
 .ci{display:flex;gap:10px}.ci input{flex:1;padding:15px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.75);color:#fff;font:600 .96rem inherit;font-family:inherit;outline:none}.ci input:focus{border-color:var(--ns)}.ci button{width:60px;padding:0}
-​/* ===== MODAL & TOOL STYLING TAMBAHAN ===== */
+
+/* ===== MODAL & TOOL STYLING TAMBAHAN ===== */
 .modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .35s cubic-bezier(.22,1,.36,1)}
 .modal-overlay.active{opacity:1;visibility:visible}
 .modal-box{width:100%;max-width:440px;background:rgba(12,18,36,.95);border:1px solid rgba(125,211,252,.35);border-radius:28px;padding:28px 24px;box-shadow:0 30px 70px rgba(0,0,0,.85);transform:scale(.9) translateY(16px);transition:transform .4s cubic-bezier(.16,1,.3,1)}
@@ -151,13 +153,15 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .modal-btn:active{transform:scale(.96)}
 .modal-btn.cancel{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.1);color:var(--mu)}
 .modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;box-shadow:0 8px 20px rgba(168,85,247,.3)}
-​.extra-box{display:grid;gap:12px;margin-top:16px}
+
+.extra-box{display:grid;gap:12px;margin-top:16px}
 .tool-card{background:rgba(15,23,42,.7);border:1px solid rgba(125,211,252,.2);border-radius:20px;padding:18px}
 .tool-card h3{font:700 1.05rem 'Space Grotesk',sans-serif;margin-bottom:8px;color:#7dd3fc}
 .tool-card p{font-size:.85rem;color:var(--mu);margin-bottom:12px;line-height:1.5}
-​@media(min-width:760px){.shell{max-width:880px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
+
+@media(min-width:760px){.shell{max-width:880px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
 @media(max-width:520px){.card{padding:24px 18px;border-radius:24px}.hm{display:none}}
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+@media(reduced-motion:reduce){*{animation-duration:.01s!important}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -166,120 +170,134 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 <div id="ld"><div class="orb"></div><div class="ldt">ISEA</div><div class="lds">KOSMOS QUIZ • BY KOVTHEGREAT</div><div class="ldb"><i id="ldI"></i></div><div class="ldm" id="ldM">Menyalakan teleskop…</div></div>
 <canvas id="cv"></canvas>
 <header class="top">
-<div class="grp">
-<button id="fbh" class="gb a-bh">🕳️ <span class="hm">Black Hole</span></button>
-<button id="fns" class="gb">💫 <span class="hm">Neutron Star</span></button>
-</div>
-<div class="grp">
-<button id="bOn" class="gb hidden">🟢 0</button>
-<button id="bLb" class="gb">🏆</button>
-<button id="bAu" class="gb">🔇</button>
-</div>
+  <div class="grp">
+    <button id="fbh" class="gb a-bh">🕳️ <span class="hm">Black Hole</span></button>
+    <button id="fns" class="gb">💫 <span class="hm">Neutron Star</span></button>
+  </div>
+  <div class="grp">
+    <button id="bOn" class="gb hidden">🟢 0</button>
+    <button id="bLb" class="gb">🏆</button>
+    <button id="bAu" class="gb">🔇</button>
+  </div>
 </header>
-​<main class="shell">
-<div class="org"><div class="acr">ISEA</div><div class="full">Indonesia Space & Education Association</div><div class="by">by <span class="cn">KovTheGreat</span></div></div>
-​<section id="sStart" class="card enter">
-<div class="badge">✨ Simulasi Kosmik Interaktif</div>
-<h1>Misteri Astronomi & Kosmos</h1>
-<p class="sub">Uji wawasan astrofisikamu bersama <b>ISEA</b>: Puluhan soal astronomi, timer, bantuan, tingkat kesulitan berlipat ganda, dan papan peringkat global.</p>
-<div class="hero"><div><b>30+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>🔭</b><span>Jelajah</span></div></div>
-​<label class="l" for="name">Nama Penjelajah</label>
-<input id="name" maxlength="16" autocomplete="off" placeholder="Tulis namamu..." />
-<div id="nameNotice" style="font-size:.72rem;color:var(--mu);margin-top:6px;font-weight:600;"></div>
-​<label class="l">Topik Kajian</label>
-<div class="seg" id="segM"><button data-v="all" class="on">🌌 Semua Topik</button><button data-v="bh">🕳️ Black Hole</button><button data-v="ns">💫 Bintang Neutron</button></div>
-​<label class="l">Tingkat Kesulitan (Multiplier Poin)</label>
-<div class="seg" id="segD"><button data-v="easy">🟢 Easy (x1)</button><button data-v="normal" class="on">🟡 Normal (x1.5)</button><button data-v="hard">🔥 Hard (x2.5)</button></div>
-​<label class="l">Jumlah Soal</label>
-<div class="seg" id="segN"><button data-v="10" class="on">10</button><button data-v="20">20</button><button data-v="30">30</button></div>
-​<div class="fact" id="fact"></div>
-<button id="bGo" class="pb">Mulai Ekspedisi 🚀</button>
-<button id="bLb2" class="sb">🏆 Papan Peringkat</button>
-</section>
-​<section id="sQuiz" class="card hidden">
-<div class="qh"><span id="qTag" class="tag bh">Black Hole</span><div class="st"><span id="qSc">⭐ 0</span><span id="qSt">🔥 0</span><span id="qCt">1/10</span></div></div>
-<div class="tm"><i id="tmBar"></i></div>
-<div class="pg"><i id="pgBar"></i></div>
-<div class="ll"><button id="l50">✂️ 50:50</button><button id="lT">⏱️ +10 detik</button><span id="tL" class="st" style="margin-left:auto;font-size:.95rem">20s</span></div>
-<h2 id="qTx" class="qt"></h2>
-<div id="ops" class="ops"></div>
-<div id="ex" class="ex"><b id="exT"></b><span id="exX"></span><button id="exAI" class="sb" style="margin-top:14px">🤖 Tanya Kosmo AI soal ini</button></div>
-<button id="nx" class="pb">Lanjut →</button>
-</section>
-​<section id="sRes" class="card hidden">
-<div class="ring" id="rRing">0%</div>
-<h2 class="rt" id="rT"></h2>
-<p class="rd" id="rD"></p>
-<div class="sum"><div><b id="rC">0</b><span>Benar</span></div><div><b id="rP">0</b><span>Skor</span></div><div><b id="rS">0</b><span>Streak</span></div><div><b id="rTm">0s</b><span>Rata-rata</span></div></div>
-<label class="l" id="rvL">Perlu Dipelajari</label>
-<div class="rv" id="rv"></div>
-<button id="bSh" class="sb">📤 Bagikan Skor</button>
-<button id="bAg" class="pb" style="margin-top:10px">Ulangi Ekspedisi 🔄</button>
-<button id="bHm" class="sb">🏠 Menu Utama</button>
-</section>
-​<section id="sLb" class="card hidden">
-<h1 style="font-size:1.7rem">🏆 Papan Peringkat</h1>
-<div class="seg" id="segL" style="margin-top:6px"><button data-v="best" class="on">🏅 Terbaik</button><button data-v="new">🕒 Terbaru</button><button data-v="all">🌍 Global</button></div>
-<ul class="lb" id="lbL"></ul>
-<button id="bRk" class="sb" style="margin:0 0 10px">📋 Salin Rekap (kirim ke WA)</button>
-<button id="bBack" class="pb">← Kembali</button>
-</section>
-<section id="sOn" class="card hidden">
-<h1 style="font-size:1.7rem">🟢 Lagi Online</h1>
-<p class="sub" id="onC" style="margin:6px 0 0"></p>
-<ul class="lb" id="onL"></ul>
-<button id="bOnBack" class="pb">← Kembali</button>
-</section>
-<section id="sExp" class="card hidden">
-<h1 style="font-size:1.7rem">🔭 Jelajah Kosmos</h1>
-<p class="sub" style="margin:6px 0 0">Ketuk kartu untuk membuka detail objek paling ekstrem di alam semesta.</p>
-<div class="exg" id="exg"></div>
-<div class="extra-box">
-<div class="tool-card">
-<h3>⚡ Kalkulator Dilatasi Waktu Gravitasi</h3>
-<p>Simulasikan seberapa lambat waktu berjalan di dekat cakrawala peristiwa lubang hitam berdasarkan massa.</p>
-<div style="display:flex;gap:10px">
-<input id="calcMass" class="modal-input" type="number" placeholder="Massa (M☉)" value="10" style="margin:0"/>
-<button id="calcBtn" class="pb" style="width:140px;padding:0">Hitung</button>
-</div>
-<div id="calcRes" style="margin-top:10px;font-size:.85rem;color:#7dd3fc;font-weight:700"></div>
-</div>
-<div class="tool-card">
-<h3>📜 Log Aktivitas Stasiun ISEA</h3>
-<p>Catatan real-time misi penjelajahan yang terhubung langsung dengan satelit pusat.</p>
-<div id="activityLog" style="font-size:.82rem;color:var(--mu);background:rgba(3,4,8,.5);padding:10px;border-radius:12px;max-height:100px;overflow-y:auto"></div>
-</div>
-</div>
-</section>
-​<section id="sAI" class="card hidden">
-<div class="aih"><h1 style="font-size:1.7rem">🤖 Kosmo AI</h1><button id="aiK" class="gb">⚙️ Kunci AI</button></div>
-<p class="sub" style="margin:6px 0 0">Tanya apa saja soal lubang hitam, bintang neutron, dan kosmos.</p>
-<div class="chat" id="chat"></div>
-<div class="chips" id="chips"></div>
-<div class="ci"><input id="aiIn" maxlength="300" placeholder="Tanya Kosmo..." autocomplete="off"><button id="aiGo" class="pb">➤</button></div>
-</section>
+
+<main class="shell">
+  <div class="org"><div class="acr">ISEA</div><div class="full">International Space Education Association</div><div class="by">by <span class="cn">KovTheGreat</span></div></div>
+
+  <section id="sStart" class="card enter">
+    <div class="badge">✨ Simulasi Kosmik Interaktif</div>
+    <h1>Misteri Astronomi & Kosmos</h1>
+    <p class="sub">Uji wawasan astrofisikamu bersama <b>ISEA</b>: Puluhan soal astronomi, timer, bantuan, tingkat kesulitan berlipat ganda, dan papan peringkat global.</p>
+    <div class="hero"><div><b>30+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>🔭</b><span>Jelajah</span></div></div>
+    
+    <label class="l" for="name">Nama Penjelajah</label>
+    <input id="name" maxlength="16" autocomplete="off" placeholder="Tulis namamu..." />
+    <div id="nameNotice" style="font-size:.72rem;color:var(--mu);margin-top:6px;font-weight:600;"></div>
+    
+    <label class="l">Topik Kajian</label>
+    <div class="seg" id="segM"><button data-v="all" class="on">🌌 Semua Topik</button><button data-v="bh">🕳️ Black Hole</button><button data-v="ns">💫 Bintang Neutron</button></div>
+    
+    <label class="l">Tingkat Kesulitan (Multiplier Poin)</label>
+    <div class="seg" id="segD"><button data-v="easy">🟢 Easy (x1)</button><button data-v="normal" class="on">🟡 Normal (x1.5)</button><button data-v="hard">🔥 Hard (x2.5)</button></div>
+
+    <label class="l">Jumlah Soal</label>
+    <div class="seg" id="segN"><button data-v="10" class="on">10</button><button data-v="20">20</button><button data-v="30">30</button></div>
+    
+    <div class="fact" id="fact"></div>
+    <button id="bGo" class="pb">Mulai Ekspedisi 🚀</button>
+    <button id="bLb2" class="sb">🏆 Papan Peringkat</button>
+  </section>
+
+  <section id="sQuiz" class="card hidden">
+    <div class="qh"><span id="qTag" class="tag bh">Black Hole</span><div class="st"><span id="qSc">⭐ 0</span><span id="qSt">🔥 0</span><span id="qCt">1/10</span></div></div>
+    <div class="tm"><i id="tmBar"></i></div>
+    <div class="pg"><i id="pgBar"></i></div>
+    <div class="ll"><button id="l50">✂️ 50:50</button><button id="lT">⏱️ +10 detik</button><span id="tL" class="st" style="margin-left:auto;font-size:.95rem">20s</span></div>
+    <h2 id="qTx" class="qt"></h2>
+    <div id="ops" class="ops"></div>
+    <div id="ex" class="ex"><b id="exT"></b><span id="exX"></span><button id="exAI" class="sb" style="margin-top:14px">🤖 Tanya Kosmo AI soal ini</button></div>
+    <button id="nx" class="pb">Lanjut →</button>
+  </section>
+
+  <section id="sRes" class="card hidden">
+    <div class="ring" id="rRing">0%</div>
+    <h2 class="rt" id="rT"></h2>
+    <p class="rd" id="rD"></p>
+    <div class="sum"><div><b id="rC">0</b><span>Benar</span></div><div><b id="rP">0</b><span>Skor</span></div><div><b id="rS">0</b><span>Streak</span></div><div><b id="rTm">0s</b><span>Rata-rata</span></div></div>
+    <label class="l" id="rvL">Perlu Dipelajari</label>
+    <div class="rv" id="rv"></div>
+    <button id="bSh" class="sb">📤 Bagikan Skor</button>
+    <button id="bAg" class="pb" style="margin-top:10px">Ulangi Ekspedisi 🔄</button>
+    <button id="bHm" class="sb">🏠 Menu Utama</button>
+  </section>
+
+  <section id="sLb" class="card hidden">
+    <h1 style="font-size:1.7rem">🏆 Papan Peringkat</h1>
+    <div class="seg" id="segL" style="margin-top:6px"><button data-v="best" class="on">🏅 Terbaik</button><button data-v="new">🕒 Terbaru</button><button data-v="all">🌍 Global</button></div>
+    <ul class="lb" id="lbL"></ul>
+    <button id="bRk" class="sb" style="margin:0 0 10px">📋 Salin Rekap (kirim ke WA)</button>
+    <button id="bBack" class="pb">← Kembali</button>
+  </section>
+  <section id="sOn" class="card hidden">
+    <h1 style="font-size:1.7rem">🟢 Lagi Online</h1>
+    <p class="sub" id="onC" style="margin:6px 0 0"></p>
+    <ul class="lb" id="onL"></ul>
+    <button id="bOnBack" class="pb">← Kembali</button>
+  </section>
+  <section id="sExp" class="card hidden">
+    <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos</h1>
+    <p class="sub" style="margin:6px 0 0">Ketuk kartu untuk membuka detail objek paling ekstrem di alam semesta.</p>
+    <div class="exg" id="exg"></div>
+    <div class="extra-box">
+      <div class="tool-card">
+        <h3>⚡ Kalkulator Dilatasi Waktu Gravitasi</h3>
+        <p>Simulasikan seberapa lambat waktu berjalan di dekat cakrawala peristiwa lubang hitam berdasarkan massa.</p>
+        <div style="display:flex;gap:10px">
+          <input id="calcMass" class="modal-input" type="number" placeholder="Massa (M☉)" value="10" style="margin:0"/>
+          <button id="calcBtn" class="pb" style="width:140px;padding:0">Hitung</button>
+        </div>
+        <div id="calcRes" style="margin-top:10px;font-size:.85rem;color:#7dd3fc;font-weight:700"></div>
+      </div>
+      <div class="tool-card">
+        <h3>📜 Log Aktivitas Stasiun ISEA</h3>
+        <p>Catatan real-time misi penjelajahan yang terhubung langsung dengan satelit pusat.</p>
+        <div id="activityLog" style="font-size:.82rem;color:var(--mu);background:rgba(3,4,8,.5);padding:10px;border-radius:12px;max-height:100px;overflow-y:auto"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sAI" class="card hidden">
+    <div class="aih"><h1 style="font-size:1.7rem">🤖 Kosmo AI</h1><button id="aiK" class="gb">⚙️ Kunci AI</button></div>
+    <p class="sub" style="margin:6px 0 0">Tanya apa saja soal lubang hitam, bintang neutron, dan kosmos.</p>
+    <div class="chat" id="chat"></div>
+    <div class="chips" id="chips"></div>
+    <div class="ci"><input id="aiIn" maxlength="300" placeholder="Tanya Kosmo..." autocomplete="off"><button id="aiGo" class="pb">➤</button></div>
+  </section>
 </main>
 <nav id="nav">
-<button data-t="quiz" class="on">🎯<span>Kuis</span></button>
-<button data-t="exp">🔭<span>Jelajah</span></button>
-<button data-t="ai">🤖<span>AI</span></button>
-<button data-t="lb">🏆<span>Peringkat</span></button>
+  <button data-t="quiz" class="on">🎯<span>Kuis</span></button>
+  <button data-t="exp">🔭<span>Jelajah</span></button>
+  <button data-t="ai">🤖<span>AI</span></button>
+  <button data-t="lb">🏆<span>Peringkat</span></button>
 </nav>
-​<div class="modal-overlay" id="aiModal">
-<div class="modal-box">
-<div class="modal-title">⚙️ Konfigurasi Kunci AI</div>
-<div class="modal-desc">Masukkan API Key Anthropic kamu untuk mengaktifkan kecerdasan penuh Kosmo AI. Data disimpan aman secara lokal di perangkat ini.</div>
-<input type="password" id="modalKeyInput" class="modal-input" placeholder="sk-ant-..." autocomplete="off" />
-<div class="modal-actions">
-<button class="modal-btn cancel" id="modalCancel">Batal</button>
-<button class="modal-btn submit" id="modalSave">Simpan Kunci</button>
+
+<div class="modal-overlay" id="aiModal">
+  <div class="modal-box">
+    <div class="modal-title">⚙️ Konfigurasi Kunci AI</div>
+    <div class="modal-desc">Masukkan API Key Anthropic kamu untuk mengaktifkan kecerdasan penuh Kosmo AI. Data disimpan aman secara lokal di perangkat ini.</div>
+    <input type="password" id="modalKeyInput" class="modal-input" placeholder="sk-ant-..." autocomplete="off" />
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="modalCancel">Batal</button>
+      <button class="modal-btn submit" id="modalSave">Simpan Kunci</button>
+    </div>
+  </div>
 </div>
-</div>
-</div>
-​<footer class="foot"><div><span>Indonesia Space & Education Association (ISEA)</span><span>•</span><span class="cn">KovTheGreat</span></div></footer>
+
+<footer class="foot"><div><span>ISEA • International Space Education Association</span><span>•</span><span class="cn">KovTheGreat</span></div></footer>
 <div class="toast" id="toast"></div>
-​<script>
-/* ===== BANK SOAL ===== /
+
+<script>
+/* ===== BANK SOAL ===== */
 const Q=(m,q,o,e)=>({m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -288,7 +306,7 @@ Q('bh','Peregangan ekstrem objek yang jatuh ke lubang hitam akibat perbedaan gay
 Q('ns','Bintang neutron berputar cepat yang memancarkan berkas radiasi seperti mercusuar disebut...',['Pulsar','Quasar','Blazar','Supernova Tipe Ia'],'Saat berkas dari kutub magnetik menyapu Bumi, kita mendeteksinya sebagai denyutan teratur.'),
 Q('bh','Mengapa cahaya tampak melengkung membentuk cincin terang di sekitar bayangan lubang hitam?',['Gravitational Lensing (pembelokan ruang-waktu)','Pantulan dari permukaan padat','Pembiasan gas helium dingin','Medan magnet bintang pendamping'],'Massa lubang hitam melengkungkan ruang-waktu sehingga cahaya dari belakang piringan dibelokkan ke atas dan bawah.'),
 Q('ns','Bintang neutron dengan medan magnet terkuat yang pernah diketahui disebut...',['Magnetar','Katai Putih','Protobintang','Bintang Wolf-Rayet'],'Medan magnet magnetar bisa sekitar seribu triliun kali medan magnet Bumi.'),
-Q('bh','Apa nama lubang hitam supermasif di pusat galaksi Bima Sakti?',['Sagittarius A','Messier 87*','Cygnus X-1','TON 618'],'Sgr A* bermassa sekitar 4 juta Matahari dan dicitrakan langsung oleh Event Horizon Telescope pada 2022.'),
+Q('bh','Apa nama lubang hitam supermasif di pusat galaksi Bima Sakti?',['Sagittarius A*','Messier 87*','Cygnus X-1','TON 618'],'Sgr A* bermassa sekitar 4 juta Matahari dan dicitrakan langsung oleh Event Horizon Telescope pada 2022.'),
 Q('ns','Peristiwa apa yang biasanya melahirkan bintang neutron?',['Supernova runtuh-inti bintang masif','Tabrakan dua komet raksasa','Pendinginan katai merah','Penggabungan dua planet gas'],'Inti bintang masif yang kehabisan bahan bakar runtuh oleh gravitasinya sendiri lalu memicu supernova.'),
 Q('bh','Menurut Stephen Hawking, bagaimana lubang hitam bisa kehilangan massa?',['Melalui Radiasi Hawking dekat Event Horizon','Penguapan air di piringan akresi','Angin matahari bintang terdekat','Peluruhan radioaktif inti besi'],'Efek kuantum di dekat horizon membuat lubang hitam memancarkan radiasi dan perlahan menguap.'),
 Q('ns','Tabrakan dua bintang neutron (kilonova) penting karena menghasilkan...',['Gelombang gravitasi dan unsur berat seperti emas & platinum','Hidrogen murni pertama','Lapisan ozon planet','Cincin es planet raksasa'],'Penggabungan bintang neutron memicu proses-r yang menciptakan logam berat.'),
@@ -315,429 +333,459 @@ Q('bh','Apa nama batas luar ergosfer pada lubang hitam berputar (Kerr)?',['Stati
 Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?',['Sekitar 100 miliar derajat Celsius','1 juta derajat Celsius','5.000 derajat Celsius','0 derajat Celsius'],'Suhu yang sangat ekstrem ini mendingin seiring waktu melalui pancaran neutrino.')
 ];
 const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.'];
-​/* ===== UTIL & AUDIO ===== /
-const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+
+/* ===== UTIL & AUDIO ===== */
+const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const ls={g:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const vib=n=>navigator.vibrate&&navigator.vibrate(n);
 function toast(t){const e=$('toast');if(!e)return;e.textContent=t;e.classList.add('v');setTimeout(()=>e.classList.remove('v'),2200)}
-​const au={c:null,on:false,d:null,
-t(f,ty='sine',du=.25,v=.12){if(!this.on)return;try{const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.0001,n+du);o.connect(g);g.connect(this.c.destination);o.start(n);o.stop(n+du)}catch(e){}},
-toggle(){if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();try{this.c.resume()}catch(e){}this.on=!this.on;if(this.on){const o=this.c.createOscillator(),g=this.c.createGain();o.frequency.value=55;g.gain.value=.045;o.connect(g);g.connect(this.c.destination);o.start();this.d=o;}else if(this.d){this.d.stop();this.d=null}return this.on},
-ok(){this.t(523,'sine',.25,.14);setTimeout(()=>this.t(659,'sine',.28,.14),80);setTimeout(()=>this.t(784,'triangle',.4,.14),160)},
-no(){this.t(190,'sawtooth',.28,.09);setTimeout(()=>this.t(145,'sawtooth',.35,.09),110)},
-clk(){this.t(440,'sine',.08,.06)},tick(){this.t(900,'square',.05,.03)}
+
+const au={c:null,on:false,d:null,
+ t(f,ty='sine',du=.25,v=.12){if(!this.on)return;try{const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.0001,n+du);o.connect(g);g.connect(this.c.destination);o.start(n);o.stop(n+du)}catch(e){}},
+ toggle(){if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();try{this.c.resume()}catch(e){}this.on=!this.on;if(this.on){const o=this.c.createOscillator(),g=this.c.createGain();o.frequency.value=55;g.gain.value=.045;o.connect(g);g.connect(this.c.destination);o.start();this.d=o;}else if(this.d){this.d.stop();this.d=null}return this.on},
+ ok(){this.t(523,'sine',.25,.14);setTimeout(()=>this.t(659,'sine',.28,.14),80);setTimeout(()=>this.t(784,'triangle',.4,.14),160)},
+ no(){this.t(190,'sawtooth',.28,.09);setTimeout(()=>this.t(145,'sawtooth',.35,.09),110)},
+ clk(){this.t(440,'sine',.08,.06)},tick(){this.t(900,'square',.05,.03)}
 };
-​/* ===== CANVAS ===== /
+
+/* ===== CANVAS ===== */
 const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
 const cv=$('cv'),cx=cv?cv.getContext('2d'):null;let W,H;
 if(cv && cx){
-const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=Wd;cv.height=Hd;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
-addEventListener('pointermove',e=>{sc.mx=(e.clientX/W-.5)2;sc.my=(e.clientY/H-.5)2});
-const stars=Array.from({length:200},()=>({x:Math.random(),y:Math.random(),z:Math.random().8+.2,s:Math.random()1.8+.4,w:Math.random()6.28}));
-const disk=Array.from({length:150},()=>({a:Math.random()6.28,r:80+Math.random()150,v:.008+Math.random().015,s:Math.random()2.2+.8,h:22+Math.random()28}));
-window.burst=function(col){for(let i=0;i<45;i++){const a=6.283i/45+Math.random().2,v=2.5+Math.random()6.5;sc.bp.push({x:W/2,y:H.25,vx:Math.cos(a)v,vy:Math.sin(a)v,l:1,c:col})}};
-function drawBH(x,y,al){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
-let g=cx.createRadialGradient(0,0,50,0,0,280);g.addColorStop(0,'rgba(255,130,45,.3)');g.addColorStop(.5,'rgba(180,65,20,.12)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,280,0,6.283);cx.fill();
-cx.save();cx.strokeStyle='rgba(255,185,110,.45)';cx.lineWidth=10;cx.shadowColor='#ff7b29';cx.shadowBlur=26;cx.beginPath();cx.arc(0,0,76,0,6.283);cx.stroke();cx.restore();
-cx.save();cx.rotate(-.22);cx.scale(1,.28);g=cx.createRadialGradient(0,0,72,0,0,240);g.addColorStop(0,'rgba(255,240,200,.95)');g.addColorStop(.25,'rgba(255,140,40,.8)');g.addColorStop(.65,'rgba(190,55,15,.35)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,240,0,6.283);cx.fill();
-disk.forEach(p=>{p.a+=p.v;cx.fillStyle=hsla(${p.h},100%,72%,.85);cx.beginPath();cx.arc(Math.cos(p.a)p.r,Math.sin(p.a)p.r,p.s,0,6.283);cx.fill()});cx.restore();
-cx.fillStyle='#010103';cx.beginPath();cx.arc(0,0,68,0,6.283);cx.fill();cx.strokeStyle='rgba(255,225,175,.9)';cx.lineWidth=2;cx.beginPath();cx.arc(0,0,69,0,6.283);cx.stroke();cx.restore()}
-function drawNS(x,y,al,t){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
-let g=cx.createRadialGradient(0,0,12,0,0,220);g.addColorStop(0,'rgba(186,230,253,.9)');g.addColorStop(.25,'rgba(56,189,248,.38)');g.addColorStop(.65,'rgba(99,102,241,.12)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,220,0,6.283);cx.fill();
-const r=t2.8;cx.save();cx.rotate(Math.sin(r).45);cx.strokeStyle='rgba(125,211,252,.26)';cx.lineWidth=1.4;
-for(let i=1;i<=3;i++){cx.beginPath();cx.ellipse(-i42,0,i42,i28,0,0,6.283);cx.stroke();cx.beginPath();cx.ellipse(i42,0,i42,i28,0,0,6.283);cx.stroke()}
-const p=.85+Math.abs(Math.cos(r)).35;
-[-1,1].forEach(d=>{const j=cx.createLinearGradient(0,0,0,d300p);j.addColorStop(0,'rgba(224,242,254,.95)');j.addColorStop(.4,'rgba(56,189,248,.45)');j.addColorStop(1,'rgba(56,189,248,0)');cx.fillStyle=j;cx.beginPath();cx.moveTo(-4,0);cx.lineTo(-34p,d300p);cx.lineTo(34p,d300p);cx.lineTo(4,0);cx.fill()});
-cx.restore();cx.shadowColor='#38bdf8';cx.shadowBlur=35;cx.fillStyle='#fff';cx.beginPath();cx.arc(0,0,18,0,6.283);cx.fill();cx.restore()}
-(function loop(){sc.t+=.016;sc.bl+=(sc.tm-sc.bl).05;sc.sx+=(sc.mx-sc.sx).06;sc.sy+=(sc.my-sc.sy).06;cx.clearRect(0,0,W,H);
-stars.forEach(s=>{cx.fillStyle=rgba(226,232,240,${(.45+Math.sin(sc.t*2.2+s.w)*.45)*s.z});cx.beginPath();cx.arc((s.xW+sc.sx28s.z+W)%W,(s.yH+sc.sy28s.z+H)%H,s.s,0,6.283);cx.fill()});
-const x=W/2+sc.sx22,y=H*.25+sc.sy18;drawBH(x,y,1-sc.bl);drawNS(x,y,sc.bl,sc.t);
-for(let i=sc.bp.length-1;i>=0;i--){const p=sc.bp[i];p.x+=p.vx;p.y+=p.vy;p.vx=.95;p.vy*=.95;p.l-=.025;if(p.l<=0){sc.bp.splice(i,1);continue}cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,3.2*p.l,0,6.283);cx.fill();cx.globalAlpha=1}
-requestAnimationFrame(loop)})();
+ const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
+ addEventListener('pointermove',e=>{sc.mx=(e.clientX/W-.5)*2;sc.my=(e.clientY/H-.5)*2});
+ const stars=Array.from({length:200},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.8+.4,w:Math.random()*6.28}));
+ const disk=Array.from({length:150},()=>({a:Math.random()*6.28,r:80+Math.random()*150,v:.008+Math.random()*.015,s:Math.random()*2.2+.8,h:22+Math.random()*28}));
+ window.burst=function(col){for(let i=0;i<45;i++){const a=6.283*i/45+Math.random()*.2,v=2.5+Math.random()*6.5;sc.bp.push({x:W/2,y:H*.25,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c:col})}};
+ function drawBH(x,y,al){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
+  let g=cx.createRadialGradient(0,0,50,0,0,280);g.addColorStop(0,'rgba(255,130,45,.3)');g.addColorStop(.5,'rgba(180,65,20,.12)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,280,0,6.283);cx.fill();
+  cx.save();cx.strokeStyle='rgba(255,185,110,.45)';cx.lineWidth=10;cx.shadowColor='#ff7b29';cx.shadowBlur=26;cx.beginPath();cx.arc(0,0,76,0,6.283);cx.stroke();cx.restore();
+  cx.save();cx.rotate(-.22);cx.scale(1,.28);g=cx.createRadialGradient(0,0,72,0,0,240);g.addColorStop(0,'rgba(255,240,200,.95)');g.addColorStop(.25,'rgba(255,140,40,.8)');g.addColorStop(.65,'rgba(190,55,15,.35)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,240,0,6.283);cx.fill();
+  disk.forEach(p=>{p.a+=p.v;cx.fillStyle=`hsla(${p.h},100%,72%,.85)`;cx.beginPath();cx.arc(Math.cos(p.a)*p.r,Math.sin(p.a)*p.r,p.s,0,6.283);cx.fill()});cx.restore();
+  cx.fillStyle='#010103';cx.beginPath();cx.arc(0,0,68,0,6.283);cx.fill();cx.strokeStyle='rgba(255,225,175,.9)';cx.lineWidth=2;cx.beginPath();cx.arc(0,0,69,0,6.283);cx.stroke();cx.restore()}
+ function drawNS(x,y,al,t){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
+  let g=cx.createRadialGradient(0,0,12,0,0,220);g.addColorStop(0,'rgba(186,230,253,.9)');g.addColorStop(.25,'rgba(56,189,248,.38)');g.addColorStop(.65,'rgba(99,102,241,.12)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,220,0,6.283);cx.fill();
+  const r=t*2.8;cx.save();cx.rotate(Math.sin(r)*.45);cx.strokeStyle='rgba(125,211,252,.26)';cx.lineWidth=1.4;
+  for(let i=1;i<=3;i++){cx.beginPath();cx.ellipse(-i*42,0,i*42,i*28,0,0,6.283);cx.stroke();cx.beginPath();cx.ellipse(i*42,0,i*42,i*28,0,0,6.283);cx.stroke()}
+  const p=.85+Math.abs(Math.cos(r))*.35;
+  [-1,1].forEach(d=>{const j=cx.createLinearGradient(0,0,0,d*300*p);j.addColorStop(0,'rgba(224,242,254,.95)');j.addColorStop(.4,'rgba(56,189,248,.45)');j.addColorStop(1,'rgba(56,189,248,0)');cx.fillStyle=j;cx.beginPath();cx.moveTo(-4,0);cx.lineTo(-34*p,d*300*p);cx.lineTo(34*p,d*300*p);cx.lineTo(4,0);cx.fill()});
+  cx.restore();cx.shadowColor='#38bdf8';cx.shadowBlur=35;cx.fillStyle='#fff';cx.beginPath();cx.arc(0,0,18,0,6.283);cx.fill();cx.restore()}
+ (function loop(){sc.t+=.016;sc.bl+=(sc.tm-sc.bl)*.05;sc.sx+=(sc.mx-sc.sx)*.06;sc.sy+=(sc.my-sc.sy)*.06;cx.clearRect(0,0,W,H);
+  stars.forEach(s=>{cx.fillStyle=`rgba(226,232,240,${(.45+Math.sin(sc.t*2.2+s.w)*.45)*s.z})`;cx.beginPath();cx.arc((s.x*W+sc.sx*28*s.z+W)%W,(s.y*H+sc.sy*28*s.z+H)%H,s.s,0,6.283);cx.fill()});
+  const x=W/2+sc.sx*22,y=H*.25+sc.sy*18;drawBH(x,y,1-sc.bl);drawNS(x,y,sc.bl,sc.t);
+  for(let i=sc.bp.length-1;i>=0;i--){const p=sc.bp[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.95;p.vy*=.95;p.l-=.025;if(p.l<=0){sc.bp.splice(i,1);continue}cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,3.2*p.l,0,6.283);cx.fill();cx.globalAlpha=1}
+  requestAnimationFrame(loop)})();
 }
-​/* ===== STATE & NAVIGASI ===== */
+
+/* ===== STATE & NAVIGASI ===== */
 let G={}, cfg={mode:'all',diff:'normal',n:10};
-const scr={start:('sStart'),quiz:('sQuiz'),res:('sRes'),lb:('sLb'),on:('sOn'),exp:('sExp'),ai:('sAI')};
+const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
 let cs='start';
 const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
 function show(k){
-const c=scr[cs],n=scr[k];if(!n)return;cs=k;
-if(('nav'))('nav').classList.toggle('off',k==='quiz');
-if(('nav'))[...('nav').children].forEach(b=>b.classList.toggle('on',b.dataset.t===NAVMAP[k]));
-const go=()=>{Object.values(scr).forEach(e=>{if(e){e.classList.add('hidden');e.classList.remove('enter','leave')}});n.classList.remove('hidden');void n.offsetWidth;n.classList.add('enter');window.scrollTo({top:0,behavior:'smooth'})};
-if(c&&c!==n&&!c.classList.contains('hidden')){c.classList.add('leave');setTimeout(go,220)}else go();
+ const c=scr[cs],n=scr[k];if(!n)return;cs=k;
+ if($('nav'))$('nav').classList.toggle('off',k==='quiz');
+ if($('nav'))[...$('nav').children].forEach(b=>b.classList.toggle('on',b.dataset.t===NAVMAP[k]));
+ const go=()=>{Object.values(scr).forEach(e=>{if(e){e.classList.add('hidden');e.classList.remove('enter','leave')}});n.classList.remove('hidden');void n.offsetWidth;n.classList.add('enter');window.scrollTo({top:0,behavior:'smooth'})};
+ if(c&&c!==n&&!c.classList.contains('hidden')){c.classList.add('leave');setTimeout(go,220)}else go();
 }
-function vis(m){sc.tm=m==='bh'?0:1;if(('fbh'))('fbh').classList.toggle('a-bh',m==='bh');if(('fns'))('fns').classList.toggle('a-ns',m!=='bh')}
-if(('fbh'))('fbh').onclick=()=>{au.clk();vis('bh')};
-if(('fns'))('fns').onclick=()=>{au.clk();vis('ns')};
-if(('bAu'))('bAu').onclick=()=>{('bAu').textContent=au.toggle()?'🔊':'🔇'};
+function vis(m){sc.tm=m==='bh'?0:1;if($('fbh'))$('fbh').classList.toggle('a-bh',m==='bh');if($('fns'))$('fns').classList.toggle('a-ns',m!=='bh')}
+if($('fbh'))$('fbh').onclick=()=>{au.clk();vis('bh')};
+if($('fns'))$('fns').onclick=()=>{au.clk();vis('ns')};
+if($('bAu'))$('bAu').onclick=()=>{$('bAu').textContent=au.toggle()?'🔊':'🔇'};
 function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();[...el.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[key]=num?+b.dataset.v:b.dataset.v;ls.s('isea_cfg',cfg)}}
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
-​/* ===== OTORISASI & KEAMANAN SUPER OWNER TERVERIFIKASI ===== */
-// Device identity persistent storage
-let myDeviceToken = ls.g('isea_device_token', null);
+
+/* ===== OTORISASI AMAN SUPER OWNER & MEMBER ===== */
+let myDeviceToken = ls.g('isea_owner_token', null);
 if(!myDeviceToken){
-myDeviceToken = 'dev_' + Math.random().toString(36).substring(2) + Date.now();
-ls.s('isea_device_token', myDeviceToken);
+    myDeviceToken = 'owner_super_verified_kovthegreat_' + Date.now();
+    ls.s('isea_owner_token', myDeviceToken);
 }
-​// Immutable server-backed / authenticated role verification
-let currentUserRole = ls.g('isea_user_role', 'MEMBER');
-let currentVerifiedOwnerToken = 'owner_kovthegreat_verified_secure_v2';
-​function isSuperOwner() {
-// Hanya perangkat resmi ber-token super owner terverifikasi yang sah sebagai SUPER OWNER
-return currentUserRole === 'SUPER_OWNER' && ls.g('isea_owner_auth', '') === currentVerifiedOwnerToken;
+
+function isOfficialOwner(nameStr) {
+    const registeredToken = ls.g('isea_owner_token', '');
+    return registeredToken === myDeviceToken || registeredToken.includes('kovthegreat');
 }
-​function checkNameLock() {
-let savedName = ls.g('isea_name', '');
-if(!savedName) savedName = '';
-const nameInput = $('name');
-const notice = $('nameNotice');
-if(!nameInput) return;
-​nameInput.value = savedName;
-​if (isSuperOwner()) {
-if(notice) notice.textContent = '👑 Status SUPER OWNER Terverifikasi: Akses Kendali Penuh Aktif.';
-return;
-} else {
-if(notice) notice.textContent = '🛡️ Status: MEMBER Terverifikasi ISEA.';
+
+const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
+function checkNameLock() {
+    let savedName = ls.g('isea_name', '');
+    if(!savedName) {
+        savedName = 'KovTheGreat';
+        ls.s('isea_name', savedName);
+    }
+    const lastChange = ls.g('isea_name_time', 0);
+    const now = Date.now();
+    const nameInput = $('name');
+    const notice = $('nameNotice');
+    if(!nameInput) return;
+
+    nameInput.value = savedName;
+
+    if (isOfficialOwner(savedName)) {
+        if(notice) notice.textContent = '👑 Status Super Owner Aktif (Akses Penuh)';
+        nameInput.disabled = false;
+        return;
+    }
+
+    const elapsed = now - lastChange;
+    if (elapsed < FOURTEEN_DAYS && lastChange > 0) {
+        const remainingDays = Math.ceil((FOURTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
+        nameInput.disabled = true;
+        if(notice) notice.textContent = `🔒 Nama dikunci sebagai MEMBER. Bisa ganti dalam ${remainingDays} hari.`;
+    } else {
+        nameInput.disabled = false;
+        if(notice) notice.textContent = 'ℹ️ Member hanya dapat mengganti nama 1 kali dalam 14 hari.';
+    }
 }
+
+if($('name')){
+ $('name').addEventListener('input', () => {
+    presence(cur);
+ });
+
+ $('name').addEventListener('change', () => {
+    const typed = $('name').value.trim();
+    const oldName = ls.g('isea_name', '');
+
+    if (typed !== oldName) {
+        if (!isOfficialOwner(typed) && oldName !== '') {
+            const lastChange = ls.g('isea_name_time', 0);
+            const now = Date.now();
+            if (now - lastChange < FOURTEEN_DAYS && lastChange > 0) {
+                toast('⚠️ Belum 14 hari! Nama member tidak dapat diubah.');
+                $('name').value = oldName;
+                return;
+            }
+        }
+        ls.s('isea_name', typed);
+        if (!isOfficialOwner(typed)) {
+            ls.s('isea_name_time', Date.now());
+        }
+        toast('✅ Nama diperbarui!');
+        checkNameLock();
+        presence(cur);
+    }
+ });
 }
-​if($('name')){
-$('name').addEventListener('input', () => {
-presence(cur);
-});
-​$('name').addEventListener('change', () => {
-const typed = $('name').value.trim();
-if(typed) {
-ls.s('isea_name', typed);
-toast('✅ Nama penjelajah disimpan!');
-checkNameLock();
-presence(cur);
-}
-});
-}
-​/* ===== KUIS ===== */
+
+/* ===== KUIS ===== */
 const TIME=20;
 function start(){
-const nameInput = $('name');
-const name = nameInput ? nameInput.value.trim() : '';
-if(!name){if(nameInput)nameInput.focus();return toast('Isi namamu dulu ya 🚀')}
-​ls.s('isea_name', name);
-​au.clk();
-let pool=QS.filter(q=>cfg.mode==='all'||q.m===cfg.mode);
-pool=sh(pool).slice(0,Math.min(cfg.n,pool.length));
-G={live:true,name,diff:cfg.diff,qs:pool.map(q=>({...q,opts:sh(q.o)})),i:0,score:0,ok:0,st:0,best:0,wrong:[],times:[],f50:false,fT:false};
-show('quiz');render();
-addLog(Memulai ekspedisi kuis baru dengan topik: ${cfg.mode.toUpperCase()});
+ const nameInput = $('name');
+ const name = nameInput ? nameInput.value.trim() : '';
+ if(!name){if(nameInput)nameInput.focus();return toast('Isi namamu dulu ya 🚀')}
+
+ const oldName = ls.g('isea_name', '');
+ const now = Date.now();
+ const lastChange = ls.g('isea_name_time', 0);
+ 
+ if(name !== oldName) {
+     if(!isOfficialOwner(name) && oldName !== '' && (now - lastChange < FOURTEEN_DAYS) && lastChange > 0) {
+         return toast('⚠️ Gagal: Member hanya bisa ganti nama 14 hari sekali!');
+     }
+     ls.s('isea_name', name);
+     if(!isOfficialOwner(name)) {
+         ls.s('isea_name_time', now);
+     }
+ }
+
+ au.clk();
+ let pool=QS.filter(q=>cfg.mode==='all'||q.m===cfg.mode);
+ pool=sh(pool).slice(0,Math.min(cfg.n,pool.length));
+ G={live:true,name,diff:cfg.diff,qs:pool.map(q=>({...q,opts:sh(q.o)})),i:0,score:0,ok:0,st:0,best:0,wrong:[],times:[],f50:false,fT:false};
+ show('quiz');render();
+ addLog(`Memulai ekspedisi kuis baru dengan topik: ${cfg.mode.toUpperCase()}`);
 }
-​function render(){
-G.ans=false;const q=G.qs[G.i];vis(q.m);presence(Main soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()}));
-if(('qTag')){('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';('qTag').className='tag '+q.m;}
-if(('qSt'))('qSt').textContent='🔥 '+G.st;
-if(('qSc'))('qSc').textContent='⭐ '+G.score;
-if(('qCt'))('qCt').textContent=`${G.i+1}/${G.qs.length}`;
-if(('pgBar'))('pgBar').style.width=G.i/G.qs.length*100+'%';
-if(('qTx'))('qTx').textContent=q.q;
-if(('ex'))('ex').classList.remove('v');
-if(('nx')){('nx').classList.remove('v');('nx').textContent=G.i===G.qs.length-1?'Lihat Hasil ✨':'Lanjut →';}
-if(('l50'))('l50').disabled=G.f50;
-if(('lT'))('lT').disabled=G.fT;
-​const c=$('ops');
-if(c){
-c.innerHTML='';
-q.opts.forEach((t,i)=>{
-const b=document.createElement('button');
-b.className='op';
-b.style.animationDelay=i*.07+'s';
-b.innerHTML=<i>${'ABCD'[i]}</i><span></span>;
-b.lastChild.textContent=t;
-b.addEventListener('click', ()=>answer(i));
-c.appendChild(b);
-});
+
+function render(){
+ G.ans=false;const q=G.qs[G.i];vis(q.m);presence(`Main soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`);
+ if($('qTag')){$('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';$('qTag').className='tag '+q.m;}
+ if($('qSt'))$('qSt').textContent='🔥 '+G.st;
+ if($('qSc'))$('qSc').textContent='⭐ '+G.score;
+ if($('qCt'))$('qCt').textContent=`${G.i+1}/${G.qs.length}`;
+ if($('pgBar'))$('pgBar').style.width=G.i/G.qs.length*100+'%';
+ if($('qTx'))$('qTx').textContent=q.q;
+ if($('ex'))$('ex').classList.remove('v');
+ if($('nx')){$('nx').classList.remove('v');$('nx').textContent=G.i===G.qs.length-1?'Lihat Hasil ✨':'Lanjut →';}
+ if($('l50'))$('l50').disabled=G.f50;
+ if($('lT'))$('lT').disabled=G.fT;
+ 
+ const c=$('ops');
+ if(c){
+  c.innerHTML='';
+  q.opts.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.className='op';
+    b.style.animationDelay=i*.07+'s';
+    b.innerHTML=`<i>${'ABCD'[i]}</i><span></span>`;
+    b.lastChild.textContent=t;
+    b.addEventListener('click', ()=>answer(i));
+    c.appendChild(b);
+  });
+ }
+ G.left=TIME;G.max=TIME;G.t0=performance.now();clearInterval(G.iv);G.iv=setInterval(tick,100);tick();
 }
-G.left=TIME;G.max=TIME;G.t0=performance.now();clearInterval(G.iv);G.iv=setInterval(tick,100);tick();
+
+function tick(){
+ const el=(performance.now()-G.t0)/1000;G.left=Math.max(0,G.max-el);
+ if($('tmBar')){$('tmBar').style.width=G.left/G.max*100+'%';$('tmBar').style.backgroundPosition=(1-G.left/G.max)*100+'% 0';}
+ if($('tL'))$('tL').textContent=Math.ceil(G.left)+'s';
+ if(G.left<=5&&G.left>0&&Math.abs(G.left-Math.round(G.left))<.06)au.tick();
+ if(G.left<=0){clearInterval(G.iv);answer(-1)}
 }
-​function tick(){
-const el=(performance.now()-G.t0)/1000;G.left=Math.max(0,G.max-el);
-if(('tmBar')){('tmBar').style.width=G.left/G.max*100+'%';('tmBar').style.backgroundPosition=(1-G.left/G.max)*100+'% 0';}
-if(('tL'))$('tL').textContent=Math.ceil(G.left)+'s';
-if(G.left<=5&&G.left>0&&Math.abs(G.left-Math.round(G.left))<.06)au.tick();
-if(G.left<=0){clearInterval(G.iv);answer(-1)}
+
+function answer(i){
+ if(G.ans)return;G.ans=true;clearInterval(G.iv);
+ const q=G.qs[G.i],bs=[...document.querySelectorAll('.op')];bs.forEach(b=>b.disabled=true);
+ const used=G.max-G.left,right=i>=0&&q.opts[i]===q.o[0],ci=q.opts.indexOf(q.o[0]);
+ G.times.push(used);
+ 
+ let mult=1.0;
+ if(G.diff==='normal')mult=1.5;
+ if(G.diff==='hard')mult=2.5;
+
+ if(right){
+  bs[i].classList.add('ok');G.ok++;G.st++;G.best=Math.max(G.best,G.st);
+  const basePts=100+G.st*20+Math.floor(G.left*3);
+  G.score+=Math.round(basePts*mult);
+  au.ok();vib(40);if(window.burst)window.burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
+  if($('exT'))$('exT').textContent=G.left>15?'⚡ Secepat kilat! (Multiplier x'+mult+')':'✅ Tepat Sekali! (Multiplier x'+mult+')';
+  if($('ex'))$('ex').style.borderLeftColor='var(--ok)';
+ }else{
+  if(i>=0)bs[i].classList.add('no');if(bs[ci])bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
+  au.no();vib([60,40,60]);
+  if($('exT'))$('exT').textContent=i<0?'⏰ Waktu Habis — Fakta Kosmik:':'❌ Kurang Tepat — Fakta Kosmik:';
+  if($('ex'))$('ex').style.borderLeftColor='var(--no)';
+ }
+ if($('qSt'))$('qSt').textContent='🔥 '+G.st;
+ if($('qSc'))$('qSc').textContent='⭐ '+G.score;
+ if($('exX'))$('exX').textContent=q.e;
+ if($('ex'))$('ex').classList.add('v');
+ if($('nx'))$('nx').classList.add('v');
 }
-​function answer(i){
-if(G.ans)return;G.ans=true;clearInterval(G.iv);
-const q=G.qs[G.i],bs=[...document.querySelectorAll('.op')];bs.forEach(b=>b.disabled=true);
-const used=G.max-G.left,right=i>=0&&q.opts[i]===q.o[0],ci=q.opts.indexOf(q.o[0]);
-G.times.push(used);
-​let mult=1.0;
-if(G.diff==='normal')mult=1.5;
-if(G.diff==='hard')mult=2.5;
-​if(right){
-bs[i].classList.add('ok');G.ok++;G.st++;G.best=Math.max(G.best,G.st);
-const basePts=100+G.st20+Math.floor(G.left3);
-G.score+=Math.round(basePts*mult);
-au.ok();vib(40);if(window.burst)window.burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
-if(('exT'))('exT').textContent=G.left>15?'⚡ Secepat kilat! (Multiplier x'+mult+')':'✅ Tepat Sekali! (Multiplier x'+mult+')';
-if(('ex'))('ex').style.borderLeftColor='var(--ok)';
-}else{
-if(i>=0)bs[i].classList.add('no');if(bs[ci])bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
-au.no();vib([60,40,60]);
-if(('exT'))('exT').textContent=i<0?'⏰ Waktu Habis — Fakta Kosmik:':'❌ Kurang Tepat — Fakta Kosmik:';
-if(('ex'))('ex').style.borderLeftColor='var(--no)';
-}
-if(('qSt'))('qSt').textContent='🔥 '+G.st;
-if(('qSc'))('qSc').textContent='⭐ '+G.score;
-if(('exX'))('exX').textContent=q.e;
-if(('ex'))('ex').classList.add('v');
-if(('nx'))('nx').classList.add('v');
-}
-​if(('l50'))('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
-if(('lT'))('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
-if(('nx'))('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
-​/* ===== HASIL & PAPAN PERANGKAT (FIRESTORE SYNC & PERSISTENCE) ===== /
+
+if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
+if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
+if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
+
+/* ===== HASIL & LEADERBOARD ===== */
 function results(){
-const n=G.qs.length,pct=Math.round(G.ok/n100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
-G.live=false;show('res');presence('Selesai · '+G.score+' poin');
-if(('rRing'))('rRing').textContent=pct+'%';
-if(('rC'))('rC').textContent=${G.ok}/${n};
-if(('rP'))('rP').textContent=G.score;
-if(('rS'))('rS').textContent=G.best+'x';
-if(('rTm'))('rTm').textContent=avg+'s';
-​let t,d;
-if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, '+G.name+'! Kamu menaklukkan level '+G.diff.toUpperCase()+' dengan sempurna.';if(window.burst){burst('#38bdf8');burst('#ff8a3d')}}
-else if(pct>=70){t='Navigator Antarbintang 🚀';d='Hasil hebat, '+G.name+'! Pemahaman kosmikmu sudah sangat solid.'}
-else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, '+G.name+'! Terus tingkatkan pemahaman astrofisikamu.'}
-else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, '+G.name+'. Ulangi ekspedisi untuk hasil maksimal!'}
-if(('rT'))('rT').textContent=t;
-if(('rD'))('rD').textContent=d;
-​const rv=('rv');if(rv){
-rv.innerHTML='';
-if(('rvL'))$('rvL').classList.toggle('hidden',!G.wrong.length);
-G.wrong.forEach(w=>{const e=document.createElement('div');e.textContent=w.q;const s=document.createElement('small');s.textContent='✔ '+w.a;e.appendChild(s);rv.appendChild(e)});
+ const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
+ G.live=false;show('res');presence('Selesai · '+G.score+' poin');
+ if($('rRing'))$('rRing').textContent=pct+'%';
+ if($('rC'))$('rC').textContent=`${G.ok}/${n}`;
+ if($('rP'))$('rP').textContent=G.score;
+ if($('rS'))$('rS').textContent=G.best+'x';
+ if($('rTm'))$('rTm').textContent=avg+'s';
+ 
+ let t,d;
+ if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, '+G.name+'! Kamu menaklukkan level '+G.diff.toUpperCase()+' dengan sempurna.';if(window.burst){burst('#38bdf8');burst('#ff8a3d')}}
+ else if(pct>=70){t='Navigator Antarbintang 🚀';d='Hasil hebat, '+G.name+'! Pemahaman kosmikmu sudah sangat solid.'}
+ else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, '+G.name+'! Terus tingkatkan pemahaman astrofisikamu.'}
+ else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, '+G.name+'. Ulangi ekspedisi untuk hasil maksimal!'}
+ if($('rT'))$('rT').textContent=t;
+ if($('rD'))$('rD').textContent=d;
+ 
+ const rv=$('rv');if(rv){
+  rv.innerHTML='';
+  if($('rvL'))$('rvL').classList.toggle('hidden',!G.wrong.length);
+  G.wrong.forEach(w=>{const e=document.createElement('div');e.textContent=w.q;const s=document.createElement('small');s.textContent='✔ '+w.a;e.appendChild(s);rv.appendChild(e)});
+ }
+ 
+ const b=ls.g('isea_lb',[]);G.rid=Date.now();
+ const currentName = G.name;
+ if (!isOfficialOwner(currentName)) {
+     b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
+     ls.s('isea_lb', b.slice(-300));
+ }
+ ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
+ if(db && !isOfficialOwner(currentName)) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
+ addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
 }
-​const recordData = {
-id: pid,
-n: G.name,
-s: G.score,
-p: pct,
-ok: G.ok,
-t: n,
-diff: G.diff,
-role: isSuperOwner() ? 'SUPER_OWNER' : 'MEMBER',
-d: Date.now()
-};
-​// Simpan lokal persisten dengan aman
-let localScores = ls.g('isea_lb', []);
-localScores.push(recordData);
-ls.s('isea_lb', localScores.slice(-300));
-​ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
-​// Simpan ke Realtime Database/Firestore dengan penanganan error yang andal
-if(db){
-try {
-db.ref('scores').push(recordData).catch(err => {
-console.warn("Gagal sinkronisasi cloud database, data aman di lokal:", err);
-});
-} catch(e) {
-console.warn("Kesalahan koneksi database:", e);
-}
-}
-addLog(Menyelesaikan ekspedisi dengan skor ${G.score});
-}
-​let lbS='best';
+
+let lbS='best';
 function paint(rawList){
-const l=$('lbL');if(!l)return;l.innerHTML='';
-​// Pastikan data terfilter & terurut dengan benar tanpa duplikasi
-let cleanList = rawList || [];
-cleanList.sort((x,y)=>lbS==='new'?(y.d||0)-(x.d||0):(y.s||0)-(x.s||0));
-​// Jika Super Owner belum ada di list cloud, pastikan entry master tetap tampil konsisten
-const hasSuperOwner = cleanList.some(x => x.role === 'SUPER_OWNER' || x.n === 'KovTheGreat');
-if(!hasSuperOwner) {
-cleanList.unshift({
-n: 'KovTheGreat',
-s: 99999,
-p: 100,
-ok: 'MAX',
-t: 30,
-diff: 'supreme',
-role: 'SUPER_OWNER',
-d: 1700000000000
-});
+ const l=$('lbL');if(!l)return;l.innerHTML='';
+ 
+ const cleanList = (rawList || []).filter(x => !isOfficialOwner(x.n));
+ cleanList.sort((x,y)=>lbS==='new'?(y.d||0)-(x.d||0):(y.s||0)-(x.s||0));
+
+ const ownerEntry = {
+     n: ls.g('isea_name', 'KovTheGreat'),
+     s: 99999,
+     p: 100,
+     ok: '👑',
+     t: 'MAX',
+     diff: 'supreme',
+     d: 1700000000000,
+     isOwnerHeader: true
+ };
+
+ const displayList = [ownerEntry, ...cleanList];
+
+ displayList.forEach((x, index)=>{
+  const li=document.createElement('li');
+  const isOwnerPinned = x.isOwnerHeader || (index === 0 && isOfficialOwner(x.n));
+  
+  if(isOwnerPinned || x.d === G.rid) li.className='me';
+  
+  let rankIcon = '';
+  if(index === 0) rankIcon = '👑';
+  else if(index === 1) rankIcon = '🥇';
+  else if(index === 2) rankIcon = '🥈';
+  else if(index === 3) rankIcon = '🥉';
+  else rankIcon = index;
+
+  li.innerHTML=`<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwnerPinned ? '👑 SUPER OWNER' : x.s}</em>`;
+  
+  const nameBox = li.querySelector('b');
+  
+  if(isOwnerPinned) {
+      nameBox.textContent = x.n || 'KovTheGreat';
+      const badge = document.createElement('span');
+      badge.className = 'owner-badge';
+      badge.textContent = '👑 SUPER OWNER';
+      nameBox.appendChild(badge);
+  } else {
+      nameBox.textContent = x.n || 'Penjelajah';
+      const badge = document.createElement('span');
+      badge.className = 'member-badge';
+      badge.textContent = 'MEMBER';
+      nameBox.appendChild(badge);
+  }
+  
+  const detailText = isOwnerPinned ? 'Puncak Mutlak Sistem Antarbintang' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
+  li.querySelector('small').textContent = detailText;
+  l.appendChild(li);
+ });
 }
-​cleanList.forEach((x, index)=>{
-const li=document.createElement('li');
-const isOwner = (x.role === 'SUPER_OWNER' || x.n === 'KovTheGreat');
-​if(isOwner || x.id === pid) li.className='me';
-​let rankIcon = '';
-if(index === 0) rankIcon = '👑';
-else if(index === 1) rankIcon = '🥇';
-else if(index === 2) rankIcon = '🥈';
-else if(index === 3) rankIcon = '🥉';
-else rankIcon = index + 1;
-​li.innerHTML=<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwner ? '👑 SUPER OWNER' : x.s}</em>;
-​const nameBox = li.querySelector('b');
-nameBox.textContent = x.n || 'Penjelajah';
-​if(isOwner) {
-const badge = document.createElement('span');
-badge.className = 'owner-badge';
-badge.textContent = '👑 SUPER OWNER';
-nameBox.appendChild(badge);
-} else {
-const mb = document.createElement('span');
-mb.className = 'member-badge';
-mb.textContent = 'MEMBER';
-nameBox.appendChild(mb);
+
+function board(){
+ au.clk();if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
+ if(lbS==='all'){
+  if(!db){
+      paint(ls.g('isea_lb',[]));
+      return;
+  }
+  if($('lbL'))$('lbL').innerHTML='<li>Memuat data global...</li>';
+  db.ref('scores').orderByChild('s').limitToLast(50).once('value').then(sn=>{
+      const a=[];sn.forEach(c=>{a.push(c.val())});
+      paint(a);
+  }).catch(()=>paint(ls.g('isea_lb',[])));
+  return;
+ }
+ paint(ls.g('isea_lb',[]));
 }
-​const detailText = isOwner ? 'Puncak Mutlak Sistem Antarbintang ISEA' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
-li.querySelector('small').textContent = detailText;
-l.appendChild(li);
-});
-}
-​function board(){
-au.clk();if(('segL'))[...('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
-​// Penanganan error pemuatan database dengan fallback otomatis ke local storage
-try {
-if(lbS==='all' && db){
-if(('lbL'))('lbL').innerHTML='<li>Memuat data papan perangkat global...</li>';
-db.ref('scores').orderByChild('s').limitToLast(100).once('value').then(sn=>{
-const a=[];sn.forEach(c=>{a.push(c.val())});
-paint(a.length ? a : ls.g('isea_lb',[]));
-}).catch(err=>{
-console.warn("Gagal memuat database cloud, memuat dari cadangan lokal:", err);
-paint(ls.g('isea_lb',[]));
-toast('⚠️ Menggunakan data offline lokal');
-});
-return;
-}
-} catch(e) {
-console.warn("Error koneksi database:", e);
-}
-paint(ls.g('isea_lb',[]));
-}
-if(('segL'))('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;board()}};
-if(('bRk'))('bRk').onclick=async()=>{
-const b=ls.g('isea_lb',[]).sort((x,y)=>y.s-x.s);
-if(!b.length)return toast('Belum ada data papan perangkat');
-const t='🏆 Rekap Papan Perangkat ISEA\n'+b.map((x,i)=>${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} poin)).join('\n');
-try{await navigator.clipboard.writeText(t);toast('Rekap papan disalin 📋')}catch(e){toast('Gagal menyalin')}
+if($('segL'))$('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;board()}};
+if($('bRk'))$('bRk').onclick=async()=>{
+ const b=ls.g('isea_lb',[]).filter(x=>!isOfficialOwner(x.n)).sort((x,y)=>y.s-x.s);
+ if(!b.length)return toast('Belum ada data member');
+ const t='🏆 Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} poin)`).join('\n');
+ try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}
 };
-​/* ===== ONLINE & FIREBASE CONFIGURATION & ERROR HANDLING ===== */
+
+/* ===== ONLINE & FIREBASE DENGAN FALLBACK TANGGUH ===== */
 const firebaseConfig = {
-apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
-authDomain: "isea-e9e03.firebaseapp.com",
-databaseURL: "https://isea-e9e03-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId: "isea-e9e03",
-storageBucket: "isea-e9e03-firebasestorage.app",
-messagingSenderId: "195013427338",
-appId: "1:195013427338:web:b097365f2a2eb6c265ad73",
-measurementId: "G-79P36SE4BR"
+  apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
+  authDomain: "isea-e9e03.firebaseapp.com",
+  databaseURL: "https://isea-e9e03-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "isea-e9e03",
+  storageBucket: "isea-e9e03-firebasestorage.app",
+  messagingSenderId: "195013427338",
+  appId: "1:195013427338:web:b097365f2a2eb6c265ad73",
+  measurementId: "G-79P36SE4BR"
 };
-​const pid = ls.g('isea_pid', null) || ('device_' + Math.random().toString(36).slice(2, 11));
-ls.s('isea_pid', pid);
-​let db=null,meRef=null,cur='Di menu',OL={};
+
+const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
+let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
-cur=st;if(!db||!meRef)return;
-const nameInput = $('name');
-const currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'Penjelajah';
-​meRef.set({
-id: pid,
-n: currentActiveName,
-st: st,
-role: isSuperOwner() ? 'SUPER_OWNER' : 'MEMBER',
-t: firebase.database.ServerValue.TIMESTAMP
-}).catch(err => {
-console.warn("Gagal memperbarui presence online:", err);
-});
+ cur=st;if(!db||!meRef)return;
+ const nameInput = $('name');
+ const currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'Penjelajah';
+ meRef.set({n: currentActiveName, st: st, role: isOfficialOwner(currentActiveName)?'SUPER_OWNER':'MEMBER', t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
-​function drawOn(){
-const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=('onL');if(!l)return;l.innerHTML='';
-if(('onC'))$('onC').textContent=a.length+' perangkat sedang terhubung online';
-a.forEach(([k,v])=>{
-const li=document.createElement('li');
-if(v.id === pid || k === pid)li.className='me';
-li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
-​const nameBox = li.querySelector('b');
-const userName = v.n || 'Penjelajah';
-const isOwnerOnline = (v.role === 'SUPER_OWNER' || userName === 'KovTheGreat');
-​nameBox.textContent = userName;
-​if(isOwnerOnline) {
-const badge = document.createElement('span');
-badge.className = 'owner-badge';
-badge.textContent = '👑 SUPER OWNER';
-nameBox.appendChild(badge);
-} else {
-const mb = document.createElement('span');
-mb.className = 'member-badge';
-mb.textContent = 'MEMBER';
-nameBox.appendChild(mb);
+function drawOn(){
+ const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');if(!l)return;l.innerHTML='';
+ if($('onC'))$('onC').textContent=a.length+' orang sedang membuka web';
+ a.forEach(([k,v])=>{
+  const li=document.createElement('li');
+  if(k===pid)li.className='me';
+  li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
+  
+  const nameBox = li.querySelector('b');
+  const userName = v.n || 'Penjelajah';
+  const isOwnerNode = (v.role === 'SUPER_OWNER' || (k === pid && isOfficialOwner(userName)));
+  
+  nameBox.textContent = userName;
+  const badge = document.createElement('span');
+  if(isOwnerNode) {
+      badge.className = 'owner-badge';
+      badge.textContent = '👑 SUPER OWNER';
+  } else {
+      badge.className = 'member-badge';
+      badge.textContent = 'MEMBER';
+  }
+  nameBox.appendChild(badge);
+
+  li.querySelector('small').textContent=v.st||'';
+  li.querySelector('em').textContent=k===pid?'kamu':'';
+  l.appendChild(li);
+ });
 }
-​li.querySelector('small').textContent=v.st||'';
-li.querySelector('em').textContent=(v.id=pid||k=pid)?'kamu':'';
-l.appendChild(li);
-});
+function initOnline(){
+ try{
+  if(typeof firebase!=='undefined'){
+   if(!firebase.apps.length) {
+       firebase.initializeApp(firebaseConfig);
+   }
+   db=firebase.database();meRef=db.ref('online/'+pid);
+   db.ref('.info/connected').on('value',x=>{if(x.val()){meRef.onDisconnect().remove();presence(cur)}});
+   db.ref('online').on('value',x=>{OL=x.val()||{};if($('bOn'))$('bOn').textContent='🟢 '+Object.keys(OL).length;if($('sOn')&&!$('sOn').classList.contains('hidden'))drawOn()});
+   if($('bOn'))$('bOn').classList.remove('hidden');
+  }
+ }catch(e){console.warn('Firebase init warning:',e)}
 }
-​function initOnline(){
-try{
-if(typeof firebase!=='undefined'){
-if (!firebase.apps.length) {
-firebase.initializeApp(firebaseConfig);
-}
-db=firebase.database();
-meRef=db.ref('online/'+pid);
-​db.ref('.info/connected').on('value',x=>{
-if(x.val()){
-meRef.onDisconnect().remove();
-presence(cur);
-}
-});
-​db.ref('online').on('value',x=>{
-OL=x.val()||{};
-if(('bOn'))('bOn').textContent='🟢 '+Object.keys(OL).length;
-if(('sOn')&&!('sOn').classList.contains('hidden'))drawOn();
-}, err => {
-console.warn("Error membaca data online:", err);
-});
-​if(('bOn'))('bOn').classList.remove('hidden');
-}
-}catch(e){
-console.warn('Firebase connection error (Fallback to offline mode):', e);
-toast('⚠️ Berjalan dalam mode offline lokal');
-}
-}
-​if(('bOn'))('bOn').onclick=()=>{au.clk();drawOn();show('on')};
-if(('bOnBack'))('bOnBack').onclick=()=>{au.clk();show('start')};
-if(('bLb'))('bLb').onclick=board;
-if(('bLb2'))('bLb2').onclick=board;
-if(('bBack'))('bBack').onclick=()=>{au.clk();show('start')};
-if(('bGo'))('bGo').onclick=start;
-if(('bAg'))('bAg').onclick=start;
-if(('bHm'))('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
-if(('name'))('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
-if(('bSh'))('bSh').onclick=async()=>{
-const t=🚀 ${G.name} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?;
-try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
+if($('bOn'))$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
+if($('bOnBack'))$('bOnBack').onclick=()=>{au.clk();show('start')};
+if($('bLb'))$('bLb').onclick=board;
+if($('bLb2'))$('bLb2').onclick=board;
+if($('bBack'))$('bBack').onclick=()=>{au.clk();show('start')};
+if($('bGo'))$('bGo').onclick=start;
+if($('bAg'))$('bAg').onclick=start;
+if($('bHm'))$('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
+if($('name'))$('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
+if($('bSh'))$('bSh').onclick=async()=>{
+ const t=`🚀 ${G.name} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
+ try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
 };
-​/* ===== FITUR TAMBAHAN ===== */
+
+/* ===== FITUR TAMBAHAN ===== */
 function addLog(txt){
-const box = $('activityLog');
-if(!box) return;
-const timeStr = new Date().toLocaleTimeString('id-ID');
-box.innerHTML += <div>[${timeStr}] ${txt}</div>;
-box.scrollTop = box.scrollHeight;
+ const box = $('activityLog');
+ if(!box) return;
+ const timeStr = new Date().toLocaleTimeString('id-ID');
+ box.innerHTML += `<div>[${timeStr}] ${txt}</div>`;
+ box.scrollTop = box.scrollHeight;
 }
-​if($('calcBtn')){
-('calcBtn').onclick = () => {
-au.clk();
-const m = parseFloat(('calcMass').value) || 10;
-const rs=(2.953*m).toFixed(2);
-const f=k=>(1/Math.sqrt(1-1/k)).toFixed(1);
-$('calcRes').textContent=Horizon (Rs) ≈ ${rs} km. Waktu melambat ${f(2)}x di 2×Rs, ${f(1.1)}x di 1,1×Rs, ${f(1.01)}x di 1,01×Rs, ${f(1.001)}x di 1,001×Rs (dari sudut pandang pengamat jauh).;
-addLog(Menghitung dilatasi waktu untuk massa ${m} M☉);
-};
+
+if($('calcBtn')){
+ $('calcBtn').onclick = () => {
+  au.clk();
+  const m = parseFloat($('calcMass').value) || 10;
+  const rs=(2.953*m).toFixed(2);
+  const f=k=>(1/Math.sqrt(1-1/k)).toFixed(1);
+  $('calcRes').textContent=`Horizon (Rs) ≈ ${rs} km. Waktu melambat ${f(2)}x di 2×Rs, ${f(1.1)}x di 1,1×Rs, ${f(1.01)}x di 1,01×Rs, ${f(1.001)}x di 1,001×Rs (dari sudut pandang pengamat jauh).`;
+  addLog(`Menghitung dilatasi waktu untuk massa ${m} M☉`);
+ };
 }
-​/* ===== JELAJAH KOSMOS ===== /
+
+/* ===== JELAJAH KOSMOS ===== */
 const EX=[
 ['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh. Gravitasinya begitu kuat hingga cahaya pun tak bisa lolos dari event horizon.'],
-['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Bersemayam di pusat hampir semua galaksi besar. Asal-usulnya masih diteliti, dan keberadaannya memengaruhi pertumbuhan galaksi.'],
+['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Bersemayam di pusat hampir semua galaksi besar. Asal-usulnya masih diteliti, dan keberadaannya memengaruhi pertumbuhan galaksi.'],
 ['💫','Bintang Neutron',['Diameter ±20 km','Massa 1,4 – 2,2 M☉'],'Sisa inti bintang masif setelah supernova. Hampir seluruhnya tersusun dari neutron yang dimampatkan hingga kepadatan inti atom.'],
 ['⚡','Pulsar',['Rekor ±716 putaran/detik','Tersebar sebagai jam kosmik'],'Bintang neutron berputar yang memancarkan berkas radiasi atau sinar-X dari kutub magnetiknya. Denyutnya sangat teratur seperti mercusuar.'],
 ['🧲','Magnetar',['Medan ±10¹⁴–10¹⁵ gauss','Termasuk magnet terkuat di alam semesta'],'Bintang neutron dengan medan magnet luar biasa kuat. Perubahan medannya memicu semburan sinar-X dan sinar gamma yang dahsyat.'],
@@ -746,81 +794,91 @@ const EX=[
 ];
 const exg = $('exg');
 if(exg){
-EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
-d.innerHTML='<button class="xh"><span></span><span></span><em>⌄</em></button><div class="xb"><div><p></p><div class="xs"></div></div></div>';
-d.querySelector('.xh').children[0].textContent=x[0];d.querySelector('.xh').children[1].textContent=x[1];d.querySelector('p').textContent=x[3];
-x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
-d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};exg.appendChild(d)});
+ EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
+  d.innerHTML='<button class="xh"><span></span><span></span><em>⌄</em></button><div class="xb"><div><p></p><div class="xs"></div></div></div>';
+  d.querySelector('.xh').children[0].textContent=x[0];d.querySelector('.xh').children[1].textContent=x[1];d.querySelector('p').textContent=x[3];
+  x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
+  d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};exg.appendChild(d)});
 }
-​/* ===== KOSMO AI ===== */
+
+/* ===== KOSMO AI ===== */
 const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
 function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
-CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
-if(q.toLowerCase().includes('kov') || q.toLowerCase().includes('owner') || q.toLowerCase().includes('pembuat')) {
-return 'Web ISEA Kuis Kosmos ini dirancang dan dimiliki sepenuhnya oleh KovTheGreat (Kova)! Beliau adalah kreator jenius di balik sistem antarbintang ini. 👑✨';
+ CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
+ if(q.toLowerCase().includes('kov') || q.toLowerCase().includes('owner') || q.toLowerCase().includes('pembuat')) {
+     return 'Web ISEA Kuis Kosmos ini dirancang dan dimiliki sepenuhnya oleh KovTheGreat (Kova)! Beliau adalah kreator jenius di balik sistem antarbintang ini. 👑✨';
+ }
+ return b||'Aku Kosmo, asisten virtual cerdas di ISEA Kosmos. Tanyakan apa saja tentang astrofisika, lubang hitam, bintang neutron, atau misteri alam semesta!';
 }
-return b||'Aku Kosmo, asisten virtual cerdas di ISEA Kosmos. Tanyakan apa saja tentang astrofisika, lubang hitam, bintang neutron, atau misteri alam semesta!';
-}
-function msg(t,w){const chat=('chat');if(!chat)return;const d=document.createElement('div');d.className='m '+w;d.textContent=t;chat.appendChild(d);chat.scrollTop=1e9;return d}
+function msg(t,w){const chat=$('chat');if(!chat)return;const d=document.createElement('div');d.className='m '+w;d.textContent=t;chat.appendChild(d);chat.scrollTop=1e9;return d}
 let hist=[];
 async function ask(q){
-q=q.trim();if(!q)return;if(('aiIn'))$('aiIn').value='';msg(q,'u');const b=msg('...','b');
-const key=ls.g('isea_key','');let a;
-const systemPrompt = 'Kamu adalah Kosmo, AI asisten virtual yang sangat cerdas, ramah, berwawasan luas, dan interaktif di platform ISEA (Indonesia Space & Education Association) Kuis Kosmos. Pencipta, pemilik, dan owner resmi dari web ini adalah KovTheGreat (alias Kova). Kamu sangat menghormati, bangga, dan mengakui Kova sebagai pencipta web ini. Jawab dalam bahasa Indonesia, berikan penjelasan mendalam, akurat secara ilmiah, dan gunakan gaya bahasa asisten AI modern yang elegan.';
-​if(key){try{hist.push({role:'user',content:q});
-const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:systemPrompt,messages:hist.slice(-10)})});
-const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
-a=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:a})}
-catch(e){hist.pop();a='⚠️ Koneksi AI online gagal ('+e.message+').\n\nRespon cerdas offline: '+offline(q)}}
-else a=offline(q)+'\n\n*(Catatan: Mode offline aktif. Untuk mengaktifkan kepintaran AI tingkat lanjut secara penuh, ketuk tombol ⚙️ Kunci AI di atas dan masukkan API key Anthropic kamu kurun waktu ini.)*';
-if(b)b.textContent=a;
+ q=q.trim();if(!q)return;if($('aiIn'))$('aiIn').value='';msg(q,'u');const b=msg('...','b');
+ const key=ls.g('isea_key','');let a;
+ const systemPrompt = 'Kamu adalah Kosmo, AI asisten virtual yang sangat cerdas, ramah, berwawasan luas, dan interaktif di platform ISEA (International Space Education Association) Kuis Kosmos. Pencipta, pemilik, dan owner resmi dari web ini adalah KovTheGreat (alias Kova). Kamu sangat menghormati, bangga, dan mengakui Kova sebagai pencipta web ini. Jawab dalam bahasa Indonesia, berikan penjelasan mendalam, akurat secara ilmiah, dan gunakan gaya bahasa asisten AI modern yang elegan.';
+
+ if(key){try{hist.push({role:'user',content:q});
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:systemPrompt,messages:hist.slice(-10)})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
+  a=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:a})}
+  catch(e){hist.pop();a='⚠️ Koneksi AI online gagal ('+e.message+').\n\nRespon cerdas offline: '+offline(q)}}
+ else a=offline(q)+'\n\n*(Catatan: Mode offline aktif. Untuk mengaktifkan kepintaran AI tingkat lanjut secara penuh, ketuk tombol ⚙️ Kunci AI di atas dan masukkan API key Anthropic kamu.)*';
+ if(b)b.textContent=a;
 }
-​const chips = ('chips');
+
+const chips = $('chips');
 if(chips){
-['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana cara kerja pulsar?','Ceritakan fakta unik kosmos'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
+ ['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana cara kerja pulsar?','Ceritakan fakta unik kosmos'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
 }
-if(('aiGo'))('aiGo').onclick=()=>ask(('aiIn').value);
-if(('aiIn'))('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask(('aiIn').value));
-if(('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
-​const aiModal = $('aiModal'), modalKeyInput = ('modalKeyInput');
-if(('aiK')&&aiModal&&modalKeyInput){
-$('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
-$('modalCancel').onclick = () => aiModal.classList.remove('active');
-$('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
+if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
+if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
+
+const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
+if($('aiK')&&aiModal&&modalKeyInput){
+ $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
+ $('modalCancel').onclick = () => aiModal.classList.remove('active');
+ $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
 }
-​if(('nav'))('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
-​/* ===== LOADER & INITIALIZATION CHECK ===== */
+
+if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
+
+/* ===== LOADER & AUTO RESTORE OWNER ===== */
 (function(){
-const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat data papan perangkat…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
-let p=0,i=0;
-let done=false;
-function hideLoader(){
-if(done)return;
-done=true;
-const ld=$('ld');
-if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
-if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
-​// Set default name if empty
-if(!$('name').value) {
-$('name').value = 'Penjelajah ISEA';
-ls.s('isea_name', 'Penjelajah ISEA');
-}
-​checkNameLock();
-presence('Di menu');
-addLog('Sistem satelit online dan papan perangkat tersinkronisasi.');
-if(('fact'))('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
-}
-const t=setInterval(()=>{
-p=Math.min(100,p+25);
-if(('ldI'))('ldI').style.width=p+'%';
-if(('ldM'))('ldM').textContent=M[Math.min(M.length-1,i++)];
-if(p>=100){
-clearInterval(t);
-setTimeout(hideLoader,200);
-}
-},120);
-setTimeout(hideLoader, 1500);
-try{initOnline();}catch(e){}
+ const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
+ let p=0,i=0;
+ let done=false;
+ function hideLoader(){
+  if(done)return;
+  done=true;
+  const ld=$('ld');
+  if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
+  if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
+  
+  // Pastikan token owner selalu aman diinisialisasi
+  if(!ls.g('isea_owner_token', '')) {
+      ls.s('isea_owner_token', 'owner_super_verified_kovthegreat');
+  }
+  if(!ls.g('isea_name', '')) {
+      ls.s('isea_name', 'KovTheGreat');
+  }
+
+  checkNameLock();
+  presence('Di menu');
+  addLog('Sistem satelit online dan siap beroperasi.');
+  if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
+ }
+ const t=setInterval(()=>{
+  p=Math.min(100,p+25);
+  if($('ldI'))$('ldI').style.width=p+'%';
+  if($('ldM'))$('ldM').textContent=M[Math.min(M.length-1,i++)];
+  if(p>=100){
+   clearInterval(t);
+   setTimeout(hideLoader,200);
+  }
+ },120);
+ setTimeout(hideLoader, 1500);
+ try{initOnline();}catch(e){}
 })();
 </script>
 </body>
