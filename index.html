@@ -446,7 +446,7 @@ if($('name')){
  });
 }
 
-/* ===== KUIS & MULTIPLIER KESULITAN ===== */
+/* ===== KUIS & MULTIPLIER KESULITAN (FIXED) ===== */
 const TIME=20;
 function start(){
  const nameInput = $('name');
@@ -489,7 +489,15 @@ function render(){
  const c=$('ops');
  if(c){
   c.innerHTML='';
-  q.opts.forEach((t,i)=>{const b=document.createElement('button');b.className='op';b.style.animationDelay=i*.07+'s';b.innerHTML=`<i>${'ABCD'[i]}</i><span></span>`;b.lastChild.textContent=t;b.onclick=()=>answer(i);c.appendChild(b)});
+  q.opts.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.className='op';
+    b.style.animationDelay=i*.07+'s';
+    b.innerHTML=`<i>${'ABCD'[i]}</i><span></span>`;
+    b.lastChild.textContent=t;
+    b.onclick=()=>answer(i);
+    c.appendChild(b);
+  });
  }
  G.left=TIME;G.max=TIME;G.t0=performance.now();clearInterval(G.iv);G.iv=setInterval(tick,100);tick();
 }
@@ -775,8 +783,10 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== SAFETY LOADER (DIPASTIKAN TIDAK AKAN STUCK) ===== */
+/* ===== SAFETY LOADER (ANIMASI LOADING AKTIF & ANTI-STUCK) ===== */
 (function(){
+ const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
+ let p=0,i=0;
  let done=false;
  function hideLoader(){
   if(done)return;
@@ -787,6 +797,15 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   checkNameLock();
   presence('Di menu');
  }
+ const t=setInterval(()=>{
+  p=Math.min(100,p+25);
+  if($('ldI'))$('ldI').style.width=p+'%';
+  if($('ldM'))$('ldM').textContent=M[Math.min(M.length-1,i++)];
+  if(p>=100){
+   clearInterval(t);
+   setTimeout(hideLoader,200);
+  }
+ },120);
  setTimeout(hideLoader, 1500);
  try{initOnline();}catch(e){}
 })();
