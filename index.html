@@ -153,7 +153,6 @@ html{scroll-behavior:smooth}
 .modal-btn.cancel{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.1);color:var(--mu)}
 .modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;box-shadow:0 8px 20px rgba(168,85,247,.3)}
 
-/* Ruang Fitur Tambahan (Kalkulator Relativistik & Log Aktivitas) */
 .extra-box{display:grid;gap:12px;margin-top:16px}
 .tool-card{background:rgba(15,23,42,.7);border:1px solid rgba(125,211,252,.2);border-radius:20px;padding:18px}
 .tool-card h3{font:700 1.05rem 'Space Grotesk',sans-serif;margin-bottom:8px;color:#7dd3fc}
@@ -248,7 +247,6 @@ html{scroll-behavior:smooth}
     <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos</h1>
     <p class="sub" style="margin:6px 0 0">Ketuk kartu untuk membuka detail objek paling ekstrem di alam semesta.</p>
     <div class="exg" id="exg"></div>
-    <!-- FITUR BARU RUANG EKSPLORASI TAMBAHAN -->
     <div class="extra-box">
       <div class="tool-card">
         <h3>⚡ Kalkulator Dilatasi Waktu Gravitasi</h3>
@@ -282,7 +280,6 @@ html{scroll-behavior:smooth}
   <button data-t="lb">🏆<span>Peringkat</span></button>
 </nav>
 
-<!-- MODAL KUNCI AI KUSTOM -->
 <div class="modal-overlay" id="aiModal">
   <div class="modal-box">
     <div class="modal-title">⚙️ Konfigurasi Kunci AI</div>
@@ -299,7 +296,7 @@ html{scroll-behavior:smooth}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BANK SOAL ASTRONOMI MASTERPIECE (LENGKAP DAN DIPERLUAS) ===== */
+/* ===== BANK SOAL ===== */
 const Q=(m,q,o,e)=>({m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -336,7 +333,7 @@ Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?
 ];
 const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.'];
 
-/* ===== UTIL & AUDIO KOSMIK ===== */
+/* ===== UTIL & AUDIO ===== */
 const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const ls={g:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const vib=n=>navigator.vibrate&&navigator.vibrate(n);
@@ -350,11 +347,12 @@ const au={c:null,on:false,d:null,
  clk(){this.t(440,'sine',.08,.06)},tick(){this.t(900,'square',.05,.03)}
 };
 
-/* ===== CANVAS VISUALIZER 3D HALUS ===== */
+/* ===== CANVAS ===== */
+/* FIX: sc dipindah ke luar blok if agar bisa dipakai fungsi vis() */
+const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
 const cv=$('cv'),cx=cv?cv.getContext('2d'):null;let W,H;
 if(cv && cx){
  const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
- const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
  addEventListener('pointermove',e=>{sc.mx=(e.clientX/W-.5)*2;sc.my=(e.clientY/H-.5)*2});
  const stars=Array.from({length:200},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.8+.4,w:Math.random()*6.28}));
  const disk=Array.from({length:150},()=>({a:Math.random()*6.28,r:80+Math.random()*150,v:.008+Math.random()*.015,s:Math.random()*2.2+.8,h:22+Math.random()*28}));
@@ -399,7 +397,7 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== VALIDASI OWNER MUTLAK & 14 HARI GANTI NAMA ===== */
+/* ===== OWNER & GANTI NAMA 14 HARI ===== */
 const OWNER_SIGNATURES = ['kovthegreat', 'kova', 'kovo'];
 function isOfficialOwner(nameStr) {
     if (!nameStr) return false;
@@ -410,10 +408,8 @@ function isOfficialOwner(nameStr) {
 const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
 function checkNameLock() {
     let savedName = ls.g('isea_name', '');
-    if(!savedName) {
-        savedName = 'KovTheGreat';
-        ls.s('isea_name', savedName);
-    }
+    /* FIX: pengunjung baru tidak lagi otomatis jadi owner */
+    if(!savedName) savedName = '';
     const lastChange = ls.g('isea_name_time', 0);
     const now = Date.now();
     const nameInput = $('name');
@@ -472,11 +468,11 @@ if($('name')){
  });
 }
 
-/* ===== KUIS & JAWABAN FIX TOTAL (DIJAMIN BISA DIPENCET) ===== */
+/* ===== KUIS ===== */
 const TIME=20;
 function start(){
  const nameInput = $('name');
- const name = nameInput ? nameInput.value.trim() : 'KovTheGreat';
+ const name = nameInput ? nameInput.value.trim() : '';
  if(!name){if(nameInput)nameInput.focus();return toast('Isi namamu dulu ya 🚀')}
  
  const oldName = ls.g('isea_name', '');
@@ -523,7 +519,6 @@ function render(){
     b.style.animationDelay=i*.07+'s';
     b.innerHTML=`<i>${'ABCD'[i]}</i><span></span>`;
     b.lastChild.textContent=t;
-    // Pengecoran event listener langsung ke fungsi answer
     b.addEventListener('click', ()=>answer(i));
     c.appendChild(b);
   });
@@ -573,7 +568,7 @@ if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('
 if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
 if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
-/* ===== HASIL & LEADERBOARD (BERSIH TANPA KATA-KATA LAIN DI POSISI OWNER) ===== */
+/* ===== HASIL & LEADERBOARD ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
  G.live=false;show('res');presence('Selesai · '+G.score+' poin');
@@ -603,7 +598,8 @@ function results(){
      b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
      ls.s('isea_lb', b.slice(-300));
  }
- toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
+ /* FITUR BARU: rekor pribadi */
+ ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
  if(db && !isOfficialOwner(currentName)) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
  addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
 }
@@ -613,9 +609,9 @@ function paint(rawList){
  const l=$('lbL');if(!l)return;l.innerHTML='';
  
  const cleanList = (rawList || []).filter(x => !isOfficialOwner(x.n));
- cleanList.sort((x, y) => (y.s || 0) - (x.s || 0));
+ /* FIX: tab Terbaru kini mengurutkan berdasarkan waktu */
+ cleanList.sort((x,y)=>lbS==='new'?(y.d||0)-(x.d||0):(y.s||0)-(x.s||0));
 
- // Entri owner mutlak di puncak #0 (bersih, tanpa tulisan aneh, murni nama + badge)
  const ownerEntry = {
      n: 'KovTheGreat',
      s: 99999,
@@ -686,7 +682,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}
 };
 
-/* ===== ONLINE & FIREBASE CONFIG ===== */
+/* ===== ONLINE & FIREBASE ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -703,7 +699,7 @@ let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
  cur=st;if(!db||!meRef)return;
  const nameInput = $('name');
- const currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'KovTheGreat';
+ const currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'Penjelajah';
  meRef.set({n: currentActiveName, st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
@@ -715,7 +711,7 @@ function drawOn(){
   li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
   
   const nameBox = li.querySelector('b');
-  const userName = v.n || 'KovTheGreat';
+  const userName = v.n || 'Penjelajah';
   
   if(isOfficialOwner(userName)) {
       nameBox.textContent = 'KovTheGreat';
@@ -744,7 +740,6 @@ function initOnline(){
 }
 if($('bOn'))$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
 if($('bOnBack'))$('bOnBack').onclick=()=>{au.clk();show('start')};
-if($('name'))$('name').addEventListener('input',()=>{presence(cur)});
 if($('bLb'))$('bLb').onclick=board;
 if($('bLb2'))$('bLb2').onclick=board;
 if($('bBack'))$('bBack').onclick=()=>{au.clk();show('start')};
@@ -757,7 +752,7 @@ if($('bSh'))$('bSh').onclick=async()=>{
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
 };
 
-/* ===== FITUR TAMBAHAN & RUANG EKSPLORASI ===== */
+/* ===== FITUR TAMBAHAN ===== */
 function addLog(txt){
  const box = $('activityLog');
  if(!box) return;
@@ -770,9 +765,10 @@ if($('calcBtn')){
  $('calcBtn').onclick = () => {
   au.clk();
   const m = parseFloat($('calcMass').value) || 10;
-  // Rumus estimasi relativistik sederhana untuk faktor dilatasi waktu mendekati horizon
-  const dilation = (m * 1.5).toFixed(2);
-  $('calcRes').textContent = `Massa ${m} M☉ menghasilkan perlambatan waktu sekitar ${dilation}x lipat di dekat event horizon!`;
+  /* FIX: rumus fisika sebenarnya, dilatasi = 1/sqrt(1 - Rs/r) */
+  const rs=(2.953*m).toFixed(2);
+  const f=k=>(1/Math.sqrt(1-1/k)).toFixed(1);
+  $('calcRes').textContent=`Horizon (Rs) ≈ ${rs} km. Waktu melambat ${f(2)}x di 2×Rs, ${f(1.1)}x di 1,1×Rs, ${f(1.01)}x di 1,01×Rs, ${f(1.001)}x di 1,001×Rs (dari sudut pandang pengamat jauh).`;
   addLog(`Menghitung dilatasi waktu untuk massa ${m} M☉`);
  };
 }
@@ -827,6 +823,8 @@ if(chips){
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+/* FIX: tombol "Tanya Kosmo AI soal ini" sebelumnya tidak punya fungsi */
+if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
@@ -837,7 +835,7 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== SAFETY LOADER (ANIMASI LOADING AKTIF & ANTI-STUCK) ===== */
+/* ===== LOADER ===== */
 (function(){
  const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
  let p=0,i=0;
@@ -851,6 +849,8 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   checkNameLock();
   presence('Di menu');
   addLog('Sistem satelit online dan siap beroperasi.');
+  /* FIX: kotak fakta di menu sebelumnya kosong */
+  if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
  const t=setInterval(()=>{
   p=Math.min(100,p+25);
