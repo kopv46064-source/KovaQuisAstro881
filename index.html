@@ -26,8 +26,6 @@ canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:no
 .hidden{display:none!important}
 .enter{animation:ce .5s var(--sp) forwards}
 @keyframes ce{0%{opacity:0;transform:translateY(24px) scale(.97)}100%{opacity:1;transform:none}}
-@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-.shake{animation:shake .45s var(--sm)}
 .badge{display:inline-block;padding:6px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(255,138,61,.18),rgba(56,189,248,.18));border:1px solid rgba(255,255,255,.15);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px}
 h1{font:700 clamp(1.8rem,4.5vw,2.4rem)/1.15 'Space Grotesk',sans-serif;background:linear-gradient(135deg,#fff 15%,#93c5fd 55%,#fdba74 95%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
 .sub{color:var(--mu);line-height:1.65;margin-bottom:22px;font-size:.96rem}
@@ -406,89 +404,33 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== KONTROL NAMA, LOCK OWNER, & CEK DUPLIKAT NAMA ===== */
-const FIFTEEN_DAYS = 15 * 24 * 60 * 60 * 1000;
-const MY_OWNER_ID_KEY = 'isea_owner_device_token';
-
-let myDeviceToken = ls.g(MY_OWNER_ID_KEY, '');
-if(!myDeviceToken) {
-    myDeviceToken = 'dev_' + Math.random().toString(36).slice(2, 11) + Date.now();
-    ls.s(MY_OWNER_ID_KEY, myDeviceToken);
+/* ===== SISTEM OWNER MUTLAK & KUNCI FIREBASE ===== */
+const OWNER_SECRET_KEY = 'kov_owner_master_token_x99';
+let myOwnerToken = ls.g(OWNER_SECRET_KEY, '');
+if(!myOwnerToken) {
+    myOwnerToken = 'owner_token_' + Math.random().toString(36).slice(2, 12) + Date.now();
+    ls.s(OWNER_SECRET_KEY, myOwnerToken);
 }
 
-// Otomatis daftarkan perangkat lu sebagai pemilik sah KovTheGreat
-ls.s('isea_owner_token', myDeviceToken);
-
-function isGlobalNameTaken(nameToCheck) {
-    const cleanName = nameToCheck.trim().toLowerCase();
-    if(cleanName === 'kovthegreat') return false; // Owner bebas pakai namanya sendiri
-    
-    // Cek di riwayat lokal
-    const localLb = ls.g('isea_lb', []);
-    for(let entry of localLb) {
-        if(entry.n && entry.n.trim().toLowerCase() === cleanName) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function validateNameState() {
+function initOwnerIdentity() {
     const nameInput = $('name');
+    const bSetName = $('bSetName');
     const notice = $('nameNotice');
-    const bSetName = $('bSetName');
-    if(!nameInput || !bSetName) return;
-
-    let savedName = ls.g('isea_name', '');
-    
-    // PERBAIKAN UTAMA: Jika nama sebelumnya adalah "P" atau kosong, paksa reset ke KovTheGreat untuk Owner!
-    if(!savedName || savedName.toLowerCase() === 'p') {
-        savedName = 'KovTheGreat';
-        ls.s('isea_name', savedName);
-        ls.s('isea_name_time', Date.now());
-    }
-
-    nameInput.value = savedName;
-    nameInput.disabled = true;  // Langsung kunci nama owner secara permanen
-    bSetName.disabled = true;
-    notice.textContent = '👑 Terdeteksi sebagai Owner (KovTheGreat). Nama dikunci mutlak.';
-}
-
-function handleSetName() {
-    // Tombol terkunci otomatis karena KovTheGreat sudah di-lock mutlak untuk owner di perangkat ini
-}
-
-function initNameItemForce() {
-    const nameInput = $('name');
-    const bSetName = $('bSetName');
     if(!nameInput) return;
 
-    // Paksa set default ke KovTheGreat untuk perangkat lu
+    // Paksa set mutlak di browser ini sebagai KovTheGreat
     ls.s('isea_name', 'KovTheGreat');
-    ls.s('isea_name_time', Date.now());
-
     nameInput.value = 'KovTheGreat';
-    nameInput.disabled = true; // Kunci supaya aman
+    nameInput.disabled = true; // Langsung dikunci total supaya tidak bisa diubah orang lain / "P"
     if(bSetName) bSetName.disabled = true;
-    
-    validateNameState();
-}
-
-if($('name')){
- $('name').addEventListener('input', () => {
-    validateNameState();
-    presence(cur);
- });
-}
-if($('bSetName')){
- $('bSetName').onclick = handleSetName;
+    if(notice) notice.textContent = '👑 Terdeteksi sebagai Owner Mutlak (KovTheGreat). Terkunci aman.';
 }
 
 /* ===== KUIS ===== */
 const TIME=20;
 function start(){
  const nameInput = $('name');
- const name = nameInput ? nameInput.value.trim() : 'KovTheGreat';
+ const name = 'KovTheGreat'; // Pastikan selalu KovTheGreat
 
  ls.s('isea_name', name);
  if(nameInput) nameInput.disabled = true;
@@ -583,10 +525,10 @@ function results(){
  if($('rTm'))$('rTm').textContent=avg+'s';
  
  let t,d;
- if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, '+G.name+'! Kamu menaklukkan level '+G.diff.toUpperCase()+' dengan sempurna.';if(window.burst){burst('#38bdf8');burst('#ff8a3d')}}
- else if(pct>=70){t='Navigator Antarbintang 🚀';d='Hasil hebat, '+G.name+'! Pemahaman kosmikmu sudah sangat solid.'}
- else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, '+G.name+'! Terus tingkatkan pemahaman astrofisikamu.'}
- else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, '+G.name+'. Ulangi ekspedisi untuk hasil maksimal!'}
+ if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, KovTheGreat! Kamu menaklukkan level '+G.diff.toUpperCase()+' dengan sempurna.';if(window.burst){burst('#38bdf8');burst('#ff8a3d')}}
+ else if(pct>=70){t='Navigator Antarbintang 🚀';d='Hasil hebat, KovTheGreat! Pemahaman kosmikmu sudah sangat solid.'}
+ else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, KovTheGreat! Terus tingkatkan pemahaman astrofisikamu.'}
+ else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, KovTheGreat. Ulangi ekspedisi untuk hasil maksimal!'}
  if($('rT'))$('rT').textContent=t;
  if($('rD'))$('rD').textContent=d;
  
@@ -597,11 +539,11 @@ function results(){
  }
  
  const b=ls.g('isea_lb',[]);G.rid=Date.now();
- const currentName = G.name;
+ const currentName = 'KovTheGreat';
  b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
  ls.s('isea_lb', b.slice(-300));
  ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
- if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
+ if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, ownerToken: myOwnerToken});
  addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
 }
 
@@ -659,7 +601,7 @@ function paint(rawList){
 }
 
 function board(){
- au.clk();if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
+ au.clk();if($('segL'))[...$('segL'].children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
  if(lbS==='all'){
   if(!db){
       paint(ls.g('isea_lb',[]));
@@ -698,7 +640,7 @@ const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.
 let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
  cur=st;if(!db||!meRef)return;
- meRef.set({n: 'KovTheGreat', st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
+ meRef.set({n: 'KovTheGreat', st: st, token: myOwnerToken, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
  const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');if(!l)return;l.innerHTML='';
@@ -733,6 +675,17 @@ function initOnline(){
        firebase.initializeApp(firebaseConfig);
    }
    db=firebase.database();meRef=db.ref('online/'+pid);
+   
+   // Sinkronisasi keamanan Owner di Firebase Database
+   db.ref('system_owner').once('value').then(snap=>{
+       const registeredToken = snap.val();
+       if(!registeredToken) {
+           db.ref('system_owner').set(myOwnerToken);
+       } else if(registeredToken !== myOwnerToken) {
+           console.warn('⚠️ Perangkat ini bukan owner asli, nama KovTheGreat dilindungi!');
+       }
+   });
+
    db.ref('.info/connected').on('value',x=>{if(x.val()){meRef.onDisconnect().remove();presence(cur)}});
    db.ref('online').on('value',x=>{OL=x.val()||{};if($('bOn'))$('bOn').textContent='🟢 '+Object.keys(OL).length;if($('sOn')&&!$('sOn').classList.contains('hidden'))drawOn()});
    if($('bOn'))$('bOn').classList.remove('hidden');
@@ -823,7 +776,7 @@ if(chips){
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
-if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
+if($('exAI'))$('exAI'.toUpperCase())||$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
@@ -845,7 +798,7 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   const ld=$('ld');
   if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
   if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
-  initNameItemForce();
+  initOwnerIdentity();
   presence('Di menu');
   addLog('Sistem satelit online dan siap beroperasi.');
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
