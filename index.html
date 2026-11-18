@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -415,8 +414,19 @@ $('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;b
 $('bRk').onclick=async()=>{const b=ls.g('isea_lb',[]).sort((x,y)=>y.s-x.s);if(!b.length)return toast('Belum ada data');
  const t='🏆 Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} poin)`).join('\n');
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}};
+
 /* ===== ONLINE: siapa yang lagi buka web (Firebase Realtime Database) ===== */
-const FB={apiKey:"",authDomain:"",databaseURL:"",projectId:""}; // <-- ISI dari Firebase Console
+const firebaseConfig = {
+  apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
+  authDomain: "isea-e9e03.firebaseapp.com",
+  databaseURL: "https://isea-e9e03-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "isea-e9e03",
+  storageBucket: "isea-e9e03.firebasestorage.app",
+  messagingSenderId: "195013427338",
+  appId: "1:195013427338:web:b097365f2a2eb6c265ad73",
+  measurementId: "G-79P36SE4BR"
+};
+
 const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
 let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){cur=st;if(!db||!meRef)return;meRef.set({n:$('name').value.trim()||'Tamu',st:st,t:firebase.database.ServerValue.TIMESTAMP}).catch(()=>{})}
@@ -427,9 +437,8 @@ function drawOn(){
   li.querySelector('b').textContent=v.n||'Tamu';li.querySelector('small').textContent=v.st||'';li.querySelector('em').textContent=k===pid?'kamu':'';l.appendChild(li)});
 }
 function initOnline(){
- if(!FB.databaseURL||typeof firebase==='undefined')return;
  try{
-  firebase.initializeApp(FB);db=firebase.database();meRef=db.ref('online/'+pid);
+  firebase.initializeApp(firebaseConfig);db=firebase.database();meRef=db.ref('online/'+pid);
   db.ref('.info/connected').on('value',x=>{if(x.val()){meRef.onDisconnect().remove();presence(cur)}});
   db.ref('online').on('value',x=>{OL=x.val()||{};$('bOn').textContent='🟢 '+Object.keys(OL).length;if(!scr.on.classList.contains('hidden'))drawOn()});
   $('bOn').classList.remove('hidden');
@@ -494,7 +503,7 @@ $('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();co
 /* ===== LOADING SCREEN ===== */
 (function(){const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat 30 soal kosmik…','Menyapa Kosmo AI…','Siap meluncur 🚀'];let p=0,i=0;
  const t=setInterval(()=>{p=Math.min(100,p+16+Math.random()*14);$('ldI').style.width=p+'%';$('ldM').textContent=M[Math.min(M.length-1,i++)];
-  if(p>=100){clearInterval(t);setTimeout(()=>{$('ld').classList.add('out');setTimeout(()=>$('ld').remove(),800);scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter')},350)}},380)})();
+  if(p>=100){clearInterval(t);setTimeout(()=>{$('ld').classList.add('out');setTimeout(()=>$('ld').remove(),800);scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter')},350)}});
 initOnline();
 </script>
 </body>
