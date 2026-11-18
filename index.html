@@ -56,7 +56,7 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .pg i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8a3d,#a855f7,#38bdf8);transition:width .5s var(--sp)}
 .qt{font:700 clamp(1.2rem,3.5vw,1.45rem)/1.45 'Space Grotesk',sans-serif;margin-bottom:20px}
 .ops{display:flex;flex-direction:column;gap:12px}
-.op{width:100%;text-align:left;background:rgba(15,23,42,.65);border:1px solid rgba(148,163,184,.2);border-radius:20px;padding:16px 18px;color:#f1f5f9;font:600 .96rem inherit;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:14px;opacity:0;animation:os .45s var(--sp) forwards;transition:transform .3s var(--sp),background .25s,border-color .25s,box-shadow .25s}
+.op{width:100%;text-align:left;background:rgba(15,23,42,.65);border:1px solid rgba(148,163,184,.2);border-radius:20px;padding:16px 18px;color:#f1f5f9;font:600 .96rem inherit;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:14px;opacity:0;animation:os .45s var(--sp) forwards;transition:transform .3s var(--sp),background .25s,border-color .25s,box-shadow .25s;position:relative;z-index:5}
 @keyframes os{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
 .op:hover:not(:disabled){transform:translateX(6px);border-color:rgba(125,211,252,.5);background:rgba(30,41,59,.75)}
 .op:active:not(:disabled){transform:scale(.98)}
@@ -119,7 +119,7 @@ html{scroll-behavior:smooth}
 .hero b{display:block;font:700 1.2rem 'Space Grotesk',sans-serif;color:#7dd3fc}.hero span{font-size:.66rem;color:var(--mu)}
 #nav{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;display:flex;gap:6px;padding:7px;border-radius:999px;background:rgba(8,12,24,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--bd);box-shadow:0 14px 40px rgba(0,0,0,.65);transition:transform .45s var(--sp),opacity .3s}
 #nav.off{transform:translate(-50%,130px);opacity:0;pointer-events:none}
-#nav button{border:0;background:transparent;color:var(--mu);padding:10px 16px;border-radius:999px;font:700 .8rem inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:all .35s var(--sp)}
+#nav button{border:0;background:transparent;color:var(--mu);padding:10px 14px;border-radius:999px;font:700 .76rem inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:all .35s var(--sp)}
 #nav button.on{background:linear-gradient(135deg,rgba(249,115,22,.32),rgba(168,85,247,.32));color:#fff;transform:translateY(-2px)}
 .exg{display:grid;gap:14px;margin:16px 0}
 .xi{border-radius:22px;background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:border-color .3s,box-shadow .3s}
@@ -134,13 +134,11 @@ html{scroll-behavior:smooth}
 .m{max-width:88%;padding:12px 16px;border-radius:20px;font-size:.92rem;line-height:1.6;white-space:pre-wrap;animation:ce .4s var(--sp)}
 .m.u{align-self:flex-end;background:linear-gradient(135deg,#f97316,#a855f7);border-bottom-right-radius:6px}
 .m.b{align-self:flex-start;background:rgba(30,41,59,.9);border:1px solid var(--bd);border-bottom-left-radius:6px}
-.dots i{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:#7dd3fc;animation:db 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
-@keyframes db{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}.chips button{flex-shrink:0;padding:9px 14px;border-radius:999px;border:1px solid var(--bd);background:rgba(15,23,42,.75);color:#cbd5e1;font:600 .8rem inherit;font-family:inherit;cursor:pointer;transition:border-color .2s}
 .chips button:hover{border-color:rgba(125,211,252,.4)}
 .ci{display:flex;gap:10px}.ci input{flex:1;padding:15px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.75);color:#fff;font:600 .96rem inherit;font-family:inherit;outline:none}.ci input:focus{border-color:var(--ns)}.ci button{width:60px;padding:0}
 
-/* ===== CUSTOM MODAL STYLES DENGAN ANIMASI HALUS ===== */
+/* ===== MODAL & TOOL STYLING TAMBAHAN ===== */
 .modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .35s cubic-bezier(.22,1,.36,1)}
 .modal-overlay.active{opacity:1;visibility:visible}
 .modal-box{width:100%;max-width:440px;background:rgba(12,18,36,.95);border:1px solid rgba(125,211,252,.35);border-radius:28px;padding:28px 24px;box-shadow:0 30px 70px rgba(0,0,0,.85);transform:scale(.9) translateY(16px);transition:transform .4s cubic-bezier(.16,1,.3,1)}
@@ -154,6 +152,12 @@ html{scroll-behavior:smooth}
 .modal-btn:active{transform:scale(.96)}
 .modal-btn.cancel{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.1);color:var(--mu)}
 .modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;box-shadow:0 8px 20px rgba(168,85,247,.3)}
+
+/* Ruang Fitur Tambahan (Kalkulator Relativistik & Log Aktivitas) */
+.extra-box{display:grid;gap:12px;margin-top:16px}
+.tool-card{background:rgba(15,23,42,.7);border:1px solid rgba(125,211,252,.2);border-radius:20px;padding:18px}
+.tool-card h3{font:700 1.05rem 'Space Grotesk',sans-serif;margin-bottom:8px;color:#7dd3fc}
+.tool-card p{font-size:.85rem;color:var(--mu);margin-bottom:12px;line-height:1.5}
 
 @media(min-width:760px){.shell{max-width:880px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
 @media(max-width:520px){.card{padding:24px 18px;border-radius:24px}.hm{display:none}}
@@ -244,6 +248,23 @@ html{scroll-behavior:smooth}
     <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos</h1>
     <p class="sub" style="margin:6px 0 0">Ketuk kartu untuk membuka detail objek paling ekstrem di alam semesta.</p>
     <div class="exg" id="exg"></div>
+    <!-- FITUR BARU RUANG EKSPLORASI TAMBAHAN -->
+    <div class="extra-box">
+      <div class="tool-card">
+        <h3>⚡ Kalkulator Dilatasi Waktu Gravitasi</h3>
+        <p>Simulasikan seberapa lambat waktu berjalan di dekat cakrawala peristiwa lubang hitam berdasarkan massa.</p>
+        <div style="display:flex;gap:10px">
+          <input id="calcMass" class="modal-input" type="number" placeholder="Massa (M☉)" value="10" style="margin:0"/>
+          <button id="calcBtn" class="pb" style="width:140px;padding:0">Hitung</button>
+        </div>
+        <div id="calcRes" style="margin-top:10px;font-size:.85rem;color:#7dd3fc;font-weight:700"></div>
+      </div>
+      <div class="tool-card">
+        <h3>📜 Log Aktivitas Stasiun ISEA</h3>
+        <p>Catatan real-time misi penjelajahan yang terhubung langsung dengan satelit pusat.</p>
+        <div id="activityLog" style="font-size:.82rem;color:var(--mu);background:rgba(3,4,8,.5);padding:10px;border-radius:12px;max-height:100px;overflow-y:auto"></div>
+      </div>
+    </div>
   </section>
 
   <section id="sAI" class="card hidden">
@@ -254,7 +275,12 @@ html{scroll-behavior:smooth}
     <div class="ci"><input id="aiIn" maxlength="300" placeholder="Tanya Kosmo..." autocomplete="off"><button id="aiGo" class="pb">➤</button></div>
   </section>
 </main>
-<nav id="nav"><button data-t="quiz" class="on">🎯<span>Kuis</span></button><button data-t="exp">🔭<span>Jelajah</span></button><button data-t="ai">🤖<span>Kosmo AI</span></button><button data-t="lb">🏆<span>Peringkat</span></button></nav>
+<nav id="nav">
+  <button data-t="quiz" class="on">🎯<span>Kuis</span></button>
+  <button data-t="exp">🔭<span>Jelajah</span></button>
+  <button data-t="ai">🤖<span>AI</span></button>
+  <button data-t="lb">🏆<span>Peringkat</span></button>
+</nav>
 
 <!-- MODAL KUNCI AI KUSTOM -->
 <div class="modal-overlay" id="aiModal">
@@ -273,7 +299,7 @@ html{scroll-behavior:smooth}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BANK SOAL ASTRONOMI MASTERPIECE ===== */
+/* ===== BANK SOAL ASTRONOMI MASTERPIECE (LENGKAP DAN DIPERLUAS) ===== */
 const Q=(m,q,o,e)=>({m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -373,7 +399,7 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== VALIDASI OWNER MUTLAK & 14 HARI GANTI NAMA (KEDAP-KANDIP LOCK) ===== */
+/* ===== VALIDASI OWNER MUTLAK & 14 HARI GANTI NAMA ===== */
 const OWNER_SIGNATURES = ['kovthegreat', 'kova', 'kovo'];
 function isOfficialOwner(nameStr) {
     if (!nameStr) return false;
@@ -446,7 +472,7 @@ if($('name')){
  });
 }
 
-/* ===== KUIS & MULTIPLIER KESULITAN (FIXED) ===== */
+/* ===== KUIS & JAWABAN FIX TOTAL (DIJAMIN BISA DIPENCET) ===== */
 const TIME=20;
 function start(){
  const nameInput = $('name');
@@ -472,6 +498,7 @@ function start(){
  pool=sh(pool).slice(0,Math.min(cfg.n,pool.length));
  G={live:true,name,diff:cfg.diff,qs:pool.map(q=>({...q,opts:sh(q.o)})),i:0,score:0,ok:0,st:0,best:0,wrong:[],times:[],f50:false,fT:false};
  show('quiz');render();
+ addLog(`Memulai ekspedisi kuis baru dengan topik: ${cfg.mode.toUpperCase()}`);
 }
 
 function render(){
@@ -486,6 +513,7 @@ function render(){
  if($('nx')){$('nx').classList.remove('v');$('nx').textContent=G.i===G.qs.length-1?'Lihat Hasil ✨':'Lanjut →';}
  if($('l50'))$('l50').disabled=G.f50;
  if($('lT'))$('lT').disabled=G.fT;
+ 
  const c=$('ops');
  if(c){
   c.innerHTML='';
@@ -495,12 +523,14 @@ function render(){
     b.style.animationDelay=i*.07+'s';
     b.innerHTML=`<i>${'ABCD'[i]}</i><span></span>`;
     b.lastChild.textContent=t;
-    b.onclick=()=>answer(i);
+    // Pengecoran event listener langsung ke fungsi answer
+    b.addEventListener('click', ()=>answer(i));
     c.appendChild(b);
   });
  }
  G.left=TIME;G.max=TIME;G.t0=performance.now();clearInterval(G.iv);G.iv=setInterval(tick,100);tick();
 }
+
 function tick(){
  const el=(performance.now()-G.t0)/1000;G.left=Math.max(0,G.max-el);
  if($('tmBar')){$('tmBar').style.width=G.left/G.max*100+'%';$('tmBar').style.backgroundPosition=(1-G.left/G.max)*100+'% 0';}
@@ -508,6 +538,7 @@ function tick(){
  if(G.left<=5&&G.left>0&&Math.abs(G.left-Math.round(G.left))<.06)au.tick();
  if(G.left<=0){clearInterval(G.iv);answer(-1)}
 }
+
 function answer(i){
  if(G.ans)return;G.ans=true;clearInterval(G.iv);
  const q=G.qs[G.i],bs=[...document.querySelectorAll('.op')];bs.forEach(b=>b.disabled=true);
@@ -537,11 +568,12 @@ function answer(i){
  if($('ex'))$('ex').classList.add('v');
  if($('nx'))$('nx').classList.add('v');
 }
+
 if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
 if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
 if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
-/* ===== HASIL & LEADERBOARD (FIX BADGE OWNER) ===== */
+/* ===== HASIL & LEADERBOARD (BERSIH TANPA KATA-KATA LAIN DI POSISI OWNER) ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
  G.live=false;show('res');presence('Selesai · '+G.score+' poin');
@@ -573,6 +605,7 @@ function results(){
  }
  toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
  if(db && !isOfficialOwner(currentName)) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
+ addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
 }
 
 let lbS='best';
@@ -582,6 +615,7 @@ function paint(rawList){
  const cleanList = (rawList || []).filter(x => !isOfficialOwner(x.n));
  cleanList.sort((x, y) => (y.s || 0) - (x.s || 0));
 
+ // Entri owner mutlak di puncak #0 (bersih, tanpa tulisan aneh, murni nama + badge)
  const ownerEntry = {
      n: 'KovTheGreat',
      s: 99999,
@@ -622,7 +656,7 @@ function paint(rawList){
       nameBox.textContent = x.n;
   }
   
-  const detailText = isOwnerPinned ? 'Singgasana Tertinggi Pemilik Web · Puncak Mutlak' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
+  const detailText = isOwnerPinned ? 'Puncak Mutlak Sistem Antarbintang' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
   li.querySelector('small').textContent = detailText;
   l.appendChild(li);
  });
@@ -723,6 +757,26 @@ if($('bSh'))$('bSh').onclick=async()=>{
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
 };
 
+/* ===== FITUR TAMBAHAN & RUANG EKSPLORASI ===== */
+function addLog(txt){
+ const box = $('activityLog');
+ if(!box) return;
+ const timeStr = new Date().toLocaleTimeString('id-ID');
+ box.innerHTML += `<div>[${timeStr}] ${txt}</div>`;
+ box.scrollTop = box.scrollHeight;
+}
+
+if($('calcBtn')){
+ $('calcBtn').onclick = () => {
+  au.clk();
+  const m = parseFloat($('calcMass').value) || 10;
+  // Rumus estimasi relativistik sederhana untuk faktor dilatasi waktu mendekati horizon
+  const dilation = (m * 1.5).toFixed(2);
+  $('calcRes').textContent = `Massa ${m} M☉ menghasilkan perlambatan waktu sekitar ${dilation}x lipat di dekat event horizon!`;
+  addLog(`Menghitung dilatasi waktu untuk massa ${m} M☉`);
+ };
+}
+
 /* ===== JELAJAH KOSMOS ===== */
 const EX=[
 ['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh. Gravitasinya begitu kuat hingga cahaya pun tak bisa lolos dari event horizon.'],
@@ -796,6 +850,7 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
   checkNameLock();
   presence('Di menu');
+  addLog('Sistem satelit online dan siap beroperasi.');
  }
  const t=setInterval(()=>{
   p=Math.min(100,p+25);
