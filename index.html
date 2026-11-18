@@ -203,7 +203,7 @@ html{scroll-behavior:smooth}
     <ul class="lb" id="lbL"></ul>
     <button id="bRk" class="sb" style="margin:0 0 10px">📋 Salin Rekap (kirim ke WA)</button>
     <button id="bBack" class="pb">← Kembali</button>
-    <button id="bClr" class="sb">Hapus Peringkat</button>
+    <button id="bClr" class="sb hidden">Hapus Peringkat</button>
   </section>
   <section id="sOn" class="card hidden">
     <h1 style="font-size:1.7rem">🟢 Lagi Online</h1>
@@ -451,7 +451,7 @@ $('bOnBack').onclick=()=>{au.clk();show('start')};
 let nt;$('name').addEventListener('input',()=>{clearTimeout(nt);nt=setTimeout(()=>presence(cur),600)});
 $('bLb').onclick=board;$('bLb2').onclick=board;
 $('bBack').onclick=()=>{au.clk();show('start')};
-$('bClr').onclick=()=>{if(confirm('Hapus semua peringkat?')){ls.s('isea_lb',[]);board()}};
+$('bClr').onclick=()=>{if(confirm('Hapus riwayat lokal?')){ls.s('isea_lb',[]);board()}};
 $('bGo').onclick=start;$('bAg').onclick=start;
 $('bHm').onclick=()=>{au.clk();newFact();presence('Di menu');show('start')};
 $('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
@@ -493,11 +493,16 @@ async function ask(q){
   catch(e){hist.pop();a='⚠️ AI online gagal ('+e.message+').\n\nJawaban offline: '+offline(q)}}
  else a=offline(q)+'\n\n(Mode offline. Tekan ⚙️ Kunci AI untuk mengaktifkan Kosmo AI penuh.)';
  b.textContent=a;$('chat').scrollTop=1e9}
-msg('Halo! Aku Kosmo 🚀 Tanya apa saja soal lubang hitam dan bintang neutron.','b');
+msg('Halo! Instrospeksi Kosmo AI aktif. Tanya apa saja soal kosmos.','b');
 ['Apa itu lubang hitam?','Kenapa pulsar berdenyut?','Beda magnetar dan pulsar?','Apa itu kilonova?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
 $('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
 $('aiK').onclick=()=>{const k=prompt('Tempel API key Anthropic (disimpan hanya di perangkat ini). Kosongkan untuk menghapus:',ls.g('isea_key',''));if(k!==null){ls.s('isea_key',k.trim());toast(k.trim()?'Kunci AI tersimpan ✅':'Kunci dihapus')}};
 $('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Jelaskan lebih dalam dan sederhana: "'+q.q+'" (jawaban benar: '+q.o[0]+')')};
+
+/* ===== ADMIN DETECTOR (Biar tombol hapus cuma muncul di HP kamu) ===== */
+if(localStorage.getItem('isea_owner') === 'true'){
+  $('bClr').classList.remove('hidden');
+}
 
 /* ===== NAV BAWAH ===== */
 $('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;
