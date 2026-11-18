@@ -499,9 +499,17 @@ $('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',
 $('aiK').onclick=()=>{const k=prompt('Tempel API key Anthropic (disimpan hanya di perangkat ini). Kosongkan untuk menghapus:',ls.g('isea_key',''));if(k!==null){ls.s('isea_key',k.trim());toast(k.trim()?'Kunci AI tersimpan ✅':'Kunci dihapus')}};
 $('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Jelaskan lebih dalam dan sederhana: "'+q.q+'" (jawaban benar: '+q.o[0]+')')};
 
-/* ===== ADMIN DETECTOR (Biar tombol hapus cuma muncul di HP kamu) ===== */
-if(localStorage.getItem('isea_owner') === 'true'){
-  $('bClr').classList.remove('hidden');
+/* ===== AUTOMATIC OWNER ACTIVATOR & VISIBILITY CODE ===== */
+// 1. Cek jika link dibuka dengan ?owner=1 di HP kamu (cukup diakses sekali saja)
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('owner')) {
+    localStorage.setItem('isea_owner', 'true');
+}
+
+// 2. Jika perangkat ini adalah owner, tampilkan tombol Hapus Peringkat
+if (localStorage.getItem('isea_owner') === 'true') {
+    const btnClr = $('bClr');
+    if (btnClr) btnClr.classList.remove('hidden');
 }
 
 /* ===== NAV BAWAH ===== */
