@@ -439,102 +439,38 @@ function validateNameState() {
     const bSetName = $('bSetName');
     if(!nameInput || !bSetName) return;
 
-    const typed = nameInput.value.trim();
-    const savedName = ls.g('isea_name', '');
-    const lastChange = ls.g('isea_name_time', 0);
-    const now = Date.now();
-
-    // Jika sudah dikunci sebelumnya dan belum lewat 15 hari
-    if(savedName !== '') {
-        const elapsed = now - lastChange;
-        if(elapsed < FIFTEEN_DAYS && lastChange > 0) {
-            nameInput.disabled = true;
-            bSetName.disabled = true;
-            const remainingDays = Math.ceil((FIFTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
-            notice.textContent = `🔒 Nama terkunci. Bisa ganti dalam ${remainingDays} hari lagi.`;
-            return;
-        }
-    }
-
-    if(!typed) {
-        bSetName.disabled = true;
-        notice.textContent = '⚠️ Nama tidak boleh kosong.';
-        return;
-    }
-
-    // Cek duplikat nama
-    if(typed.toLowerCase() !== savedName.toLowerCase() && isGlobalNameTaken(typed)) {
-        bSetName.disabled = true;
-        notice.textContent = '⚠️ Nama sudah dipakai penjelajah lain! Pilih yang lain.';
-        return;
-    }
-
-    bSetName.disabled = false;
-    notice.textContent = '✨ Klik OKE untuk menyimpan dan mengunci nama.';
-}
-
-function handleSetName() {
-    const nameInput = $('name');
-    const name = nameInput ? nameInput.value.trim() : '';
-    if(!name) return toast('Tulis namamu dulu ya!');
-
-    if(name.toLowerCase() === 'kovthegreat') {
-        ls.s('isea_owner_token', myDeviceToken);
-    } else if(isGlobalNameTaken(name)) {
-        return toast('⚠️ Gagal: Nama tersebut sudah terdaftar!');
-    }
-
-    const savedName = ls.g('isea_name', '');
-    const now = Date.now();
-    const lastChange = ls.g('isea_name_time', 0);
-
-    if(name !== savedName && savedName !== '') {
-        if(now - lastChange < FIFTEEN_DAYS && lastChange > 0) {
-            return toast('⚠️ Gagal: Ganti nama hanya boleh 15 hari sekali!');
-        }
-    }
-    
-    ls.s('isea_name', name);
-    ls.s('isea_name_time', now);
-    
-    // Kunci total input nama setelah klik OKE
-    nameInput.disabled = true;
-    const bSetName = $('bSetName');
-    if(bSetName) bSetName.disabled = true;
-    
-    au.clk();
-    toast('✅ Nama disimpan dan dikunci permanen!');
-    validateNameState();
-    presence(cur);
-}
-
-function initNameInput() {
-    const nameInput = $('name');
-    const bSetName = $('bSetName');
-    if(!nameInput) return;
-    
     let savedName = ls.g('isea_name', '');
-    const lastChange = ls.g('isea_name_time', 0);
-    const now = Date.now();
-
-    // Jika perangkat ini adalah pemilik sah, pastikan default awal bisa KovTheGreat jika belum di-set
-    if(!savedName) {
+    
+    // PERBAIKAN UTAMA: Jika nama sebelumnya adalah "P" atau kosong, paksa reset ke KovTheGreat untuk Owner!
+    if(!savedName || savedName.toLowerCase() === 'p') {
         savedName = 'KovTheGreat';
         ls.s('isea_name', savedName);
-        ls.s('isea_name_time', now);
+        ls.s('isea_name_time', Date.now());
     }
 
     nameInput.value = savedName;
+    nameInput.disabled = true;  // Langsung kunci nama owner secara permanen
+    bSetName.disabled = true;
+    notice.textContent = '👑 Terdeteksi sebagai Owner (KovTheGreat). Nama dikunci mutlak.';
+}
 
-    // Kunci input jika masih dalam masa cooldown 15 hari
-    const elapsed = now - lastChange;
-    if(elapsed < FIFTEEN_DAYS && lastChange > 0) {
-        nameInput.disabled = true;
-        if(bSetName) bSetName.disabled = true;
-    } else {
-        nameInput.disabled = false;
-        if(bSetName) bSetName.disabled = false;
-    }
+function handleSetName() {
+    // Tombol terkunci otomatis karena KovTheGreat sudah di-lock mutlak untuk owner di perangkat ini
+}
+
+function initNameItemForce() {
+    const nameInput = $('name');
+    const bSetName = $('bSetName');
+    if(!nameInput) return;
+
+    // Paksa set default ke KovTheGreat untuk perangkat lu
+    ls.s('isea_name', 'KovTheGreat');
+    ls.s('isea_name_time', Date.now());
+
+    nameInput.value = 'KovTheGreat';
+    nameInput.disabled = true; // Kunci supaya aman
+    if(bSetName) bSetName.disabled = true;
+    
     validateNameState();
 }
 
@@ -552,14 +488,7 @@ if($('bSetName')){
 const TIME=20;
 function start(){
  const nameInput = $('name');
- const name = nameInput ? nameInput.value.trim() : ls.g('isea_name','');
- if(!name) return toast('Isi dan klik OKE namamu dulu ya 🚀');
-
- if(name.toLowerCase() === 'kovthegreat') {
-     ls.s('isea_owner_token', myDeviceToken);
- } else if(isGlobalNameTaken(name)) {
-     return toast('⚠️ Nama sudah dipakai penjelajah lain!');
- }
+ const name = nameInput ? nameInput.value.trim() : 'KovTheGreat';
 
  ls.s('isea_name', name);
  if(nameInput) nameInput.disabled = true;
@@ -643,7 +572,7 @@ if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('
 if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
 if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
-/* ===== HASIL & LEADERBOARD (KovTheGreat tetap dipin di puncak dengan badge Owner) ===== */
+/* ===== HASIL & LEADERBOARD ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
  G.live=false;show('res');presence('Selesai · '+G.score+' poin');
@@ -769,9 +698,7 @@ const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.
 let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
  cur=st;if(!db||!meRef)return;
- const nameInput = $('name');
- const currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'Penjelajah';
- meRef.set({n: currentActiveName, st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
+ meRef.set({n: 'KovTheGreat', st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
  const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');if(!l)return;l.innerHTML='';
@@ -822,7 +749,7 @@ if($('bAg'))$('bAg').onclick=start;
 if($('bHm'))$('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
 if($('name'))$('name').addEventListener('keydown',e=>{if(e.key==='Enter')start()});
 if($('bSh'))$('bSh').onclick=async()=>{
- const t=`🚀 ${G.name} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
+ const t=`🚀 KovTheGreat meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
 };
 
@@ -918,7 +845,7 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   const ld=$('ld');
   if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
   if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
-  initNameInput();
+  initNameItemForce();
   presence('Di menu');
   addLog('Sistem satelit online dan siap beroperasi.');
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
