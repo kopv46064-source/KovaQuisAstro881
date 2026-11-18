@@ -189,6 +189,7 @@ html{scroll-behavior:smooth}
     
     <label class="l" for="name">Nama Penjelajah</label>
     <input id="name" maxlength="16" autocomplete="off" placeholder="Tulis namamu..." />
+    <div id="nameNotice" style="font-size:.72rem;color:var(--mu);margin-top:6px;font-weight:600;"></div>
     
     <label class="l">Topik Kajian</label>
     <div class="seg" id="segM"><button data-v="all" class="on">🌌 Semua Topik</button><button data-v="bh">🕳️ Black Hole</button><button data-v="ns">💫 Bintang Neutron</button></div>
@@ -371,10 +372,8 @@ function applyCfg(){
  ['segM','segD','segN'].forEach((id,i)=>[...$(id).children].forEach(b=>b.classList.toggle('on',b.dataset.v==String(i===0?cfg.mode:(i===1?cfg.diff:cfg.n)))));
 }
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));applyCfg();
-$('name').value=ls.g('isea_name','');
-const newFact=()=>{$('fact').innerHTML='<b>💡 Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0]};newFact();
 
-/* ===== VALIDASI OWNER MUTLAK (HANYA KKOVTHEGREAT / KOVA) ===== */
+/* ===== VALIDASI OWNER MUTLAK & ATURAN 14 HARI GANTI NAMA ===== */
 const OWNER_SIGNATURES = ['kovthegreat', 'kova'];
 function isOfficialOwner(nameStr) {
     if (!nameStr) return false;
@@ -382,17 +381,95 @@ function isOfficialOwner(nameStr) {
     return OWNER_SIGNATURES.some(sig => clean.includes(sig));
 }
 
+const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
+function checkNameLock() {
+    const savedName = ls.g('isea_name', '');
+    const lastChange = ls.g('isea_name_time', 0);
+    const now = Date.now();
+    const nameInput = $('name');
+    const notice = $('nameNotice');
+
+    nameInput.value = savedName;
+
+    // Jika belum pernah set nama, biarkan bebas
+    if (!savedName) {
+        notice.textContent = '';
+        nameInput.disabled = false;
+        return;
+    }
+
+    // Jika dia owner, selalu bebas ganti nama kapanpun tanpa batasan
+    if (isOfficialOwner(savedName)) {
+        notice.textContent = '👑 Status Owner Terdeteksi: Bebas ganti nama kapan saja.';
+        nameInput.disabled = false;
+        return;
+    }
+
+    // Untuk member biasa, cek apakah sudah 14 hari
+    const elapsed = now - lastChange;
+    if (elapsed < FOURTEEN_DAYS && lastChange > 0) {
+        const remainingDays = Math.ceil((FOURTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
+        nameInput.disabled = true;
+        notice.textContent = `🔒 Nama dikunci. Kamu bisa ganti nama lagi dalam ${remainingDays} hari ke depan. (Khusus Owner bebas ganti)`;
+    } else {
+        nameInput.disabled = false;
+        notice.textContent = 'ℹ️ Member hanya dapat mengganti nama 1 kali dalam 14 hari.';
+    }
+}
+checkNameList = checkNameLock;
+
+$('name').addEventListener('input', () => {
+    const typed = $('name').value.trim();
+    if (isOfficialOwner(typed)) {
+        $('nameNotice').textContent = '👑 Status Owner Resmi Aktif!';
+    }
+});
+
+$('name').addEventListener('change', () => {
+    const typed = $('name').value.trim();
+    const oldName = ls.g('isea_name', '');
+    if (typed !== oldName) {
+        if (!isOfficialOwner(oldName) && oldName !== '') {
+            const lastChange = ls.g('isea_name_time', 0);
+            const now = Date.now();
+            if (now - lastChange < FOURTEEN_DAYS && lastChange > 0) {
+                toast('⚠️ Belum 14 hari! Nama tidak dapat diubah.');
+                $('name').value = oldName;
+                return;
+            }
+        }
+        ls.s('isea_name', typed);
+        ls.s('isea_name_time', Date.now());
+        toast('✅ Nama diperbarui!');
+        checkNameLock();
+    }
+});
+
 /* ===== KUIS & MULTIPLIER KESULITAN ===== */
 const TIME=20;
 function start(){
  const name=$('name').value.trim();
  if(!name){const n=$('name');n.classList.remove('err');void n.offsetWidth;n.classList.add('err');n.focus();vib(80);return toast('Isi namamu dulu ya 🚀')}
- ls.s('isea_name',name);au.clk();
+ 
+ const oldName = ls.g('isea_name', '');
+ const now = Date.now();
+ const lastChange = ls.g('isea_name_time', 0);
+ 
+ if(name !== oldName) {
+     if(!isOfficialOwner(name) && oldName !== '' && (now - lastChange < FOURTEEN_DAYS) && lastChange > 0) {
+         return toast('⚠️ Gagal: Member hanya bisa ganti nama 14 hari sekali!');
+     }
+     ls.s('isea_name', name);
+     ls.s('isea_name_time', now);
+ }
+
+ au.clk();
  let pool=QS.filter(q=>cfg.mode==='all'||q.m===cfg.mode);
  pool=sh(pool).slice(0,Math.min(cfg.n,pool.length));
  G={live:true,name,diff:cfg.diff,qs:pool.map(q=>({...q,opts:sh(q.o)})),i:0,score:0,ok:0,st:0,best:0,wrong:[],times:[],f50:false,fT:false};
  show('quiz');render();
 }
+
 function render(){
  G.ans=false;const q=G.qs[G.i];vis(q.m);presence(`Main soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`);
  $('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';$('qTag').className='tag '+q.m;
@@ -429,7 +506,7 @@ function answer(i){
   au.ok();vib(40);burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
   $('exT').textContent=G.left>15?'⚡ Secepat kilat! (Multiplier x'+mult+')':'✅ Tepat Sekali! (Multiplier x'+mult+')';
   $('ex').style.borderLeftColor='var(--ok)';
-}else{
+ }else{
   if(i>=0)bs[i].classList.add('no');bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
   au.no();vib([60,40,60]);scr.quiz.classList.remove('shake');void scr.quiz.offsetWidth;scr.quiz.classList.add('shake');
   $('exT').textContent=i<0?'⏰ Waktu Habis — Fakta Kosmik:':'❌ Kurang Tepat — Fakta Kosmik:';
@@ -443,7 +520,7 @@ $('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=t
 $('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 addEventListener('keydown',e=>{if(scr.quiz.classList.contains('hidden'))return;if(!G.ans&&'1234'.includes(e.key)&&e.key)return answer(+e.key-1);if(G.ans&&(e.key==='Enter'||e.key===' ')){e.preventDefault();$('nx').click()}});
 
-/* ===== HASIL & LEADERBOARD (STRICT GLOBAL OWNER PINNING DI POSISI #0) ===== */
+/* ===== HASIL & LEADERBOARD (OWNER SELALU DIPATOK DI POSISI #0 DI SEMUA PERANGKAT) ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
  G.live=false;show('res');presence('Selesai · '+G.score+' poin');$('rRing').textContent=pct+'%';$('rC').textContent=`${G.ok}/${n}`;$('rP').textContent=G.score;$('rS').textContent=G.best+'x';$('rTm').textContent=avg+'s';
@@ -468,7 +545,7 @@ function paint(list){
  const l=$('lbL');l.innerHTML='';
  if(!list.length)list=[];
  
- // Pastikan entri Owner Asli (KovTheGreat / Kova) selalu ada dan dipatok mutlak di indeks 0 (paling atas) untuk SEMUA perangkat
+ // Pastikan entri owner resmi selalu ada dan dipatok mutlak di puncak #0 untuk SEMUA perangkat
  const hasOwner = list.some(x => isOfficialOwner(x.n));
  if (!hasOwner) {
      list.unshift({n: 'KovTheGreat', s: 99999, p: 100, ok: '👑', t: 'MAX', diff: 'supreme', d: 1700000000000});
@@ -565,7 +642,6 @@ function drawOn(){
   const userName = v.n || 'Tamu';
   nameBox.textContent = userName;
   
-  // HANYA BERIKAN BADGE OWNER DI LIST ONLINE PADA AKUN RESMI OWNER (KovTheGreat / Kova)
   if(isOfficialOwner(userName)) {
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
@@ -644,7 +720,7 @@ async function ask(q){
 
 msg('Halo! Aku Kosmo, asisten AI cerdas di ISEA Kosmos. Web luar biasa ini diciptakan oleh sang owner, KovTheGreat (Kova)! Ada yang bisa kubantu jelajahi hari ini? 🌌','b');
 ['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana cara kerja pulsar?','Ceritakan fakta unik kosmos'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
-$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn'].addEventListener?.('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
 
 /* ===== LOGIKA MODAL KUNCI AI KUSTOM ===== */
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
@@ -688,6 +764,7 @@ $('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();co
   scr.start.classList.remove('enter');
   void scr.start.offsetWidth;
   scr.start.classList.add('enter');
+  checkNameLock();
  }
  const t=setInterval(()=>{
   p=Math.min(100,p+25);
