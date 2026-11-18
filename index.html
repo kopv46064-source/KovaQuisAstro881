@@ -441,8 +441,24 @@ function presence(st){cur=st;if(!db||!meRef)return;meRef.set({n:$('name').value.
 function drawOn(){
  const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');l.innerHTML='';
  $('onC').textContent=a.length+' orang sedang membuka web';
- a.forEach(([k,v])=>{const li=document.createElement('li');if(k===pid)li.className='me';li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
-  li.querySelector('b').textContent=v.n||'Tamu';li.querySelector('small').textContent=v.st||'';li.querySelector('em').textContent=k===pid?'kamu':'';l.appendChild(li)});
+ a.forEach(([k,v])=>{
+  const li=document.createElement('li');
+  if(k===pid)li.className='me';
+  li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
+  
+  const nameBox = li.querySelector('b');
+  nameBox.textContent = v.n || 'Tamu';
+  if(localStorage.getItem('isea_owner') === 'true' && (v.n || '').toLowerCase().includes('kov')) {
+      const badge = document.createElement('span');
+      badge.className = 'owner-badge';
+      badge.textContent = '👑 OWNER';
+      nameBox.appendChild(badge);
+  }
+
+  li.querySelector('small').textContent=v.st||'';
+  li.querySelector('em').textContent=k===pid?'kamu':'';
+  l.appendChild(li);
+ });
 }
 function initOnline(){
  try{
@@ -503,7 +519,7 @@ async function ask(q){
  b.textContent=a;$('chat').scrollTop=1e9}
 msg('Halo! Instrospeksi Kosmo AI aktif. Tanya apa saja soal kosmos.','b');
 ['Apa itu lubang hitam?','Kenapa pulsar berdenyut?','Beda magnetar dan pulsar?','Apa itu kilonova?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
-$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn'].addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
 $('aiK').onclick=()=>{const k=prompt('Tempel API key Anthropic (disimpan hanya di perangkat ini). Kosongkan untuk menghapus:',ls.g('isea_key',''));if(k!==null){ls.s('isea_key',k.trim());toast(k.trim()?'Kunci AI tersimpan ✅':'Kunci dihapus')}};
 $('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Jelaskan lebih dalam dan sederhana: "'+q.q+'" (jawaban benar: '+q.o[0]+')')};
 
