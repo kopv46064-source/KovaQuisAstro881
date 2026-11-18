@@ -34,7 +34,6 @@ h1{font:700 clamp(1.8rem,4.5vw,2.4rem)/1.15 'Space Grotesk',sans-serif;backgroun
 label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--mu);margin:18px 0 8px}
 #name{width:100%;padding:16px 20px;border-radius:18px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.75);color:#fff;font:600 1.05rem inherit;font-family:inherit;outline:none;transition:all .25s}
 #name:focus{border-color:var(--ns);box-shadow:0 0 0 4px rgba(56,189,248,.15)}
-#name.err{border-color:var(--no);animation:shake .45s}
 .seg{display:flex;gap:8px}
 .seg button{flex:1;padding:12px 8px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.6);color:var(--mu);font:700 .86rem inherit;font-family:inherit;cursor:pointer;transition:all .3s var(--sp)}
 .seg button:hover{border-color:rgba(125,211,252,.4);color:#fff}
@@ -139,7 +138,7 @@ html{scroll-behavior:smooth}
 @keyframes db{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}.chips button{flex-shrink:0;padding:9px 14px;border-radius:999px;border:1px solid var(--bd);background:rgba(15,23,42,.75);color:#cbd5e1;font:600 .8rem inherit;font-family:inherit;cursor:pointer;transition:border-color .2s}
 .chips button:hover{border-color:rgba(125,211,252,.4)}
-.ci{display:flex;gap:10px}.ci input{flex:1;padding:15px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.75);color:#fff;font:600 .96rem inherit;font-family:inherit;outline:none}.ci input:focus{border-color:var-.ns}.ci button{width:60px;padding:0}
+.ci{display:flex;gap:10px}.ci input{flex:1;padding:15px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.75);color:#fff;font:600 .96rem inherit;font-family:inherit;outline:none}.ci input:focus{border-color:var(--ns)}.ci button{width:60px;padding:0}
 
 /* ===== CUSTOM MODAL STYLES DENGAN ANIMASI HALUS ===== */
 .modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .35s cubic-bezier(.22,1,.36,1)}
@@ -325,7 +324,7 @@ const au={c:null,on:false,d:null,
  clk(){this.t(440,'sine',.08,.06)},tick(){this.t(900,'square',.05,.03)}
 };
 
-/* ===== CANVAS VISUALIZER 3D HALUS (FULL ANIMASI KEMBALI) ===== */
+/* ===== CANVAS VISUALIZER 3D HALUS ===== */
 const cv=$('cv'),cx=cv?cv.getContext('2d'):null;let W,H;
 if(cv && cx){
  const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
@@ -375,7 +374,7 @@ seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
 /* ===== VALIDASI OWNER MUTLAK & 14 HARI GANTI NAMA ===== */
-const OWNER_SIGNATURES = ['kovthegreat', 'kova'];
+const OWNER_SIGNATURES = ['kovthegreat', 'kova', 'kovo'];
 function isOfficialOwner(nameStr) {
     if (!nameStr) return false;
     const clean = nameStr.trim().toLowerCase();
@@ -427,7 +426,7 @@ if($('name')){
     const typed = $('name').value.trim();
     const oldName = ls.g('isea_name', '');
     if (typed !== oldName) {
-        if (!isOfficialOwner(oldName) && oldName !== '') {
+        if (!isOfficialOwner(typed) && oldName !== '') {
             const lastChange = ls.g('isea_name_time', 0);
             const now = Date.now();
             if (now - lastChange < FOURTEEN_DAYS && lastChange > 0) {
@@ -437,7 +436,9 @@ if($('name')){
             }
         }
         ls.s('isea_name', typed);
-        ls.s('isea_name_time', Date.now());
+        if (!isOfficialOwner(typed)) {
+            ls.s('isea_name_time', Date.now());
+        }
         toast('✅ Nama diperbarui!');
         checkNameLock();
         presence(cur);
@@ -461,7 +462,9 @@ function start(){
          return toast('⚠️ Gagal: Member hanya bisa ganti nama 14 hari sekali!');
      }
      ls.s('isea_name', name);
-     ls.s('isea_name_time', now);
+     if(!isOfficialOwner(name)) {
+         ls.s('isea_name_time', now);
+     }
  }
 
  au.clk();
@@ -530,7 +533,7 @@ if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('
 if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
 if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
-/* ===== HASIL & LEADERBOARD (FIX BADGE OWNER & DATA MEMBER AMAN) ===== */
+/* ===== HASIL & LEADERBOARD (FIX BADGE OWNER) ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
  G.live=false;show('res');presence('Selesai · '+G.score+' poin');
@@ -568,11 +571,9 @@ let lbS='best';
 function paint(rawList){
  const l=$('lbL');if(!l)return;l.innerHTML='';
  
- // Saring list agar bersih dari entri owner duplikat
  const cleanList = (rawList || []).filter(x => !isOfficialOwner(x.n));
  cleanList.sort((x, y) => (y.s || 0) - (x.s || 0));
 
- // Entri owner mutlak di puncak #0 (bersih tanpa string ganda)
  const ownerEntry = {
      n: 'KovTheGreat',
      s: 99999,
@@ -711,7 +712,7 @@ if($('bHm'))$('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
 if($('name'))$('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
 if($('bSh'))$('bSh').onclick=async()=>{
  const t=`🚀 ${G.name} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
- try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
+ try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}catch(e){}
 };
 
 /* ===== JELAJAH KOSMOS ===== */
@@ -791,7 +792,7 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
  const t=setInterval(()=>{
   p=Math.min(100,p+25);
   if($('ldI'))$('ldI').style.width=p+'%';
-  if($('ldM'))$('ldM').textContent=M[Math.min(M.length-1,i++)];
+  if($('ldM'))$('ldM'].textContent=M[Math.min(M.length-1,i++)];
   if(p>=100){
    clearInterval(t);
    setTimeout(hideLoader,200);
