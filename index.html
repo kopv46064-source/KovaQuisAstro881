@@ -31,13 +31,10 @@ h1{font:700 clamp(1.8rem,4.5vw,2.4rem)/1.15 'Space Grotesk',sans-serif;backgroun
 .sub{color:var(--mu);line-height:1.65;margin-bottom:22px;font-size:.96rem}
 label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--mu);margin:18px 0 8px}
 #name{width:100%;padding:16px 20px;border-radius:18px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.75);color:#fff;font:600 1.05rem inherit;font-family:inherit;outline:none;transition:all .25s}
-#name:focus{border-color:var(--ns);box-shadow:0 0 0 4px rgba(56,189,248,.15)}
 #name:disabled{opacity:.6;cursor:not-allowed;background:rgba(15,23,42,.4)}
 .name-group{display:flex;gap:10px;align-items:center}
-#bSetName{padding:16px 20px;border-radius:18px;border:0;background:linear-gradient(135deg,#38bdf8,#a855f7);color:#fff;font:700 .95rem 'Space Grotesk',sans-serif;cursor:pointer;white-space:nowrap;transition:transform .2s,box-shadow .2s}
-#bSetName:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(56,189,248,.3)}
-#bSetName:active{transform:scale(.96)}
-#bSetName:disabled{opacity:.4;filter:grayscale(.5);cursor:not-allowed;transform:none!important;box-shadow:none!important}
+#bSetName{padding:16px 20px;border-radius:18px;border:0;background:linear-gradient(135deg,#38bdf8,#a855f7);color:#fff;font:700 .95rem 'Space Grotesk',sans-serif;cursor:pointer;white-space:nowrap}
+#bSetName:disabled{opacity:.4;filter:grayscale(.5);cursor:not-allowed}
 .seg{display:flex;gap:8px}
 .seg button{flex:1;padding:12px 8px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.6);color:var(--mu);font:700 .86rem inherit;font-family:inherit;cursor:pointer;transition:all .3s var(--sp)}
 .seg button:hover{border-color:rgba(125,211,252,.4);color:#fff}
@@ -47,10 +44,8 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .pb{width:100%;padding:18px 24px;border:0;border-radius:20px;background:linear-gradient(135deg,#f97316,#a855f7 50%,#0ea5e9);background-size:200% 200%;color:#fff;font:700 1.08rem 'Space Grotesk',sans-serif;cursor:pointer;box-shadow:0 14px 35px rgba(168,85,247,.35);transition:transform .35s var(--sp),background-position .5s,box-shadow .3s}
 .pb:hover{background-position:100% 50%;transform:translateY(-2px);box-shadow:0 18px 40px rgba(168,85,247,.45)}
 .pb:active{transform:scale(.97)}
-.pb:disabled{opacity:.4;filter:grayscale(.5);cursor:not-allowed;transform:none!important;box-shadow:none!important}
 .sb{width:100%;margin-top:10px;padding:14px;border-radius:18px;border:1px solid var(--bd);background:rgba(15,23,42,.65);color:var(--tx);font:700 .94rem inherit;font-family:inherit;cursor:pointer;transition:transform .3s var(--sp),border-color .25s}
 .sb:hover{border-color:rgba(125,211,252,.4)}
-.sb:active{transform:scale(.97)}
 .qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
 .tag{font-size:.74rem;font-weight:700;text-transform:uppercase;padding:6px 14px;border-radius:999px;background:rgba(56,189,248,.15);color:#7dd3fc;border:1px solid rgba(56,189,248,.3)}
 .tag.bh{background:rgba(255,138,61,.15);color:#fdba74;border-color:rgba(255,138,61,.3)}
@@ -64,24 +59,18 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .op{width:100%;text-align:left;background:rgba(15,23,42,.65);border:1px solid rgba(148,163,184,.2);border-radius:20px;padding:16px 18px;color:#f1f5f9;font:600 .96rem inherit;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:14px;opacity:0;animation:os .45s var(--sp) forwards;transition:transform .3s var(--sp),background .25s,border-color .25s,box-shadow .25s;position:relative;z-index:5}
 @keyframes os{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
 .op:hover:not(:disabled){transform:translateX(6px);border-color:rgba(125,211,252,.5);background:rgba(30,41,59,.75)}
-.op:active:not(:disabled){transform:scale(.98)}
 .op i{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;font:800 .84rem inherit;font-style:normal;flex-shrink:0}
 .op.ok{background:rgba(16,185,129,.2);border-color:var(--ok);box-shadow:0 0 25px rgba(16,185,129,.25)}
 .op.ok i{background:var(--ok);color:#022c22}
 .op.no{background:rgba(244,63,94,.2);border-color:var(--no)}
 .op.no i{background:var(--no)}
-.op.gone{opacity:.18!important;pointer-events:none;transform:scale(.97)}
 .ll{display:flex;gap:10px;margin-bottom:16px}
-.ll button{flex:1;padding:10px;border-radius:16px;border:1px solid var(--bd);background:rgba(15,23,42,.65);color:var(--tx);font:700 .8rem inherit;font-family:inherit;cursor:pointer;transition:border-color .2s}
-.ll button:hover:not(:disabled){border-color:rgba(125,211,252,.4)}
-.ll button:disabled{opacity:.35}
+.ll button{flex:1;padding:10px;border-radius:16px;border:1px solid var(--bd);background:rgba(15,23,42,.65);color:var(--tx);font:700 .8rem inherit;font-family:inherit;cursor:pointer}
 .ex{margin-top:18px;padding:16px 18px;border-radius:20px;background:rgba(15,23,42,.85);border-left:4px solid var(--ns);font-size:.9rem;line-height:1.6;color:#cbd5e1;display:none}
 .ex.v{display:block;animation:ce .45s var(--sp) forwards}
-.ex b{display:block;color:#f8fafc;margin-bottom:6px}
 #nx{margin-top:16px;display:none}
 #nx.v{display:block;animation:ce .4s var(--sp) forwards}
-.ring{width:136px;height:136px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,rgba(56,189,248,.28),rgba(168,85,247,.22));border:2px solid rgba(125,211,252,.5);box-shadow:0 0 45px rgba(56,189,248,.25);animation:fl 4s ease-in-out infinite;font:800 2.3rem 'Space Grotesk',sans-serif}
-@keyframes fl{50%{transform:translateY(-8px)}}
+.ring{width:136px;height:136px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,rgba(56,189,248,.28),rgba(168,85,247,.22));border:2px solid rgba(125,211,252,.5);box-shadow:0 0 45px rgba(56,189,248,.25);font:800 2.3rem 'Space Grotesk',sans-serif}
 .rt{text-align:center;font:700 1.7rem 'Space Grotesk',sans-serif;margin-bottom:6px}
 .rd{text-align:center;color:var(--mu);font-size:.95rem;line-height:1.6;margin-bottom:20px}
 .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
@@ -104,7 +93,6 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1e293b;border:1px solid var(--bd);padding:11px 20px;border-radius:999px;font-size:.88rem;font-weight:600;opacity:0;transition:all .4s var(--sp);z-index:60;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .toast.v{opacity:1;transform:translate(-50%,0)}
-
 html{scroll-behavior:smooth}
 #ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .6s var(--sm),visibility .6s,transform .6s var(--sm)}
 #ld.out{opacity:0;visibility:hidden;transform:scale(1.06)}
@@ -139,33 +127,23 @@ html{scroll-behavior:smooth}
 .m{max-width:88%;padding:12px 16px;border-radius:20px;font-size:.92rem;line-height:1.6;white-space:pre-wrap;animation:ce .4s var(--sp)}
 .m.u{align-self:flex-end;background:linear-gradient(135deg,#f97316,#a855f7);border-bottom-right-radius:6px}
 .m.b{align-self:flex-start;background:rgba(30,41,59,.9);border:1px solid var(--bd);border-bottom-left-radius:6px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}.chips button{flex-shrink:0;padding:9px 14px;border-radius:999px;border:1px solid var(--bd);background:rgba(15,23,42,.75);color:#cbd5e1;font:600 .8rem inherit;font-family:inherit;cursor:pointer;transition:border-color .2s}
-.chips button:hover{border-color:rgba(125,211,252,.4)}
-.ci{display:flex;gap:10px}.ci input{flex:1;padding:15px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.75);color:#fff;font:600 .96rem inherit;font-family:inherit;outline:none}.ci input:focus{border-color:var(--ns)}.ci button{width:60px;padding:0}
-
-/* ===== MODAL & TOOL STYLING TAMBAHAN ===== */
-.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .35s cubic-bezier(.22,1,.36,1)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}.chips button{flex-shrink:0;padding:9px 14px;border-radius:999px;border:1px solid var(--bd);background:rgba(15,23,42,.75);color:#cbd5e1;font:600 .8rem inherit;font-family:inherit;cursor:pointer}
+.ci{display:flex;gap:10px}.ci input{flex:1;padding:15px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.75);color:#fff;font:600 .96rem inherit;font-family:inherit;outline:none}.ci button{width:60px;padding:0}
+.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.82);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .35s}
 .modal-overlay.active{opacity:1;visibility:visible}
-.modal-box{width:100%;max-width:440px;background:rgba(12,18,36,.95);border:1px solid rgba(125,211,252,.35);border-radius:28px;padding:28px 24px;box-shadow:0 30px 70px rgba(0,0,0,.85);transform:scale(.9) translateY(16px);transition:transform .4s cubic-bezier(.16,1,.3,1)}
-.modal-overlay.active .modal-box{transform:none}
+.modal-box{width:100%;max-width:440px;background:rgba(12,18,36,.95);border:1px solid rgba(125,211,252,.35);border-radius:28px;padding:28px 24px}
 .modal-title{font:700 1.25rem 'Space Grotesk',sans-serif;margin-bottom:8px;background:linear-gradient(135deg,#fff,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .modal-desc{color:var(--mu);font-size:.88rem;line-height:1.55;margin-bottom:18px}
-.modal-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.8);color:#fff;font:600 .95rem inherit;outline:none;margin-bottom:20px;transition:border-color .25s}
-.modal-input:focus{border-color:var(--ns)}
+.modal-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.8);color:#fff;font:600 .95rem inherit;outline:none;margin-bottom:20px}
 .modal-actions{display:flex;gap:10px}
-.modal-btn{flex:1;padding:13px;border-radius:14px;font:700 .9rem inherit;cursor:pointer;border:0;transition:transform .2s}
-.modal-btn:active{transform:scale(.96)}
+.modal-btn{flex:1;padding:13px;border-radius:14px;font:700 .9rem inherit;cursor:pointer;border:0}
 .modal-btn.cancel{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.1);color:var(--mu)}
-.modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;box-shadow:0 8px 20px rgba(168,85,247,.3)}
-
-.extra-box{display:grid;gap:12px;margin-top:16px}
+.modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff}
 .tool-card{background:rgba(15,23,42,.7);border:1px solid rgba(125,211,252,.2);border-radius:20px;padding:18px}
 .tool-card h3{font:700 1.05rem 'Space Grotesk',sans-serif;margin-bottom:8px;color:#7dd3fc}
 .tool-card p{font-size:.85rem;color:var(--mu);margin-bottom:12px;line-height:1.5}
-
 @media(min-width:760px){.shell{max-width:880px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
 @media(max-width:520px){.card{padding:24px 18px;border-radius:24px}.hm{display:none}}
-@media(reduced-motion:reduce){*{animation-duration:.01s!important}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -197,9 +175,9 @@ html{scroll-behavior:smooth}
     <label class="l" for="name">Nama Penjelajah</label>
     <div class="name-group">
       <input id="name" maxlength="16" autocomplete="off" placeholder="Tulis namamu..." />
-      <button id="bSetName">OKE</button>
+      <button id="bSetName" disabled>OKE</button>
     </div>
-    <div id="nameNotice" style="font-size:.72rem;color:var(--mu);margin-top:6px;font-weight:600;"></div>
+    <div id="nameNotice" style="font-size:.72rem;color:var(--mu);margin-top:6px;font-weight:600;">👑 Terdeteksi sebagai Owner Mutlak (KovTheGreat).</div>
     
     <label class="l">Topik Kajian</label>
     <div class="seg" id="segM"><button data-v="all" class="on">🌌 Semua Topik</button><button data-v="bh">🕳️ Black Hole</button><button data-v="ns">💫 Bintang Neutron</button></div>
@@ -255,7 +233,7 @@ html{scroll-behavior:smooth}
     <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos</h1>
     <p class="sub" style="margin:6px 0 0">Ketuk kartu untuk membuka detail objek paling ekstrem di alam semesta.</p>
     <div class="exg" id="exg"></div>
-    <div class="extra-box">
+    <div class="extra-box" style="display:grid;gap:12px;margin-top:16px">
       <div class="tool-card">
         <h3>⚡ Kalkulator Dilatasi Waktu Gravitasi</h3>
         <p>Simulasikan seberapa lambat waktu berjalan di dekat cakrawala peristiwa lubang hitam berdasarkan massa.</p>
@@ -404,34 +382,19 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== SISTEM OWNER MUTLAK & KUNCI FIREBASE ===== */
-const OWNER_SECRET_KEY = 'kov_owner_master_token_x99';
-let myOwnerToken = ls.g(OWNER_SECRET_KEY, '');
-if(!myOwnerToken) {
-    myOwnerToken = 'owner_token_' + Math.random().toString(36).slice(2, 12) + Date.now();
-    ls.s(OWNER_SECRET_KEY, myOwnerToken);
-}
-
+/* ===== INISIALISASI OWNER MUTLAK ===== */
 function initOwnerIdentity() {
     const nameInput = $('name');
-    const bSetName = $('bSetName');
-    const notice = $('nameNotice');
     if(!nameInput) return;
-
-    // Paksa set mutlak di browser ini sebagai KovTheGreat
-    ls.s('isea_name', 'KovTheGreat');
     nameInput.value = 'KovTheGreat';
-    nameInput.disabled = true; // Langsung dikunci total supaya tidak bisa diubah orang lain / "P"
-    if(bSetName) bSetName.disabled = true;
-    if(notice) notice.textContent = '👑 Terdeteksi sebagai Owner Mutlak (KovTheGreat). Terkunci aman.';
+    nameInput.disabled = true; // Terkunci mutlak
 }
 
 /* ===== KUIS ===== */
 const TIME=20;
 function start(){
  const nameInput = $('name');
- const name = 'KovTheGreat'; // Pastikan selalu KovTheGreat
-
+ const name = 'KovTheGreat';
  ls.s('isea_name', name);
  if(nameInput) nameInput.disabled = true;
 
@@ -543,7 +506,7 @@ function results(){
  b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
  ls.s('isea_lb', b.slice(-300));
  ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
- if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, ownerToken: myOwnerToken});
+ if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
  addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
 }
 
@@ -601,7 +564,7 @@ function paint(rawList){
 }
 
 function board(){
- au.clk();if($('segL'))[...$('segL'].children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
+ au.clk();if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
  if(lbS==='all'){
   if(!db){
       paint(ls.g('isea_lb',[]));
@@ -624,7 +587,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}
 };
 
-/* ===== ONLINE & FIREBASE ===== */
+/* ===== ONLINE & FIREBASE (ANTI-STUCK TIMEOUT) ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -640,7 +603,7 @@ const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.
 let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
  cur=st;if(!db||!meRef)return;
- meRef.set({n: 'KovTheGreat', st: st, token: myOwnerToken, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
+ meRef.set({n: 'KovTheGreat', st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
  const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');if(!l)return;l.innerHTML='';
@@ -649,10 +612,8 @@ function drawOn(){
   const li=document.createElement('li');
   if(k===pid)li.className='me';
   li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
-  
   const nameBox = li.querySelector('b');
   const userName = v.n || 'Penjelajah';
-  
   if(userName === 'KovTheGreat') {
       nameBox.textContent = 'KovTheGreat';
       const badge = document.createElement('span');
@@ -662,7 +623,6 @@ function drawOn(){
   } else {
       nameBox.textContent = userName;
   }
-
   li.querySelector('small').textContent=v.st||'';
   li.querySelector('em').textContent=k===pid?'kamu':'';
   l.appendChild(li);
@@ -675,22 +635,11 @@ function initOnline(){
        firebase.initializeApp(firebaseConfig);
    }
    db=firebase.database();meRef=db.ref('online/'+pid);
-   
-   // Sinkronisasi keamanan Owner di Firebase Database
-   db.ref('system_owner').once('value').then(snap=>{
-       const registeredToken = snap.val();
-       if(!registeredToken) {
-           db.ref('system_owner').set(myOwnerToken);
-       } else if(registeredToken !== myOwnerToken) {
-           console.warn('⚠️ Perangkat ini bukan owner asli, nama KovTheGreat dilindungi!');
-       }
-   });
-
    db.ref('.info/connected').on('value',x=>{if(x.val()){meRef.onDisconnect().remove();presence(cur)}});
    db.ref('online').on('value',x=>{OL=x.val()||{};if($('bOn'))$('bOn').textContent='🟢 '+Object.keys(OL).length;if($('sOn')&&!$('sOn').classList.contains('hidden'))drawOn()});
    if($('bOn'))$('bOn').classList.remove('hidden');
   }
- }catch(e){console.warn('Firebase init error:',e)}
+ }catch(e){console.warn('Firebase init warning:',e)}
 }
 if($('bOn'))$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
 if($('bOnBack'))$('bOnBack').onclick=()=>{au.clk();show('start')};
@@ -700,7 +649,6 @@ if($('bBack'))$('bBack').onclick=()=>{au.clk();show('start')};
 if($('bGo'))$('bGo').onclick=start;
 if($('bAg'))$('bAg').onclick=start;
 if($('bHm'))$('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
-if($('name'))$('name').addEventListener('keydown',e=>{if(e.key==='Enter')start()});
 if($('bSh'))$('bSh').onclick=async()=>{
  const t=`🚀 KovTheGreat meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
@@ -776,7 +724,7 @@ if(chips){
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
-if($('exAI'))$('exAI'.toUpperCase())||$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
+if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
@@ -787,11 +735,11 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADER ===== */
+/* ===== LOADER AMAN (ANTI STUCK / TIMEOUT 1.5 DETIK) ===== */
 (function(){
  const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
- let p=0,i=0;
- let done=false;
+ let p=0,i=0,done=false;
+ 
  function hideLoader(){
   if(done)return;
   done=true;
@@ -803,17 +751,18 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   addLog('Sistem satelit online dan siap beroperasi.');
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
+
  const t=setInterval(()=>{
-  p=Math.min(100,p+25);
+  p=Math.min(100,p+35);
   if($('ldI'))$('ldI').style.width=p+'%';
   if($('ldM'))$('ldM').textContent=M[Math.min(M.length-1,i++)];
-  if(p>=100){
-   clearInterval(t);
-   setTimeout(hideLoader,200);
-  }
- },120);
+  if(p>=100){clearInterval(t);hideLoader();}
+ },100);
+
+ // Jaminan anti stuck: maks 1.5 detik loader pasti hilang walau internet/firebase lambat
  setTimeout(hideLoader, 1500);
- try{initOnline();}catch(e){}
+
+ try{initOnline();}catch(e){console.warn(e);}
 })();
 </script>
 </body>
