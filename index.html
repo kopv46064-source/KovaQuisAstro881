@@ -336,7 +336,7 @@ Q('bh','Quasar adalah...',['Inti galaksi sangat terang bertenaga lubang hitam su
 Q('ns','Struktur eksotis di kerak dalam bintang neutron yang disebut "nuclear pasta" terbentuk karena...',['Tekanan ekstrem menyusun inti atom menjadi bentuk lembaran dan batang','Pembekuan air','Fusi helium','Debu antarbintang'],'Inti atom dipadatkan hingga menyerupai bentuk spageti dan lasagna.'),
 Q('bh','Di mana cahaya dapat mengorbit lubang hitam dalam lintasan tak stabil?',['Photon sphere (±1,5 kali jari-jari Schwarzschild)','Di dalam singularitas','Di jari-jari 10 kali horizon','Hanya di luar galaksi'],'Cincin foton menghasilkan tepi terang pada citra lubang hitam.'),
 Q('ns','Pulsar dijuluki "jam kosmik" karena...',['Denyutannya sangat teratur, setara jam atom','Mengeluarkan bunyi tik-tik','Berputar sesuai waktu Bumi','Hanya terlihat siang hari'],'Stabilitasnya dipakai untuk mendeteksi gelombang gravitasi dan navigasi pesawat luar angkasa.'),
-Q('bh','Titik berkepadatan tak hingga di pusat lubang hitam menurut relativitas umum disebut...',['Singularitas','Horizon','Ergosfer','Nebula'],'Di sini hukum fisika yang we kenal diperkirakan runtuh; butuh teori gravitasi kuantum.'),
+Q('bh','Titik berkepadatan tak hingga di pusat lubang hitam menurut relativitas umum disebut...',['Singularitas','Horizon','Ergosfer','Nebula'],'Di sini hukum fisika yang kita kenal diperkirakan runtuh; butuh teori gravitasi kuantum.'),
 Q('bh','Apa nama batas luar ergosfer pada lubang hitam berputar (Kerr)?',['Static limit (Batas statis)','Horizon peristiwa','Photon sphere','Cincin Planck'],'Di dalam ergosfer, ruang-waktu terseret oleh rotasi lubang hitam sehingga benda tidak bisa diam.'),
 Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?',['Sekitar 100 miliar derajat Celsius','1 juta derajat Celsius','5.000 derajat Celsius','0 derajat Celsius'],'Suhu yang sangat ekstrem ini mendingin seiring waktu melalui pancaran neutrino.')
 ];
@@ -405,8 +405,16 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== KONTROL NAMA & VALIDASI 15 HARI / KESAMAAN ===== */
+/* ===== KONTROL NAMA & VALIDASI 15 HARI / KESAMAAN / LOCK OWNER ===== */
 const FIFTEEN_DAYS = 15 * 24 * 60 * 60 * 1000;
+const MY_OWNER_ID_KEY = 'isea_owner_device_token';
+
+// Inisialisasi Device Token unik untuk HP Lu
+let myDeviceToken = ls.g(MY_OWNER_ID_KEY, '');
+if(!myDeviceToken) {
+    myDeviceToken = 'dev_' + Math.random().toString(36).slice(2, 11) + Date.now();
+    ls.s(MY_OWNER_ID_KEY, myDeviceToken);
+}
 
 function validateNameState() {
     const nameInput = $('name');
@@ -418,6 +426,16 @@ function validateNameState() {
     const savedName = ls.g('isea_name', '');
     const lastChange = ls.g('isea_name_time', 0);
     const now = Date.now();
+
+    // Proteksi ketat: Cek apakah yang ngetik "KovTheGreat" tapi bukan di device pemilik asli
+    if(typed.toLowerCase() === 'kovthegreat') {
+        const registeredOwnerToken = ls.g('isea_owner_token', '');
+        if(registeredOwnerToken && registeredOwnerToken !== myDeviceToken) {
+            bSetName.disabled = true;
+            notice.textContent = '❌ Nama KovTheGreat dikunci khusus untuk perangkat pemilik asli!';
+            return;
+        }
+    }
 
     if(!typed) {
         bSetName.disabled = true;
@@ -451,6 +469,11 @@ function handleSetName() {
     const bSetName = $('bSetName');
     if(!name || (bSetName && bSetName.disabled)) return toast('Periksa kembali nama atau batasan waktu ganti nama!');
 
+    // Jika pakai KovTheGreat, daftarkan token device ini sebagai pemilik sah
+    if(name.toLowerCase() === 'kovthegreat') {
+        ls.s('isea_owner_token', myDeviceToken);
+    }
+
     const savedName = ls.g('isea_name', '');
     const now = Date.now();
     const lastChange = ls.g('isea_name_time', 0);
@@ -471,7 +494,17 @@ function handleSetName() {
 function initNameInput() {
     const nameInput = $('name');
     if(!nameInput) return;
-    const savedName = ls.g('isea_name', '');
+    let savedName = ls.g('isea_name', '');
+    
+    // Jika di HP lain mencoba pasang KovTheGreat dari cache lama, paksa reset ke kosong
+    if(savedName.toLowerCase() === 'kovthegreat') {
+        const regToken = ls.g('isea_owner_token', '');
+        if(regToken && regToken !== myDeviceToken) {
+            savedName = '';
+            ls.s('isea_name', '');
+        }
+    }
+
     nameInput.value = savedName;
     validateNameState();
 }
@@ -491,7 +524,16 @@ const TIME=20;
 function start(){
  const nameInput = $('name');
  const name = nameInput ? nameInput.value.trim() : ls.g('isea_name','');
- if(!name) return toast('Isi dan simpan namamu dulu ya 🚀');
+ if(!name) return toast('Isi dan klik OKE namamu dulu ya 🚀');
+
+ // Proteksi tambahan saat mulai kuis
+ if(name.toLowerCase() === 'kovthegreat') {
+     const regToken = ls.g('isea_owner_token', '');
+     if(regToken && regToken !== myDeviceToken) {
+         return toast('❌ Nama KovTheGreat tidak diizinkan di perangkat ini!');
+     }
+     ls.s('isea_owner_token', myDeviceToken);
+ }
 
  ls.s('isea_name', name);
 
