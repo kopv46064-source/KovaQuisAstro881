@@ -1,1380 +1,501 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ISEA — International Space Education Association | Kuis Kosmos</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
-
-    :root {
-      --bg-void: #04050a;
-      --glass-bg: rgba(12, 16, 30, 0.68);
-      --glass-border: rgba(130, 170, 255, 0.18);
-      --accent-bh: #ff8a3d;
-      --accent-ns: #38bdf8;
-      --accent-purple: #a855f7;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --correct: #10b981;
-      --wrong: #f43f5e;
-      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background-color: var(--bg-void);
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      min-height: 100dvh;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-    }
-
-    canvas#cosmos-canvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    /* Top Controls */
-    .top-bar {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      right: 16px;
-      z-index: 20;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      pointer-events: none;
-    }
-
-    .pill-group {
-      display: flex;
-      gap: 8px;
-      pointer-events: auto;
-    }
-
-    .glass-btn {
-      background: rgba(15, 23, 42, 0.72);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      color: var(--text-main);
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform 0.35s var(--ease-spring), background 0.25s ease, border-color 0.25s ease;
-    }
-
-    .glass-btn:hover {
-      transform: translateY(-2px) scale(1.03);
-      background: rgba(30, 41, 59, 0.85);
-      border-color: rgba(148, 163, 184, 0.45);
-    }
-
-    .glass-btn:active {
-      transform: scale(0.96);
-    }
-
-    .glass-btn.active-bh {
-      border-color: var(--accent-bh);
-      box-shadow: 0 0 18px rgba(255, 138, 61, 0.25);
-    }
-
-    .glass-btn.active-ns {
-      border-color: var(--accent-ns);
-      box-shadow: 0 0 18px rgba(56, 189, 248, 0.25);
-    }
-
-    /* Main Container */
-    .app-shell {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 680px;
-      padding: 80px 20px 20px;
-      margin: auto 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* ISEA Branding Header */
-    .org-header {
-      text-align: center;
-      margin-bottom: 18px;
-      animation: cardEnter 0.7s var(--ease-spring) forwards;
-    }
-
-    .org-acronym {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.55rem;
-      font-weight: 800;
-      letter-spacing: 0.28em;
-      padding-left: 0.28em;
-      background: linear-gradient(90deg, #7dd3fc, #f8fafc 50%, #fdba74);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 24px rgba(56, 189, 248, 0.3);
-    }
-
-    .org-fullname {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .card {
-      width: 100%;
-      background: var(--glass-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--glass-border);
-      border-radius: 28px;
-      padding: 32px 28px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      transition: transform 0.6s var(--ease-spring), opacity 0.45s var(--ease-smooth);
-    }
-
-    .card.hidden {
-      display: none;
-    }
-
-    .card.enter {
-      animation: cardEnter 0.65s var(--ease-spring) forwards;
-    }
-
-    @keyframes cardEnter {
-      0% { opacity: 0; transform: translateY(28px) scale(0.95); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-8px); }
-      40% { transform: translateX(8px); }
-      60% { transform: translateX(-5px); }
-      80% { transform: translateX(5px); }
-    }
-
-    .shake {
-      animation: shake 0.45s var(--ease-smooth);
-    }
-
-    /* Start Screen */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, rgba(255, 138, 61, 0.16), rgba(56, 189, 248, 0.16));
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #e2e8f0;
-      margin-bottom: 16px;
-    }
-
-    h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.9rem, 5vw, 2.65rem);
-      line-height: 1.12;
-      font-weight: 700;
-      background: linear-gradient(135deg, #ffffff 15%, #93c5fd 55%, #fdba74 95%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 14px;
-    }
-
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 1rem;
-      line-height: 1.6;
-      margin-bottom: 26px;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .feature-item {
-      background: rgba(15, 23, 42, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 18px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: transform 0.35s var(--ease-spring);
-    }
-
-    .feature-item:hover {
-      transform: translateY(-3px);
-    }
-
-    .feature-icon {
-      font-size: 1.4rem;
-    }
-
-    .feature-text strong {
-      display: block;
-      font-size: 0.9rem;
-      color: #f1f5f9;
-    }
-
-    .feature-text span {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    .primary-btn {
-      width: 100%;
-      padding: 16px 24px;
-      border: none;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #f97316, #a855f7 55%, #0ea5e9);
-      background-size: 200% 200%;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.08rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 12px 30px rgba(168, 85, 247, 0.35);
-      transition: transform 0.4s var(--ease-spring), box-shadow 0.3s ease, background-position 0.5s ease;
-    }
-
-    .primary-btn:hover {
-      transform: translateY(-3px) scale(1.015);
-      background-position: 100% 50%;
-      box-shadow: 0 18px 38px rgba(56, 189, 248, 0.42);
-    }
-
-    .primary-btn:active {
-      transform: scale(0.97);
-    }
-
-    /* Quiz Screen */
-    .quiz-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      gap: 12px;
-    }
-
-    .topic-tag {
-      font-size: 0.76rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 5px 12px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.14);
-      color: #7dd3fc;
-      border: 1px solid rgba(56, 189, 248, 0.28);
-    }
-
-    .topic-tag.bh {
-      background: rgba(255, 138, 61, 0.14);
-      color: #fdba74;
-      border-color: rgba(255, 138, 61, 0.28);
-    }
-
-    .stats-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 0.88rem;
-      font-weight: 700;
-    }
-
-    .streak-pill {
-      color: #fbbf24;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 7px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-bottom: 22px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #ff8a3d, #a855f7, #38bdf8);
-      transition: width 0.6s var(--ease-spring);
-    }
-
-    .question-text {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.22rem, 3.2vw, 1.48rem);
-      line-height: 1.38;
-      font-weight: 700;
-      margin-bottom: 22px;
-      color: #f8fafc;
-    }
-
-    .options-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .option-btn {
-      width: 100%;
-      text-align: left;
-      background: rgba(15, 23, 42, 0.62);
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      border-radius: 18px;
-      padding: 15px 18px;
-      color: #f1f5f9;
-      font-family: inherit;
-      font-size: 0.96rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      transition: transform 0.35s var(--ease-spring), background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-      opacity: 0;
-      animation: optionSlide 0.45s var(--ease-spring) forwards;
-    }
-
-    @keyframes optionSlide {
-      from { opacity: 0; transform: translateX(-14px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .option-btn:hover:not(:disabled) {
-      transform: translateX(6px) scale(1.01);
-      background: rgba(30, 41, 59, 0.85);
-      border-color: rgba(125, 211, 252, 0.55);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    }
-
-    .option-btn:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .option-letter {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: 0.85rem;
-      flex-shrink: 0;
-      transition: background 0.25s ease, color 0.25s ease;
-    }
-
-    .option-btn.correct {
-      background: rgba(16, 185, 129, 0.18);
-      border-color: var(--correct);
-      box-shadow: 0 0 24px rgba(16, 185, 129, 0.25);
-      transform: scale(1.015);
-    }
-
-    .option-btn.correct .option-letter {
-      background: var(--correct);
-      color: #022c22;
-    }
-
-    .option-btn.wrong {
-      background: rgba(244, 63, 94, 0.18);
-      border-color: var(--wrong);
-    }
-
-    .option-btn.wrong .option-letter {
-      background: var(--wrong);
-      color: #fff;
-    }
-
-    .option-btn:disabled {
-      cursor: default;
-    }
-
-    /* Explanation Box */
-    .explanation-box {
-      margin-top: 20px;
-      padding: 16px 18px;
-      border-radius: 18px;
-      background: rgba(15, 23, 42, 0.78);
-      border-left: 4px solid var(--accent-ns);
-      font-size: 0.9rem;
-      line-height: 1.55;
-      color: #cbd5e1;
-      display: none;
-      animation: cardEnter 0.45s var(--ease-spring) forwards;
-    }
-
-    .explanation-box.visible {
-      display: block;
-    }
-
-    .explanation-box strong {
-      display: block;
-      color: #f8fafc;
-      margin-bottom: 4px;
-    }
-
-    .next-btn {
-      margin-top: 18px;
-      display: none;
-    }
-
-    .next-btn.visible {
-      display: block;
-      animation: cardEnter 0.4s var(--ease-spring) forwards;
-    }
-
-    /* Result Screen */
-    .result-score-ring {
-      width: 132px;
-      height: 132px;
-      border-radius: 50%;
-      margin: 0 auto 20px;
-      display: grid;
-      place-items: center;
-      background: radial-gradient(circle at 30% 30%, rgba(56, 189, 248, 0.25), rgba(168, 85, 247, 0.2));
-      border: 2px solid rgba(125, 211, 252, 0.45);
-      box-shadow: 0 0 40px rgba(56, 189, 248, 0.25);
-      animation: floatSlow 4s ease-in-out infinite;
-    }
-
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .result-score-ring span {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.3rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .result-title {
-      text-align: center;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.75rem;
-      margin-bottom: 8px;
-    }
-
-    .result-desc {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.96rem;
-      line-height: 1.55;
-      margin-bottom: 24px;
-    }
-
-    .summary-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .stat-box {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 14px 10px;
-      text-align: center;
-    }
-
-    .stat-box .val {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #f8fafc;
-    }
-
-    .stat-box .lbl {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    /* Footer Signature (KovaTheGreat) */
-    .creator-footer {
-      position: relative;
-      z-index: 10;
-      padding: 14px 20px 22px;
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-    }
-
-    .creator-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      transition: transform 0.35s var(--ease-spring), border-color 0.25s ease;
-    }
-
-    .creator-badge:hover {
-      transform: translateY(-2px);
-      border-color: rgba(125, 211, 252, 0.4);
-    }
-
-    .creator-name {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      background: linear-gradient(90deg, #38bdf8, #c084fc, #fb923c);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    @media (max-width: 520px) {
-      .card { padding: 24px 18px; border-radius: 22px; }
-      .feature-grid { grid-template-columns: 1fr; }
-      .glass-btn span.hide-mobile { display: none; }
-      .org-acronym { font-size: 1.3rem; }
-      .org-fullname { font-size: 0.65rem; letter-spacing: 0.11em; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#04050a" />
+<title>ISEA Kuis Kosmos — by KovTheGreat</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
+:root{--bg:#04050a;--glass:rgba(12,16,30,.7);--bd:rgba(130,170,255,.18);--bh:#ff8a3d;--ns:#38bdf8;--tx:#f8fafc;--mu:#94a3b8;--ok:#10b981;--no:#f43f5e;--sp:cubic-bezier(.34,1.56,.64,1);--sm:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);font-family:'Plus Jakarta Sans',system-ui,sans-serif;min-height:100dvh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:space-between}
+canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.top{position:fixed;top:calc(12px + env(safe-area-inset-top));left:14px;right:14px;z-index:20;display:flex;justify-content:space-between;gap:8px}
+.grp{display:flex;gap:8px}
+.gb{background:rgba(15,23,42,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--bd);color:var(--tx);padding:8px 13px;border-radius:999px;font:600 .8rem inherit;font-family:inherit;cursor:pointer;transition:transform .35s var(--sp),border-color .25s,box-shadow .25s}
+.gb:active{transform:scale(.94)}
+.gb.a-bh{border-color:var(--bh);box-shadow:0 0 18px rgba(255,138,61,.25)}
+.gb.a-ns{border-color:var(--ns);box-shadow:0 0 18px rgba(56,189,248,.25)}
+.shell{position:relative;z-index:10;width:100%;max-width:680px;padding:78px 18px 14px;margin:auto 0;display:flex;flex-direction:column;align-items:center}
+.org{text-align:center;margin-bottom:16px}
+.acr{font:800 1.5rem 'Space Grotesk',sans-serif;letter-spacing:.28em;padding-left:.28em;background:linear-gradient(90deg,#7dd3fc,#f8fafc 50%,#fdba74);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.full{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}
+.card{width:100%;background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--bd);border-radius:28px;padding:28px 22px;box-shadow:0 24px 60px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.08)}
+.hidden{display:none!important}
+.enter{animation:ce .6s var(--sp) forwards}
+@keyframes ce{0%{opacity:0;transform:translateY(26px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.shake{animation:shake .45s var(--sm)}
+.badge{display:inline-block;padding:6px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(255,138,61,.16),rgba(56,189,248,.16));border:1px solid rgba(255,255,255,.14);font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px}
+h1{font:700 clamp(1.8rem,5vw,2.5rem)/1.12 'Space Grotesk',sans-serif;background:linear-gradient(135deg,#fff 15%,#93c5fd 55%,#fdba74 95%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+.sub{color:var(--mu);line-height:1.6;margin-bottom:20px;font-size:.95rem}
+label.l{display:block;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin:16px 0 8px}
+#name{width:100%;padding:15px 18px;border-radius:16px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.7);color:#fff;font:600 1rem inherit;font-family:inherit;outline:none;transition:border-color .25s,box-shadow .25s}
+#name:focus{border-color:var(--ns);box-shadow:0 0 0 4px rgba(56,189,248,.15)}
+#name.err{border-color:var(--no);animation:shake .45s}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;padding:11px 6px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(15,23,42,.6);color:var(--mu);font:700 .85rem inherit;font-family:inherit;cursor:pointer;transition:all .3s var(--sp)}
+.seg button.on{color:#fff;border-color:#a855f7;background:rgba(168,85,247,.22);box-shadow:0 0 18px rgba(168,85,247,.25);transform:translateY(-2px)}
+.fact{margin:18px 0;padding:13px 15px;border-radius:16px;background:rgba(15,23,42,.55);border:1px dashed rgba(125,211,252,.3);font-size:.84rem;line-height:1.5;color:#cbd5e1}
+.fact b{color:#7dd3fc}
+.pb{width:100%;padding:16px 22px;border:0;border-radius:18px;background:linear-gradient(135deg,#f97316,#a855f7 55%,#0ea5e9);background-size:200% 200%;color:#fff;font:700 1.05rem 'Space Grotesk',sans-serif;cursor:pointer;box-shadow:0 12px 30px rgba(168,85,247,.35);transition:transform .4s var(--sp),background-position .5s}
+.pb:hover{background-position:100% 50%;transform:translateY(-2px)}
+.pb:active{transform:scale(.97)}
+.sb{width:100%;margin-top:10px;padding:13px;border-radius:16px;border:1px solid var(--bd);background:rgba(15,23,42,.6);color:var(--tx);font:700 .92rem inherit;font-family:inherit;cursor:pointer;transition:transform .3s var(--sp)}
+.sb:active{transform:scale(.97)}
+.qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+.tag{font-size:.72rem;font-weight:700;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:rgba(56,189,248,.14);color:#7dd3fc;border:1px solid rgba(56,189,248,.28)}
+.tag.bh{background:rgba(255,138,61,.14);color:#fdba74;border-color:rgba(255,138,61,.28)}
+.st{display:flex;gap:12px;font-size:.86rem;font-weight:700;align-items:center}
+.tm{height:7px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-bottom:6px}
+.tm i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#10b981,#fbbf24,#f43f5e);background-size:300% 100%;border-radius:999px}
+.pg{height:4px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.pg i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8a3d,#a855f7,#38bdf8);transition:width .6s var(--sp)}
+.qt{font:700 clamp(1.15rem,3.2vw,1.4rem)/1.4 'Space Grotesk',sans-serif;margin-bottom:18px}
+.ops{display:flex;flex-direction:column;gap:11px}
+.op{width:100%;text-align:left;background:rgba(15,23,42,.62);border:1px solid rgba(148,163,184,.2);border-radius:18px;padding:14px 16px;color:#f1f5f9;font:600 .94rem inherit;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:13px;opacity:0;animation:os .45s var(--sp) forwards;transition:transform .35s var(--sp),background .25s,border-color .25s,box-shadow .25s}
+@keyframes os{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.op:hover:not(:disabled){transform:translateX(6px);border-color:rgba(125,211,252,.55)}
+.op:active:not(:disabled){transform:scale(.98)}
+.op i{width:31px;height:31px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;font:800 .82rem inherit;font-style:normal;flex-shrink:0}
+.op.ok{background:rgba(16,185,129,.18);border-color:var(--ok);box-shadow:0 0 24px rgba(16,185,129,.25)}
+.op.ok i{background:var(--ok);color:#022c22}
+.op.no{background:rgba(244,63,94,.18);border-color:var(--no)}
+.op.no i{background:var(--no)}
+.op.gone{opacity:.18!important;pointer-events:none;transform:scale(.97)}
+.ll{display:flex;gap:8px;margin-bottom:14px}
+.ll button{flex:1;padding:9px;border-radius:14px;border:1px solid var(--bd);background:rgba(15,23,42,.6);color:var(--tx);font:700 .78rem inherit;font-family:inherit;cursor:pointer}
+.ll button:disabled{opacity:.35}
+.ex{margin-top:16px;padding:15px 16px;border-radius:18px;background:rgba(15,23,42,.8);border-left:4px solid var(--ns);font-size:.88rem;line-height:1.55;color:#cbd5e1;display:none}
+.ex.v{display:block;animation:ce .45s var(--sp) forwards}
+.ex b{display:block;color:#f8fafc;margin-bottom:4px}
+#nx{margin-top:14px;display:none}
+#nx.v{display:block;animation:ce .4s var(--sp) forwards}
+.ring{width:128px;height:128px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,rgba(56,189,248,.25),rgba(168,85,247,.2));border:2px solid rgba(125,211,252,.45);box-shadow:0 0 40px rgba(56,189,248,.25);animation:fl 4s ease-in-out infinite;font:800 2.2rem 'Space Grotesk',sans-serif}
+@keyframes fl{50%{transform:translateY(-8px)}}
+.rt{text-align:center;font:700 1.6rem 'Space Grotesk',sans-serif;margin-bottom:6px}
+.rd{text-align:center;color:var(--mu);font-size:.92rem;line-height:1.55;margin-bottom:18px}
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.sum div{background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 4px;text-align:center}
+.sum b{display:block;font:700 1.1rem 'Space Grotesk',sans-serif}
+.sum span{font-size:.66rem;color:var(--mu)}
+.rv{max-height:220px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:8px}
+.rv div{padding:11px 13px;border-radius:14px;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);font-size:.82rem;line-height:1.45}
+.rv small{display:block;color:#6ee7b7;margin-top:3px}
+.lb{list-style:none;display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.lb li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.07);font-weight:700;font-size:.9rem}
+.lb li span:first-child{width:26px;text-align:center}
+.lb li em{margin-left:auto;font-style:normal;color:#fbbf24;font-family:'Space Grotesk',sans-serif}
+.lb{max-height:48vh;overflow-y:auto}.lb li div{min-width:0}.lb li b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lb li small{display:block;color:var(--mu);font-weight:600;font-size:.72rem;margin-top:2px}
+.lb li.me{border-color:#a855f7;box-shadow:0 0 18px rgba(168,85,247,.3)}
+.foot{padding-bottom:calc(90px + env(safe-area-inset-bottom))!important;position:relative;z-index:10;padding:10px 16px calc(18px + env(safe-area-inset-bottom));text-align:center;font-size:.76rem;color:var(--mu)}
+.foot div{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:6px 14px;border-radius:999px;background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.09)}
+.cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1e293b;border:1px solid var(--bd);padding:10px 18px;border-radius:999px;font-size:.85rem;font-weight:600;opacity:0;transition:all .4s var(--sp);z-index:50;pointer-events:none}
+.toast.v{opacity:1;transform:translate(-50%,0)}
+
+html{scroll-behavior:smooth}
+#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#0b1030,#04050a 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .7s var(--sm),visibility .7s,transform .7s var(--sm)}
+#ld.out{opacity:0;visibility:hidden;transform:scale(1.06)}
+.orb{width:92px;height:92px;border-radius:50%;background:#010103;position:relative;box-shadow:0 0 40px rgba(255,138,61,.5),inset 0 0 0 3px rgba(255,200,140,.85);animation:pul 2.4s ease-in-out infinite}
+.orb:before{content:"";position:absolute;inset:-26px;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(255,138,61,.8),rgba(56,189,248,.6),transparent 70%);-webkit-mask:radial-gradient(circle,transparent 56%,#000 58%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 56%,#000 58%,#000 70%,transparent 72%);animation:spn 1.8s linear infinite}
+@keyframes spn{to{transform:rotate(360deg)}}@keyframes pul{50%{transform:scale(1.07)}}
+.ldt{font:800 2rem 'Space Grotesk',sans-serif;letter-spacing:.3em;padding-left:.3em}
+.lds{font-size:.7rem;letter-spacing:.2em;color:var(--mu);font-weight:700}
+.ldb{width:220px;height:5px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:8px}
+.ldb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8a3d,#a855f7,#38bdf8);transition:width .35s var(--sm)}
+.ldm{font-size:.78rem;color:var(--mu);min-height:1em}
+.by{font-size:.72rem;color:var(--mu);margin-top:3px;letter-spacing:.08em}
+.leave{opacity:0!important;transform:translateY(-12px) scale(.98)!important;transition:all .22s ease-in}
+.shell{padding-bottom:96px}
+.hero{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px}
+.hero div{background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 4px;text-align:center}
+.hero b{display:block;font:700 1.15rem 'Space Grotesk',sans-serif;color:#7dd3fc}.hero span{font-size:.64rem;color:var(--mu)}
+#nav{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;display:flex;gap:4px;padding:6px;border-radius:999px;background:rgba(10,14,28,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);box-shadow:0 12px 36px rgba(0,0,0,.6);transition:transform .45s var(--sp),opacity .3s}
+#nav.off{transform:translate(-50%,120px);opacity:0;pointer-events:none}
+#nav button{border:0;background:transparent;color:var(--mu);padding:9px 14px;border-radius:999px;font:700 .78rem inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;transition:all .35s var(--sp)}
+#nav button.on{background:linear-gradient(135deg,rgba(249,115,22,.3),rgba(168,85,247,.3));color:#fff;transform:translateY(-2px)}
+.exg{display:grid;gap:12px;margin:14px 0}
+.xi{border-radius:20px;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:border-color .3s,box-shadow .3s}
+.xi.open{border-color:rgba(125,211,252,.5);box-shadow:0 0 24px rgba(56,189,248,.15)}
+.xh{width:100%;display:flex;align-items:center;gap:12px;padding:15px 16px;background:none;border:0;color:#fff;font:700 .95rem inherit;font-family:inherit;text-align:left;cursor:pointer}
+.xh span:first-child{font-size:1.6rem}.xh em{margin-left:auto;font-style:normal;transition:transform .4s var(--sp)}.xi.open .xh em{transform:rotate(180deg)}
+.xb{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--sm)}.xi.open .xb{grid-template-rows:1fr}
+.xb>div{overflow:hidden}.xb p{padding:0 16px 8px;font-size:.86rem;line-height:1.6;color:#cbd5e1}
+.xs{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 14px}.xs span{font-size:.72rem;padding:5px 10px;border-radius:999px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:#bae6fd;font-weight:700}
+.aih{display:flex;justify-content:space-between;align-items:center}
+.chat{height:min(46vh,400px);overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:6px 2px;margin:12px 0}
+.m{max-width:88%;padding:11px 14px;border-radius:18px;font-size:.9rem;line-height:1.55;white-space:pre-wrap;animation:ce .4s var(--sp)}
+.m.u{align-self:flex-end;background:linear-gradient(135deg,#f97316,#a855f7);border-bottom-right-radius:6px}
+.m.b{align-self:flex-start;background:rgba(30,41,59,.9);border:1px solid var(--bd);border-bottom-left-radius:6px}
+.dots i{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:#7dd3fc;animation:db 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes db{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}.chips button{flex-shrink:0;padding:8px 13px;border-radius:999px;border:1px solid var(--bd);background:rgba(15,23,42,.7);color:#cbd5e1;font:600 .78rem inherit;font-family:inherit;cursor:pointer}
+.ci{display:flex;gap:8px}.ci input{flex:1;padding:14px 16px;border-radius:16px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.7);color:#fff;font:600 .95rem inherit;font-family:inherit;outline:none}.ci input:focus{border-color:var(--ns)}.ci button{width:56px;padding:0}
+@media(min-width:760px){.shell{max-width:880px}.card{padding:36px 36px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
+@media(max-width:520px){.card{padding:22px 16px;border-radius:22px}.hm{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
-  <canvas id="cosmos-canvas"></canvas>
-
-  <header class="top-bar">
-    <div class="pill-group">
-      <button id="btn-focus-bh" class="glass-btn active-bh" title="Fokus ke Black Hole">
-        🕳️ <span>Black Hole</span>
-      </button>
-      <button id="btn-focus-ns" class="glass-btn" title="Fokus ke Neutron Star">
-        💫 <span>Neutron Star</span>
-      </button>
-    </div>
-    <div class="pill-group">
-      <button id="btn-audio" class="glass-btn" title="Suara Kosmik">
-        🔇 <span class="hide-mobile">Audio</span>
-      </button>
-    </div>
-  </header>
-
-  <main class="app-shell">
-    <!-- ISEA IDENTITY HEADER -->
-    <div class="org-header">
-      <div class="org-acronym">ISEA</div>
-      <div class="org-fullname">International Space Education Association</div>
-    </div>
-
-    <!-- START SCREEN -->
-    <section id="screen-start" class="card enter">
-      <div class="badge">✨ Simulasi Kosmik Interaktif</div>
-      <h1>Misteri Black Hole & Neutron Star</h1>
-      <p class="subtitle">
-        Uji pengetahuan astrofisika kamu bersama <strong>ISEA</strong> sambil menjelajahi lengkungan ruang-waktu di sekitar lubang hitam supermasif dan bintang neutron berkecepatan tinggi.
-      </p>
-
-      <div class="feature-grid">
-        <div class="feature-item">
-          <div class="feature-icon">🕳️</div>
-          <div class="feature-text">
-            <strong>Event Horizon</strong>
-            <span>Piringan akresi & lensa gravitasi</span>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon">⚡</div>
-          <div class="feature-text">
-            <strong>Pulsar Relativistik</strong>
-            <span>Rotasi ekstrem & jet magnetik</span>
-          </div>
-        </div>
-      </div>
-
-      <button id="btn-start" class="primary-btn">Mulai Ekspedisi Kuis 🚀</button>
-    </section>
-
-    <!-- QUIZ SCREEN -->
-    <section id="screen-quiz" class="card hidden">
-      <div class="quiz-header">
-        <span id="q-topic" class="topic-tag bh">Black Hole</span>
-        <div class="stats-row">
-          <span id="q-streak" class="streak-pill">🔥 0</span>
-          <span id="q-counter">1 / 10</span>
-        </div>
-      </div>
-
-      <div class="progress-track">
-        <div id="progress-fill" class="progress-fill"></div>
-      </div>
-
-      <h2 id="q-text" class="question-text">Memuat pertanyaan...</h2>
-
-      <div id="options-container" class="options-list"></div>
-
-      <div id="explanation-box" class="explanation-box">
-        <strong id="exp-title">Penjelasan Ilmiah:</strong>
-        <span id="exp-text"></span>
-      </div>
-
-      <button id="btn-next" class="primary-btn next-btn">Lanjut ke Sektor Berikutnya →</button>
-    </section>
-
-    <!-- RESULT SCREEN -->
-    <section id="screen-result" class="card hidden">
-      <div class="result-score-ring">
-        <span id="res-score">0%</span>
-      </div>
-      <h2 id="res-title" class="result-title">Penjelajah Kosmik</h2>
-      <p id="res-desc" class="result-desc"></p>
-
-      <div class="summary-stats">
-        <div class="stat-box">
-          <div id="res-correct" class="val">0/10</div>
-          <div class="lbl">Jawaban Benar</div>
-        </div>
-        <div class="stat-box">
-          <div id="res-points" class="val">0</div>
-          <div class="lbl">Total Skor</div>
-        </div>
-        <div class="stat-box">
-          <div id="res-best-streak" class="val">0</div>
-          <div class="lbl">Streak Terbaik</div>
-        </div>
-      </div>
-
-      <button id="btn-restart" class="primary-btn">Ulangi Ekspedisi 🔄</button>
-    </section>
-  </main>
-
-  <!-- FOOTER SIGNATURE -->
-  <footer class="creator-footer">
-    <div class="creator-badge">
-      <span>ISEA • International Space Education Association</span>
-      <span>•</span>
-      <span class="creator-name">KovaTheGreat</span>
-    </div>
-  </footer>
-
-  <script>
-    /* =========================================
-       1. BANK SOAL ASTROFISIKA (BLACK HOLE & NEUTRON STAR)
-    ========================================= */
-    const QUESTIONS = [
-      {
-        topic: "Black Hole",
-        mode: "bh",
-        question: "Apa nama batas di sekitar lubang hitam di mana kecepatan lepasnya melebihi kecepatan cahaya?",
-        options: [
-          "Singularitas Kuantum",
-          "Event Horizon (Horizon Peristiwa)",
-          "Fotosfer Relativistik",
-          "Batas Chandrasekhar"
-        ],
-        answer: 1,
-        explanation: "Event Horizon adalah batas 'tanpa jalan kembali'. Setelah melewati titik ini, tidak ada materi maupun radiasi elektromagnetik (termasuk cahaya) yang bisa lolos dari tarikan gravitasi lubang hitam."
-      },
-      {
-        topic: "Neutron Star",
-        mode: "ns",
-        question: "Seberapa padat materi penyusun sebuah bintang neutron?",
-        options: [
-          "Satu sendok teh materinya bermassa sekitar 1 miliar ton",
-          "Setara dengan kepadatan inti planet Jupiter",
-          "Sepuluh kali lebih padat dari besi murni di Bumi",
-          "Memiliki kepadatan yang sama dengan inti Matahari"
-        ],
-        answer: 0,
-        explanation: "Bintang neutron memampatkan massa sekitar 1,4 hingga 2 kali massa Matahari ke dalam bola berdiameter hanya ~20 kilometer, membuat satu sendok teh materinya seberat gunung di Bumi."
-      },
-      {
-        topic: "Black Hole",
-        mode: "bh",
-        question: "Fenomena peregangan ekstrem pada objek yang jatuh mendekati lubang hitam akibat perbedaan gaya pasang surut gravitasi disebut...",
-        options: [
-          "Lensing Gravitasi",
-          "Radiasi Hawking",
-          "Spaghettification (Spagetifikasi)",
-          "Efek Doppler Relativistik"
-        ],
-        answer: 2,
-        explanation: "Spagetifikasi terjadi karena gravitasi di bagian tubuh yang lebih dekat ke lubang hitam jauh lebih kuat daripada bagian yang lebih jauh, sehingga objek tertarik memanjang seperti mi."
-      },
-      {
-        topic: "Neutron Star",
-        mode: "ns",
-        question: "Bintang neutron yang berputar sangat cepat dan memancarkan berkas radiasi dari kutub magnetiknya seperti mercusuar disebut...",
-        options: [
-          "Quasar",
-          "Pulsar",
-          "Blazar",
-          "Supernova Tipe Ia"
-        ],
-        answer: 1,
-        explanation: "Pulsar memancarkan sinar gelombang radio atau sinar-X dari kutub magnetiknya. Ketika berkas itu menyapu arah Bumi saat bintang berotasi, kita mendeteksinya sebagai denyutan teratur."
-      },
-      {
-        topic: "Black Hole",
-        mode: "bh",
-        question: "Mengapa cahaya tampak melengkung membentuk cincin terang di atas dan bawah bayangan lubang hitam?",
-        options: [
-          "Pantulan cahaya dari permukaan padat lubang hitam",
-          "Gravitational Lensing (Pembelokan ruang-waktu)",
-          "Pembiasan atmosfer gas helium dingin",
-          "Medan magnetik bintang pendamping"
-        ],
-        answer: 1,
-        explanation: "Massa lubang hitam melengkungkan jaringan ruang-waktu secara ekstrem sehingga cahaya dari bagian belakang piringan akresi dibelokkan ke atas dan ke bawah."
-      },
-      {
-        topic: "Neutron Star",
-        mode: "ns",
-        question: "Jenis bintang neutron dengan medan magnet paling kuat yang pernah diketahui di alam semesta adalah...",
-        options: [
-          "Katai Putih",
-          "Magnetar",
-          "Protobintang",
-          "Bintang Wolf-Rayet"
-        ],
-        answer: 1,
-        explanation: "Magnetar memiliki medan magnet hingga seribu triliun kali lebih kuat dari medan magnet Bumi, cukup kuat untuk merusak struktur atom dari jarak ribuan kilometer."
-      },
-      {
-        topic: "Black Hole",
-        mode: "bh",
-        question: "Apa nama lubang hitam supermasif yang berada di pusat galaksi Bima Sakti kita?",
-        options: [
-          "Messier 87*",
-          "Cygnus X-1",
-          "Sagittarius A*",
-          "TON 618"
-        ],
-        answer: 2,
-        explanation: "Sagittarius A* (dibaca Sagittarius A-star) memiliki massa sekitar 4 juta kali massa Matahari dan dicitrakan secara langsung oleh Event Horizon Telescope pada tahun 2022."
-      },
-      {
-        topic: "Neutron Star",
-        mode: "ns",
-        question: "Peristiwa dahsyat apa yang biasanya melahirkan sebuah bintang neutron?",
-        options: [
-          "Tabrakan dua komet raksasa",
-          "Ledakan Supernova runtuh-inti dari bintang masif",
-          "Pendinginan bintang katai merah",
-          "Penggabungan dua planet gas"
-        ],
-        answer: 1,
-        explanation: "Ketika bintang bermassa sekitar 8–25 kali massa Matahari kehabisan bahan bakar nuklir, intinya runtuh oleh gravitasinya sendiri dan memicu ledakan supernova."
-      },
-      {
-        topic: "Black Hole",
-        mode: "bh",
-        question: "Menurut teori Stephen Hawking, bagaimana lubang hitam dapat perlahan kehilangan massanya dalam waktu sangat lama?",
-        options: [
-          "Melalui pancaran Radiasi Hawking di dekat Event Horizon",
-          "Karena penguapan air di piringan akresi",
-          "Akibat angin matahari dari bintang terdekat",
-          "Melalui peluruhan radioaktif inti besi"
-        ],
-        answer: 0,
-        explanation: "Fluktuasi kuantum di dekat Event Horizon menciptakan pasangan partikel-antipartikel; salah satu jatuh ke dalam sementara yang lain lolos sebagai Radiasi Hawking."
-      },
-      {
-        topic: "Neutron Star",
-        mode: "ns",
-        question: "Tabrakan dua bintang neutron (kilonova) sangat penting bagi kosmologi karena menghasilkan...",
-        options: [
-          "Gas hidrogen murni pertama di alam semesta",
-          "Gelombang gravitasi dan unsur berat seperti emas & platinum",
-          "Lapisan ozon di planet-planet terestrial",
-          "Cincin es di sekitar planet raksasa"
-        ],
-        answer: 1,
-        explanation: "Penggabungan bintang neutron memancarkan riak gelombang gravitasi dan memicu proses nukleosintesis cepat yang menciptakan logam berat seperti emas dan platinum."
-      }
-    ];
-
-    /* =========================================
-       2. WEB AUDIO API (SYNTHESIZER KOSMIK)
-    ========================================= */
-    class CosmicAudio {
-      constructor() {
-        this.ctx = null;
-        this.enabled = false;
-        this.droneOsc = null;
-        this.droneGain = null;
-      }
-
-      init() {
-        if (!this.ctx) {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioCtx();
-        }
-        if (this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
-      }
-
-      toggle() {
-        this.init();
-        this.enabled = !this.enabled;
-        if (this.enabled) {
-          this.startAmbient();
-          this.playTone(520, 'sine', 0.12, 0.08);
-        } else {
-          this.stopAmbient();
-        }
-        return this.enabled;
-      }
-
-      startAmbient() {
-        if (!this.ctx || this.droneOsc) return;
-        this.droneOsc = this.ctx.createOscillator();
-        const subOsc = this.ctx.createOscillator();
-        this.droneGain = this.ctx.createGain();
-        const filter = this.ctx.createBiquadFilter();
-
-        this.droneOsc.type = 'sine';
-        this.droneOsc.frequency.value = 55;
-        subOsc.type = 'triangle';
-        subOsc.frequency.value = 82.41;
-
-        filter.type = 'lowpass';
-        filter.frequency.value = 180;
-
-        this.droneGain.gain.value = 0.045;
-
-        this.droneOsc.connect(filter);
-        subOsc.connect(filter);
-        filter.connect(this.droneGain);
-        this.droneGain.connect(this.ctx.destination);
-
-        this.droneOsc.start();
-        subOsc.start();
-        this.subOsc = subOsc;
-      }
-
-      stopAmbient() {
-        if (this.droneOsc) {
-          try {
-            this.droneOsc.stop();
-            this.subOsc.stop();
-          } catch (e) {}
-          this.droneOsc = null;
-          this.subOsc = null;
-        }
-      }
-
-      playTone(freq, type = 'sine', duration = 0.25, volume = 0.12) {
-        if (!this.enabled || !this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, now);
-        gain.gain.setValueAtTime(volume, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + duration);
-      }
-
-      playCorrect() {
-        this.playTone(523.25, 'sine', 0.25, 0.14);
-        setTimeout(() => this.playTone(659.25, 'sine', 0.28, 0.14), 80);
-        setTimeout(() => this.playTone(783.99, 'triangle', 0.4, 0.14), 160);
-      }
-
-      playWrong() {
-        this.playTone(190, 'sawtooth', 0.28, 0.09);
-        setTimeout(() => this.playTone(145, 'sawtooth', 0.35, 0.09), 110);
-      }
-
-      playClick() {
-        this.playTone(440, 'sine', 0.08, 0.06);
-      }
-    }
-
-    const audio = new CosmicAudio();
-
-    /* =========================================
-       3. SIMULASI VISUAL CANVAS (BLACK HOLE & PULSAR)
-    ========================================= */
-    const canvas = document.getElementById('cosmos-canvas');
-    const ctx = canvas.getContext('2d');
-
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
-
-    const scene = {
-      targetMode: 0,
-      blend: 0,
-      mouseX: 0,
-      mouseY: 0,
-      smoothX: 0,
-      smoothY: 0,
-      time: 0,
-      burstParticles: []
-    };
-
-    window.addEventListener('pointermove', (e) => {
-      scene.mouseX = (e.clientX / width - 0.5) * 2;
-      scene.mouseY = (e.clientY / height - 0.5) * 2;
-    });
-
-    const stars = Array.from({ length: 160 }, () => ({
-      x: Math.random(),
-      y: Math.random(),
-      z: Math.random() * 0.8 + 0.2,
-      size: Math.random() * 1.7 + 0.4,
-      twinkle: Math.random() * Math.PI * 2
-    }));
-
-    const diskParticles = Array.from({ length: 140 }, () => ({
-      angle: Math.random() * Math.PI * 2,
-      radius: 75 + Math.random() * 145,
-      speed: 0.008 + Math.random() * 0.015,
-      size: Math.random() * 2.2 + 0.8,
-      hue: 22 + Math.random() * 28
-    }));
-
-    function spawnBurst(color) {
-      const cx = width * 0.5;
-      const cy = height * 0.42;
-      for (let i = 0; i < 36; i++) {
-        const angle = (Math.PI * 2 * i) / 36 + Math.random() * 0.2;
-        const speed = 2.5 + Math.random() * 5.5;
-        scene.burstParticles.push({
-          x: cx,
-          y: cy,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          life: 1,
-          color
-        });
-      }
-    }
-
-    function drawBlackHole(cx, cy, alpha) {
-      if (alpha <= 0.01) return;
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.translate(cx, cy);
-
-      const ambientGlow = ctx.createRadialGradient(0, 0, 50, 0, 0, 260);
-      ambientGlow.addColorStop(0, 'rgba(255, 130, 45, 0.28)');
-      ambientGlow.addColorStop(0.5, 'rgba(180, 65, 20, 0.1)');
-      ambientGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = ambientGlow;
-      ctx.beginPath();
-      ctx.arc(0, 0, 260, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255, 185, 110, 0.42)';
-      ctx.lineWidth = 10;
-      ctx.shadowColor = '#ff7b29';
-      ctx.shadowBlur = 24;
-      ctx.beginPath();
-      ctx.arc(0, 0, 74, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.save();
-      ctx.rotate(-0.22);
-      ctx.scale(1, 0.28);
-
-      const diskGrad = ctx.createRadialGradient(0, 0, 72, 0, 0, 230);
-      diskGrad.addColorStop(0, 'rgba(255, 240, 200, 0.95)');
-      diskGrad.addColorStop(0.25, 'rgba(255, 140, 40, 0.8)');
-      diskGrad.addColorStop(0.65, 'rgba(190, 55, 15, 0.35)');
-      diskGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-      ctx.fillStyle = diskGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, 230, 0, Math.PI * 2);
-      ctx.fill();
-
-      diskParticles.forEach(p => {
-        p.angle += p.speed;
-        const px = Math.cos(p.angle) * p.radius;
-        const py = Math.sin(p.angle) * p.radius;
-        ctx.fillStyle = `hsla(${p.hue}, 100%, 72%, 0.85)`;
-        ctx.beginPath();
-        ctx.arc(px, py, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      ctx.restore();
-
-      ctx.fillStyle = '#010103';
-      ctx.beginPath();
-      ctx.arc(0, 0, 66, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = 'rgba(255, 225, 175, 0.9)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(0, 0, 67, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    function drawNeutronStar(cx, cy, alpha, t) {
-      if (alpha <= 0.01) return;
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.translate(cx, cy);
-
-      const corona = ctx.createRadialGradient(0, 0, 12, 0, 0, 210);
-      corona.addColorStop(0, 'rgba(186, 230, 253, 0.85)');
-      corona.addColorStop(0.25, 'rgba(56, 189, 248, 0.35)');
-      corona.addColorStop(0.65, 'rgba(99, 102, 241, 0.12)');
-      corona.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = corona;
-      ctx.beginPath();
-      ctx.arc(0, 0, 210, 0, Math.PI * 2);
-      ctx.fill();
-
-      const rot = t * 2.8;
-      ctx.save();
-      ctx.rotate(Math.sin(rot) * 0.45);
-
-      ctx.strokeStyle = 'rgba(125, 211, 252, 0.24)';
-      ctx.lineWidth = 1.4;
-      for (let i = 1; i <= 3; i++) {
-        const rx = i * 42;
-        const ry = i * 28;
-        ctx.beginPath();
-        ctx.ellipse(-rx, 0, rx, ry, 0, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.ellipse(rx, 0, rx, ry, 0, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
-      const pulseScale = 0.85 + Math.abs(Math.cos(rot)) * 0.35;
-      const jetGradTop = ctx.createLinearGradient(0, 0, 0, -290 * pulseScale);
-      jetGradTop.addColorStop(0, 'rgba(224, 242, 254, 0.95)');
-      jetGradTop.addColorStop(0.4, 'rgba(56, 189, 248, 0.45)');
-      jetGradTop.addColorStop(1, 'rgba(56, 189, 248, 0)');
-
-      ctx.fillStyle = jetGradTop;
-      ctx.beginPath();
-      ctx.moveTo(-4, 0);
-      ctx.lineTo(-34 * pulseScale, -290 * pulseScale);
-      ctx.lineTo(34 * pulseScale, -290 * pulseScale);
-      ctx.lineTo(4, 0);
-      ctx.closePath();
-      ctx.fill();
-
-      const jetGradBot = ctx.createLinearGradient(0, 0, 0, 290 * pulseScale);
-      jetGradBot.addColorStop(0, 'rgba(224, 242, 254, 0.95)');
-      jetGradBot.addColorStop(0.4, 'rgba(56, 189, 248, 0.45)');
-      jetGradBot.addColorStop(1, 'rgba(56, 189, 248, 0)');
-
-      ctx.fillStyle = jetGradBot;
-      ctx.beginPath();
-      ctx.moveTo(-4, 0);
-      ctx.lineTo(-34 * pulseScale, 290 * pulseScale);
-      ctx.lineTo(34 * pulseScale, 290 * pulseScale);
-      ctx.lineTo(4, 0);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.restore();
-
-      ctx.shadowColor = '#38bdf8';
-      ctx.shadowBlur = 32;
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(0, 0, 18, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    function animate() {
-      scene.time += 0.016;
-      scene.blend += (scene.targetMode - scene.blend) * 0.05;
-      scene.smoothX += (scene.mouseX - scene.smoothX) * 0.06;
-      scene.smoothY += (scene.mouseY - scene.smoothY) * 0.06;
-
-      ctx.clearRect(0, 0, width, height);
-
-      stars.forEach(s => {
-        const px = (s.x * width + scene.smoothX * 26 * s.z + width) % width;
-        const py = (s.y * height + scene.smoothY * 26 * s.z + height) % height;
-        const twinkle = 0.45 + Math.sin(scene.time * 2.2 + s.twinkle) * 0.45;
-        ctx.fillStyle = `rgba(226, 232, 240, ${twinkle * s.z})`;
-        ctx.beginPath();
-        ctx.arc(px, py, s.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      const cx = width * 0.5 + scene.smoothX * 22;
-      const cy = height * 0.25 + scene.smoothY * 18;
-
-      drawBlackHole(cx, cy, 1 - scene.blend);
-      drawNeutronStar(cx, cy, scene.blend, scene.time);
-
-      for (let i = scene.burstParticles.length - 1; i >= 0; i--) {
-        const p = scene.burstParticles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.95;
-        p.vy *= 0.95;
-        p.life -= 0.025;
-        if (p.life <= 0) {
-          scene.burstParticles.splice(i, 1);
-          continue;
-        }
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.life;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 3.2 * p.life, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    /* =========================================
-       4. LOGIKA PERMAINAN KUIS
-    ========================================= */
-    let currentIndex = 0;
-    let score = 0;
-    let correctCount = 0;
-    let streak = 0;
-    let bestStreak = 0;
-    let answered = false;
-
-    const screenStart = document.getElementById('screen-start');
-    const screenQuiz = document.getElementById('screen-quiz');
-    const screenResult = document.getElementById('screen-result');
-
-    const btnFocusBH = document.getElementById('btn-focus-bh');
-    const btnFocusNS = document.getElementById('btn-focus-ns');
-    const btnAudio = document.getElementById('btn-audio');
-
-    function setVisualMode(mode) {
-      if (mode === 'bh') {
-        scene.targetMode = 0;
-        btnFocusBH.classList.add('active-bh');
-        btnFocusNS.classList.remove('active-ns');
-      } else {
-        scene.targetMode = 1;
-        btnFocusNS.classList.add('active-ns');
-        btnFocusBH.classList.remove('active-bh');
-      }
-    }
-
-    btnFocusBH.addEventListener('click', () => {
-      audio.playClick();
-      setVisualMode('bh');
-    });
-
-    btnFocusNS.addEventListener('click', () => {
-      audio.playClick();
-      setVisualMode('ns');
-    });
-
-    btnAudio.addEventListener('click', () => {
-      const isOn = audio.toggle();
-      btnAudio.innerHTML = isOn
-        ? '🔊 <span class="hide-mobile">Audio</span>'
-        : '🔇 <span class="hide-mobile">Audio</span>';
-    });
-
-    function showScreen(target) {
-      [screenStart, screenQuiz, screenResult].forEach(el => {
-        el.classList.add('hidden');
-        el.classList.remove('enter');
-      });
-      target.classList.remove('hidden');
-      void target.offsetWidth;
-      target.classList.add('enter');
-    }
-
-    function startQuiz() {
-      audio.playClick();
-      currentIndex = 0;
-      score = 0;
-      correctCount = 0;
-      streak = 0;
-      bestStreak = 0;
-      showScreen(screenQuiz);
-      renderQuestion();
-    }
-
-    function renderQuestion() {
-      answered = false;
-      const q = QUESTIONS[currentIndex];
-      setVisualMode(q.mode);
-
-      const topicEl = document.getElementById('q-topic');
-      topicEl.textContent = q.topic;
-      topicEl.className = `topic-tag ${q.mode}`;
-
-      document.getElementById('q-streak').textContent = `🔥 ${streak}`;
-      document.getElementById('q-counter').textContent = `${currentIndex + 1} / ${QUESTIONS.length}`;
-      document.getElementById('progress-fill').style.width = `${(currentIndex / QUESTIONS.length) * 100}%`;
-      document.getElementById('q-text').textContent = q.question;
-
-      const expBox = document.getElementById('explanation-box');
-      expBox.classList.remove('visible');
-      const nextBtn = document.getElementById('btn-next');
-      nextBtn.classList.remove('visible');
-      nextBtn.textContent = currentIndex === QUESTIONS.length - 1
-        ? 'Lihat Hasil Ekspedisi ✨'
-        : 'Lanjut ke Sektor Berikutnya →';
-
-      const container = document.getElementById('options-container');
-      container.innerHTML = '';
-
-      const letters = ['A', 'B', 'C', 'D'];
-      q.options.forEach((optText, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.style.animationDelay = `${idx * 0.07}s`;
-        btn.innerHTML = `
-          <span class="option-letter">${letters[idx]}</span>
-          <span>${optText}</span>
-        `;
-        btn.addEventListener('click', () => handleAnswer(idx, btn));
-        container.appendChild(btn);
-      });
-    }
-
-    function handleAnswer(selectedIdx, selectedBtn) {
-      if (answered) return;
-      answered = true;
-
-      const q = QUESTIONS[currentIndex];
-      const allBtns = document.querySelectorAll('.option-btn');
-      allBtns.forEach(b => (b.disabled = true));
-
-      const isCorrect = selectedIdx === q.answer;
-      const expBox = document.getElementById('explanation-box');
-      const expTitle = document.getElementById('exp-title');
-      const expText = document.getElementById('exp-text');
-
-      if (isCorrect) {
-        selectedBtn.classList.add('correct');
-        correctCount++;
-        streak++;
-        if (streak > bestStreak) bestStreak = streak;
-        score += 100 + streak * 20;
-        audio.playCorrect();
-        spawnBurst(q.mode === 'bh' ? '#ff8a3d' : '#38bdf8');
-        expTitle.textContent = '✅ Tepat Sekali!';
-        expBox.style.borderLeftColor = 'var(--correct)';
-      } else {
-        selectedBtn.classList.add('wrong');
-        allBtns[q.answer].classList.add('correct');
-        streak = 0;
-        audio.playWrong();
-        screenQuiz.classList.remove('shake');
-        void screenQuiz.offsetWidth;
-        screenQuiz.classList.add('shake');
-        expTitle.textContent = '❌ Kurang Tepat — Fakta Kosmik:';
-        expBox.style.borderLeftColor = 'var(--wrong)';
-      }
-
-      document.getElementById('q-streak').textContent = `🔥 ${streak}`;
-      document.getElementById('progress-fill').style.width = `${((currentIndex + 1) / QUESTIONS.length) * 100}%`;
-      expText.textContent = q.explanation;
-      expBox.classList.add('visible');
-      document.getElementById('btn-next').classList.add('visible');
-    }
-
-    function nextStep() {
-      audio.playClick();
-      currentIndex++;
-      if (currentIndex < QUESTIONS.length) {
-        renderQuestion();
-      } else {
-        showResults();
-      }
-    }
-
-    function showResults() {
-      showScreen(screenResult);
-      const pct = Math.round((correctCount / QUESTIONS.length) * 100);
-      document.getElementById('res-score').textContent = `${pct}%`;
-      document.getElementById('res-correct').textContent = `${correctCount}/${QUESTIONS.length}`;
-      document.getElementById('res-points').textContent = score;
-      document.getElementById('res-best-streak').textContent = `${bestStreak}x`;
-
-      const titleEl = document.getElementById('res-title');
-      const descEl = document.getElementById('res-desc');
-
-      if (pct >= 80) {
-        titleEl.textContent = 'Astrofisikawan Ulung! 🌌';
-        descEl.textContent = 'Pemahamanmu tentang gravitasi ekstrem, horizon peristiwa, dan bintang pulsar luar biasa tajam.';
-        spawnBurst('#38bdf8');
-      } else if (pct >= 50) {
-        titleEl.textContent = 'Navigator Antarbintang 🚀';
-        descEl.textContent = 'Hasil yang solid! Kamu sudah menguasai dasar-dasar objek paling ekstrem di alam semesta.';
-      } else {
-        titleEl.textContent = 'Kadet Ruang Angkasa 🛰️';
-        descEl.textContent = 'Perjalanan kosmik baru dimulai. Ulangi misi untuk menaklukkan misteri lubang hitam dan bintang neutron!';
-      }
-    }
-
-    document.getElementById('btn-start').addEventListener('click', startQuiz);
-    document.getElementById('btn-next').addEventListener('click', nextStep);
-    document.getElementById('btn-restart').addEventListener('click', startQuiz);
-  </script>
+<div id="ld"><div class="orb"></div><div class="ldt">ISEA</div><div class="lds">KOSMOS QUIZ • BY KOVTHEGREAT</div><div class="ldb"><i id="ldI"></i></div><div class="ldm" id="ldM">Menyalakan teleskop…</div></div>
+<canvas id="cv"></canvas>
+<header class="top">
+  <div class="grp">
+    <button id="fbh" class="gb a-bh">🕳️ <span class="hm">Black Hole</span></button>
+    <button id="fns" class="gb">💫 <span class="hm">Neutron Star</span></button>
+  </div>
+  <div class="grp">
+    <button id="bOn" class="gb hidden">🟢 0</button>
+    <button id="bLb" class="gb">🏆</button>
+    <button id="bAu" class="gb">🔇</button>
+  </div>
+</header>
+
+<main class="shell">
+  <div class="org"><div class="acr">ISEA</div><div class="full">International Space Education Association</div><div class="by">by <span class="cn">KovTheGreat</span></div></div>
+
+  <section id="sStart" class="card enter">
+    <div class="badge">✨ Simulasi Kosmik Interaktif</div>
+    <h1>Misteri Black Hole & Neutron Star</h1>
+    <p class="sub">Uji astrofisikamu bersama <b>ISEA</b>: 30 soal, timer, bantuan, dan papan peringkat.</p>
+    <div class="hero"><div><b>30</b><span>Soal</span></div><div><b>2</b><span>Topik</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>🔭</b><span>Jelajah</span></div></div>
+    <label class="l" for="name">Nama Penjelajah</label>
+    <input id="name" maxlength="16" autocomplete="off" placeholder="Tulis namamu..." />
+    <label class="l">Topik</label>
+    <div class="seg" id="segM"><button data-v="all" class="on">🌌 Campuran</button><button data-v="bh">🕳️ Black Hole</button><button data-v="ns">💫 Neutron</button></div>
+    <label class="l">Jumlah Soal</label>
+    <div class="seg" id="segN"><button data-v="10" class="on">10</button><button data-v="20">20</button><button data-v="30">30</button></div>
+    <div class="fact" id="fact"></div>
+    <button id="bGo" class="pb">Mulai Ekspedisi 🚀</button>
+    <button id="bLb2" class="sb">🏆 Papan Peringkat</button>
+  </section>
+
+  <section id="sQuiz" class="card hidden">
+    <div class="qh"><span id="qTag" class="tag bh">Black Hole</span><div class="st"><span id="qSc">⭐ 0</span><span id="qSt">🔥 0</span><span id="qCt">1/10</span></div></div>
+    <div class="tm"><i id="tmBar"></i></div>
+    <div class="pg"><i id="pgBar"></i></div>
+    <div class="ll"><button id="l50">✂️ 50:50</button><button id="lT">⏱️ +10 detik</button><span id="tL" class="st" style="margin-left:auto;font-size:.95rem">20s</span></div>
+    <h2 id="qTx" class="qt"></h2>
+    <div id="ops" class="ops"></div>
+    <div id="ex" class="ex"><b id="exT"></b><span id="exX"></span><button id="exAI" class="sb" style="margin-top:12px">🤖 Tanya Kosmo AI soal ini</button></div>
+    <button id="nx" class="pb">Lanjut →</button>
+  </section>
+
+  <section id="sRes" class="card hidden">
+    <div class="ring" id="rRing">0%</div>
+    <h2 class="rt" id="rT"></h2>
+    <p class="rd" id="rD"></p>
+    <div class="sum"><div><b id="rC">0</b><span>Benar</span></div><div><b id="rP">0</b><span>Skor</span></div><div><b id="rS">0</b><span>Streak</span></div><div><b id="rTm">0s</b><span>Rata-rata</span></div></div>
+    <label class="l" id="rvL">Perlu Dipelajari</label>
+    <div class="rv" id="rv"></div>
+    <button id="bSh" class="sb">📤 Bagikan Skor</button>
+    <button id="bAg" class="pb" style="margin-top:10px">Ulangi Ekspedisi 🔄</button>
+    <button id="bHm" class="sb">🏠 Menu Utama</button>
+  </section>
+
+  <section id="sLb" class="card hidden">
+    <h1 style="font-size:1.7rem">🏆 Papan Peringkat</h1>
+    <div class="seg" id="segL" style="margin-top:6px"><button data-v="best" class="on">🏅 Terbaik</button><button data-v="new">🕒 Terbaru</button><button data-v="all">🌍 Global</button></div>
+    <ul class="lb" id="lbL"></ul>
+    <button id="bRk" class="sb" style="margin:0 0 10px">📋 Salin Rekap (kirim ke WA)</button>
+    <button id="bBack" class="pb">← Kembali</button>
+    <button id="bClr" class="sb">Hapus Peringkat</button>
+  </section>
+  <section id="sOn" class="card hidden">
+    <h1 style="font-size:1.7rem">🟢 Lagi Online</h1>
+    <p class="sub" id="onC" style="margin:6px 0 0"></p>
+    <ul class="lb" id="onL"></ul>
+    <button id="bOnBack" class="pb">← Kembali</button>
+  </section>
+  <section id="sExp" class="card hidden">
+    <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos</h1>
+    <p class="sub" style="margin:6px 0 0">Ketuk kartu untuk membuka detail objek paling ekstrem di alam semesta.</p>
+    <div class="exg" id="exg"></div>
+  </section>
+
+  <section id="sAI" class="card hidden">
+    <div class="aih"><h1 style="font-size:1.7rem">🤖 Kosmo AI</h1><button id="aiK" class="gb">⚙️ Kunci AI</button></div>
+    <p class="sub" style="margin:6px 0 0">Tanya apa saja soal lubang hitam, bintang neutron, dan kosmos.</p>
+    <div class="chat" id="chat"></div>
+    <div class="chips" id="chips"></div>
+    <div class="ci"><input id="aiIn" maxlength="300" placeholder="Tanya Kosmo..." autocomplete="off"><button id="aiGo" class="pb">➤</button></div>
+  </section>
+</main>
+<nav id="nav"><button data-t="quiz" class="on">🎯<span>Kuis</span></button><button data-t="exp">🔭<span>Jelajah</span></button><button data-t="ai">🤖<span>Kosmo AI</span></button><button data-t="lb">🏆<span>Peringkat</span></button></nav>
+
+<footer class="foot"><div><span>ISEA • International Space Education Association</span><span>•</span><span class="cn">KovTheGreat</span></div></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== BANK SOAL (jawaban benar selalu di posisi pertama; diacak saat main) ===== */
+const Q=(m,q,o,e)=>({m,q,o,e});
+const QS=[
+Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
+Q('ns','Seberapa padat materi sebuah bintang neutron?',['Satu sendok teh bermassa sekitar 1 miliar ton','Setara kepadatan inti Jupiter','10 kali lebih padat dari besi','Sama dengan kepadatan inti Matahari'],'Massa 1,4–2 kali Matahari dimampatkan dalam bola berdiameter sekitar 20 km.'),
+Q('bh','Peregangan ekstrem objek yang jatuh ke lubang hitam akibat perbedaan gaya pasang surut disebut...',['Spaghettification (Spagetifikasi)','Lensing Gravitasi','Radiasi Hawking','Efek Doppler'],'Gravitasi di bagian yang lebih dekat jauh lebih kuat, sehingga objek memanjang seperti mi.'),
+Q('ns','Bintang neutron berputar cepat yang memancarkan berkas radiasi seperti mercusuar disebut...',['Pulsar','Quasar','Blazar','Supernova Tipe Ia'],'Saat berkas dari kutub magnetik menyapu Bumi, kita mendeteksinya sebagai denyutan teratur.'),
+Q('bh','Mengapa cahaya tampak melengkung membentuk cincin terang di sekitar bayangan lubang hitam?',['Gravitational Lensing (pembelokan ruang-waktu)','Pantulan dari permukaan padat','Pembiasan gas helium dingin','Medan magnet bintang pendamping'],'Massa lubang hitam melengkungkan ruang-waktu sehingga cahaya dari belakang piringan dibelokkan ke atas dan bawah.'),
+Q('ns','Bintang neutron dengan medan magnet terkuat yang pernah diketahui disebut...',['Magnetar','Katai Putih','Protobintang','Bintang Wolf-Rayet'],'Medan magnet magnetar bisa sekitar seribu triliun kali medan magnet Bumi.'),
+Q('bh','Apa nama lubang hitam supermasif di pusat galaksi Bima Sakti?',['Sagittarius A*','Messier 87*','Cygnus X-1','TON 618'],'Sgr A* bermassa sekitar 4 juta Matahari dan dicitrakan langsung oleh Event Horizon Telescope pada 2022.'),
+Q('ns','Peristiwa apa yang biasanya melahirkan bintang neutron?',['Supernova runtuh-inti bintang masif','Tabrakan dua komet raksasa','Pendinginan katai merah','Penggabungan dua planet gas'],'Inti bintang masif yang kehabisan bahan bakar runtuh oleh gravitasinya sendiri lalu memicu supernova.'),
+Q('bh','Menurut Stephen Hawking, bagaimana lubang hitam bisa kehilangan massa?',['Melalui Radiasi Hawking dekat Event Horizon','Penguapan air di piringan akresi','Angin matahari bintang terdekat','Peluruhan radioaktif inti besi'],'Efek kuantum di dekat horizon membuat lubang hitam memancarkan radiasi dan perlahan menguap.'),
+Q('ns','Tabrakan dua bintang neutron (kilonova) penting karena menghasilkan...',['Gelombang gravitasi dan unsur berat seperti emas & platinum','Hidrogen murni pertama','Lapisan ozon planet','Cincin es planet raksasa'],'Penggabungan bintang neutron memicu proses-r yang menciptakan logam berat.'),
+Q('bh','Jari-jari Schwarzschild menentukan...',['Ukuran event horizon lubang hitam tak berputar','Suhu piringan akresi','Kecepatan rotasi lubang hitam','Umur lubang hitam'],'Rumusnya R = 2GM/c². Makin besar massa, makin besar horizonnya.'),
+Q('ns','Siapa yang pertama menemukan pulsar pada 1967?',['Jocelyn Bell Burnell','Stephen Hawking','Carl Sagan','Edwin Hubble'],'Jocelyn Bell Burnell mendeteksi sinyal radio berdenyut teratur; awalnya sempat dijuluki "LGM-1".'),
+Q('bh','Gambar pertama lubang hitam (2019) menunjukkan lubang hitam di galaksi...',['Messier 87','Bima Sakti','Andromeda','Galaksi Segitiga'],'Event Horizon Telescope merilis citra bayangan M87* pada April 2019.'),
+Q('ns','Sekitar berapa diameter bintang neutron?',['±20 kilometer','±2.000 kilometer','±200.000 kilometer','±2 kilometer'],'Seukuran sebuah kota, tetapi massanya lebih dari Matahari.'),
+Q('bh','Gelombang gravitasi dari penggabungan lubang hitam pertama kali dideteksi oleh...',['LIGO pada 2015','Hubble pada 1990','Voyager pada 1977','Kepler pada 2009'],'Sinyal GW150914 membuktikan prediksi Einstein dan keberadaan lubang hitam biner.'),
+Q('ns','Apa yang menahan bintang neutron agar tidak runtuh lebih jauh?',['Tekanan degenerasi neutron','Fusi hidrogen','Angin bintang','Radiasi Hawking'],'Neutron tidak bisa dipadatkan melampaui batas tertentu karena prinsip larangan Pauli.'),
+Q('bh','Teori yang memprediksi keberadaan lubang hitam dan singularitas adalah...',['Relativitas Umum Einstein','Hukum Kepler','Teori Big Crunch Newton','Model Atom Bohr'],'Solusi Schwarzschild (1916) pada persamaan Einstein menggambarkan lubang hitam.'),
+Q('ns','Pulsar milidetik adalah pulsar yang...',['Berputar ratusan kali per detik','Berusia milidetik','Berukuran milimeter','Hanya ada di galaksi Andromeda'],'Biasanya dipercepat oleh materi dari bintang pendamping.'),
+Q('bh','Piringan akresi lubang hitam bersinar terang karena...',['Gesekan dan pemanasan materi yang berputar cepat','Reaksi fusi di dalam horizon','Pantulan cahaya bintang','Muatan listrik lubang hitam'],'Materi berpilin menjadi jutaan derajat dan memancarkan sinar-X.'),
+Q('ns','Pulsar di Nebula Kepiting adalah sisa supernova yang diamati pada tahun...',['1054','1604','1987','1066 SM'],'Supernova SN 1054 dicatat astronom Tiongkok; pulsarnya berputar ±30 kali per detik.'),
+Q('bh','Lubang hitam yang berputar disebut...',['Lubang hitam Kerr','Lubang hitam Schwarzschild','Lubang hitam Planck','Lubang hitam Hubble'],'Rotasi menyeret ruang-waktu di sekitarnya (frame dragging).'),
+Q('ns','Perubahan mendadak kecepatan rotasi pulsar disebut...',['Glitch','Flare','Redshift','Transit'],'Diduga akibat gempa bintang atau transfer momentum dari inti superfluida.'),
+Q('bh','Pengamat jauh melihat jam yang jatuh mendekati event horizon akan...',['Berdetak makin lambat (dilatasi waktu)','Berdetak makin cepat','Berhenti selamanya lalu meledak','Berputar mundur'],'Dilatasi waktu gravitasi membuat waktu tampak melambat dan cahayanya memerah.'),
+Q('ns','Bintang neutron dengan massa melampaui batas Tolman–Oppenheimer–Volkoff (±2–3 Matahari) akan...',['Runtuh menjadi lubang hitam','Menjadi katai putih','Menjadi bintang raksasa merah','Menjadi planet'],'Tekanan neutron tak lagi mampu melawan gravitasi.'),
+Q('bh','Quasar adalah...',['Inti galaksi sangat terang bertenaga lubang hitam supermasif','Bintang neutron berputar cepat','Sisa supernova','Awan gas dingin'],'Materi yang jatuh ke lubang hitam supermasif memancarkan energi luar biasa.'),
+Q('ns','Struktur eksotis di kerak dalam bintang neutron yang disebut "nuclear pasta" terbentuk karena...',['Tekanan ekstrem menyusun inti atom menjadi bentuk lembaran dan batang','Pembekuan air','Fusi helium','Debu antarbintang'],'Inti atom dipadatkan hingga menyerupai bentuk spageti dan lasagna.'),
+Q('bh','Di mana cahaya dapat mengorbit lubang hitam dalam lintasan tak stabil?',['Photon sphere (±1,5 kali jari-jari Schwarzschild)','Di dalam singularitas','Di jari-jari 10 kali horizon','Hanya di luar galaksi'],'Cincin foton menghasilkan tepi terang pada citra lubang hitam.'),
+Q('ns','Pulsar dijuluki "jam kosmik" karena...',['Denyutannya sangat teratur, setara jam atom','Mengeluarkan bunyi tik-tik','Berputar sesuai waktu Bumi','Hanya terlihat siang hari'],'Stabilitasnya dipakai untuk mendeteksi gelombang gravitasi dan navigasi pesawat luar angkasa.'),
+Q('bh','Titik berkepadatan tak hingga di pusat lubang hitam menurut relativitas umum disebut...',['Singularitas','Horizon','Ergosfer','Nebula'],'Di sini hukum fisika yang kita kenal diperkirakan runtuh; butuh teori gravitasi kuantum.')
+];
+const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.'];
+
+/* ===== UTIL ===== */
+const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const ls={g:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const vib=n=>navigator.vibrate&&navigator.vibrate(n);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('v');setTimeout(()=>e.classList.remove('v'),2200)}
+
+/* ===== AUDIO ===== */
+const au={c:null,on:false,d:null,
+ t(f,ty='sine',du=.25,v=.12){if(!this.on)return;const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.0001,n+du);o.connect(g);g.connect(this.c.destination);o.start(n);o.stop(n+du)},
+ toggle(){if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();this.c.resume();this.on=!this.on;if(this.on){const o=this.c.createOscillator(),g=this.c.createGain();o.frequency.value=55;g.gain.value=.045;o.connect(g);g.connect(this.c.destination);o.start();this.d=o;this.t(520,'sine',.12,.08)}else if(this.d){this.d.stop();this.d=null}return this.on},
+ ok(){this.t(523,'sine',.25,.14);setTimeout(()=>this.t(659,'sine',.28,.14),80);setTimeout(()=>this.t(784,'triangle',.4,.14),160)},
+ no(){this.t(190,'sawtooth',.28,.09);setTimeout(()=>this.t(145,'sawtooth',.35,.09),110)},
+ clk(){this.t(440,'sine',.08,.06)},tick(){this.t(900,'square',.05,.03)}};
+
+/* ===== CANVAS ===== */
+const cv=$('cv'),cx=cv.getContext('2d');let W,H;
+const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
+const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
+addEventListener('pointermove',e=>{sc.mx=(e.clientX/W-.5)*2;sc.my=(e.clientY/H-.5)*2});
+const stars=Array.from({length:150},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.7+.4,w:Math.random()*6.28}));
+const disk=Array.from({length:130},()=>({a:Math.random()*6.28,r:75+Math.random()*145,v:.008+Math.random()*.015,s:Math.random()*2.2+.8,h:22+Math.random()*28}));
+function burst(col){for(let i=0;i<36;i++){const a=6.283*i/36+Math.random()*.2,v=2.5+Math.random()*5.5;sc.bp.push({x:W/2,y:H*.25,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c:col})}}
+function drawBH(x,y,al){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
+ let g=cx.createRadialGradient(0,0,50,0,0,260);g.addColorStop(0,'rgba(255,130,45,.28)');g.addColorStop(.5,'rgba(180,65,20,.1)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,260,0,6.283);cx.fill();
+ cx.save();cx.strokeStyle='rgba(255,185,110,.42)';cx.lineWidth=10;cx.shadowColor='#ff7b29';cx.shadowBlur=24;cx.beginPath();cx.arc(0,0,74,0,6.283);cx.stroke();cx.restore();
+ cx.save();cx.rotate(-.22);cx.scale(1,.28);g=cx.createRadialGradient(0,0,72,0,0,230);g.addColorStop(0,'rgba(255,240,200,.95)');g.addColorStop(.25,'rgba(255,140,40,.8)');g.addColorStop(.65,'rgba(190,55,15,.35)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,230,0,6.283);cx.fill();
+ disk.forEach(p=>{p.a+=p.v;cx.fillStyle=`hsla(${p.h},100%,72%,.85)`;cx.beginPath();cx.arc(Math.cos(p.a)*p.r,Math.sin(p.a)*p.r,p.s,0,6.283);cx.fill()});cx.restore();
+ cx.fillStyle='#010103';cx.beginPath();cx.arc(0,0,66,0,6.283);cx.fill();cx.strokeStyle='rgba(255,225,175,.9)';cx.lineWidth=2;cx.beginPath();cx.arc(0,0,67,0,6.283);cx.stroke();cx.restore()}
+function drawNS(x,y,al,t){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
+ let g=cx.createRadialGradient(0,0,12,0,0,210);g.addColorStop(0,'rgba(186,230,253,.85)');g.addColorStop(.25,'rgba(56,189,248,.35)');g.addColorStop(.65,'rgba(99,102,241,.12)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,210,0,6.283);cx.fill();
+ const r=t*2.8;cx.save();cx.rotate(Math.sin(r)*.45);cx.strokeStyle='rgba(125,211,252,.24)';cx.lineWidth=1.4;
+ for(let i=1;i<=3;i++){cx.beginPath();cx.ellipse(-i*42,0,i*42,i*28,0,0,6.283);cx.stroke();cx.beginPath();cx.ellipse(i*42,0,i*42,i*28,0,0,6.283);cx.stroke()}
+ const p=.85+Math.abs(Math.cos(r))*.35;
+ [-1,1].forEach(d=>{const j=cx.createLinearGradient(0,0,0,d*290*p);j.addColorStop(0,'rgba(224,242,254,.95)');j.addColorStop(.4,'rgba(56,189,248,.45)');j.addColorStop(1,'rgba(56,189,248,0)');cx.fillStyle=j;cx.beginPath();cx.moveTo(-4,0);cx.lineTo(-34*p,d*290*p);cx.lineTo(34*p,d*290*p);cx.lineTo(4,0);cx.fill()});
+ cx.restore();cx.shadowColor='#38bdf8';cx.shadowBlur=32;cx.fillStyle='#fff';cx.beginPath();cx.arc(0,0,18,0,6.283);cx.fill();cx.restore()}
+(function loop(){sc.t+=.016;sc.bl+=(sc.tm-sc.bl)*.05;sc.sx+=(sc.mx-sc.sx)*.06;sc.sy+=(sc.my-sc.sy)*.06;cx.clearRect(0,0,W,H);
+ stars.forEach(s=>{cx.fillStyle=`rgba(226,232,240,${(.45+Math.sin(sc.t*2.2+s.w)*.45)*s.z})`;cx.beginPath();cx.arc((s.x*W+sc.sx*26*s.z+W)%W,(s.y*H+sc.sy*26*s.z+H)%H,s.s,0,6.283);cx.fill()});
+ const x=W/2+sc.sx*22,y=H*.25+sc.sy*18;drawBH(x,y,1-sc.bl);drawNS(x,y,sc.bl,sc.t);
+ for(let i=sc.bp.length-1;i>=0;i--){const p=sc.bp[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.95;p.vy*=.95;p.l-=.025;if(p.l<=0){sc.bp.splice(i,1);continue}cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,3.2*p.l,0,6.283);cx.fill();cx.globalAlpha=1}
+ requestAnimationFrame(loop)})();
+
+/* ===== STATE & NAVIGASI ===== */
+let G={}, cfg={mode:'all',n:10};
+const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
+let cs='start';
+const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
+function show(k){
+ const c=scr[cs],n=scr[k];cs=k;
+ $('nav').classList.toggle('off',k==='quiz');
+ [...$('nav').children].forEach(b=>b.classList.toggle('on',b.dataset.t===NAVMAP[k]));
+ const go=()=>{Object.values(scr).forEach(e=>{e.classList.add('hidden');e.classList.remove('enter','leave')});n.classList.remove('hidden');void n.offsetWidth;n.classList.add('enter');scrollTo({top:0,behavior:'smooth'})};
+ if(c&&c!==n&&!c.classList.contains('hidden')){c.classList.add('leave');setTimeout(go,220)}else go();
+}
+function vis(m){sc.tm=m==='bh'?0:1;$('fbh').classList.toggle('a-bh',m==='bh');$('fns').classList.toggle('a-ns',m!=='bh')}
+$('fbh').onclick=()=>{au.clk();vis('bh')};$('fns').onclick=()=>{au.clk();vis('ns')};
+$('bAu').onclick=()=>{$('bAu').textContent=au.toggle()?'🔊':'🔇'};
+function seg(id,key,num){$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();[...$(id).children].forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[key]=num?+b.dataset.v:b.dataset.v;ls.s('isea_cfg',cfg)}}
+seg('segM','mode');seg('segN','n',1);
+function applyCfg(){['segM','segN'].forEach((id,i)=>[...$(id).children].forEach(b=>b.classList.toggle('on',b.dataset.v==String(i?cfg.n:cfg.mode))))}
+cfg=Object.assign(cfg,ls.g('isea_cfg',{}));applyCfg();
+$('name').value=ls.g('isea_name','');
+const newFact=()=>{$('fact').innerHTML='<b>💡 Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0]};newFact();
+
+/* ===== KUIS ===== */
+const TIME=20;
+function start(){
+ const name=$('name').value.trim();
+ if(!name){const n=$('name');n.classList.remove('err');void n.offsetWidth;n.classList.add('err');n.focus();vib(80);return toast('Isi namamu dulu ya 🚀')}
+ ls.s('isea_name',name);au.clk();
+ let pool=QS.filter(q=>cfg.mode==='all'||q.m===cfg.mode);
+ pool=sh(pool).slice(0,Math.min(cfg.n,pool.length));
+ G={live:true,name,qs:pool.map(q=>({...q,opts:sh(q.o)})),i:0,score:0,ok:0,st:0,best:0,wrong:[],times:[],f50:false,fT:false};
+ show('quiz');render();
+}
+function render(){
+ G.ans=false;const q=G.qs[G.i];vis(q.m);presence(`Main soal ${G.i+1}/${G.qs.length}`);
+ $('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';$('qTag').className='tag '+q.m;
+ $('qSt').textContent='🔥 '+G.st;$('qSc').textContent='⭐ '+G.score;$('qCt').textContent=`${G.i+1}/${G.qs.length}`;
+ $('pgBar').style.width=G.i/G.qs.length*100+'%';$('qTx').textContent=q.q;
+ $('ex').classList.remove('v');$('nx').classList.remove('v');
+ $('nx').textContent=G.i===G.qs.length-1?'Lihat Hasil ✨':'Lanjut →';
+ $('l50').disabled=G.f50;$('lT').disabled=G.fT;
+ const c=$('ops');c.innerHTML='';
+ q.opts.forEach((t,i)=>{const b=document.createElement('button');b.className='op';b.style.animationDelay=i*.07+'s';b.innerHTML=`<i>${'ABCD'[i]}</i><span></span>`;b.lastChild.textContent=t;b.onclick=()=>answer(i);c.appendChild(b)});
+ G.left=TIME;G.max=TIME;G.t0=performance.now();clearInterval(G.iv);G.iv=setInterval(tick,100);tick();
+}
+function tick(){
+ const el=(performance.now()-G.t0)/1000;G.left=Math.max(0,G.max-el);
+ $('tmBar').style.width=G.left/G.max*100+'%';$('tmBar').style.backgroundPosition=(1-G.left/G.max)*100+'% 0';
+ $('tL').textContent=Math.ceil(G.left)+'s';
+ if(G.left<=5&&G.left>0&&Math.abs(G.left-Math.round(G.left))<.06)au.tick();
+ if(G.left<=0){clearInterval(G.iv);answer(-1)}
+}
+function answer(i){
+ if(G.ans)return;G.ans=true;clearInterval(G.iv);
+ const q=G.qs[G.i],bs=[...document.querySelectorAll('.op')];bs.forEach(b=>b.disabled=true);
+ const used=G.max-G.left,right=i>=0&&q.opts[i]===q.o[0],ci=q.opts.indexOf(q.o[0]);
+ G.times.push(used);
+ if(right){bs[i].classList.add('ok');G.ok++;G.st++;G.best=Math.max(G.best,G.st);G.score+=100+G.st*20+Math.floor(G.left*3);au.ok();vib(40);burst(q.m==='bh'?'#ff8a3d':'#38bdf8');$('exT').textContent=G.left>15?'⚡ Secepat kilat!':'✅ Tepat Sekali!';$('ex').style.borderLeftColor='var(--ok)'}
+ else{if(i>=0)bs[i].classList.add('no');bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});au.no();vib([60,40,60]);scr.quiz.classList.remove('shake');void scr.quiz.offsetWidth;scr.quiz.classList.add('shake');$('exT').textContent=i<0?'⏰ Waktu Habis — Fakta Kosmik:':'❌ Kurang Tepat — Fakta Kosmik:';$('ex').style.borderLeftColor='var(--no)'}
+ $('qSt').textContent='🔥 '+G.st;$('qSc').textContent='⭐ '+G.score;$('pgBar').style.width=(G.i+1)/G.qs.length*100+'%';
+ $('exX').textContent=q.e;$('ex').classList.add('v');$('nx').classList.add('v');
+}
+$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
+$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
+$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
+addEventListener('keydown',e=>{if(scr.quiz.classList.contains('hidden'))return;if(!G.ans&&'1234'.includes(e.key)&&e.key)return answer(+e.key-1);if(G.ans&&(e.key==='Enter'||e.key===' ')){e.preventDefault();$('nx').click()}});
+
+/* ===== HASIL & PERINGKAT ===== */
+function results(){
+ const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
+ G.live=false;show('res');presence('Selesai · '+G.score+' poin');$('rRing').textContent=pct+'%';$('rC').textContent=`${G.ok}/${n}`;$('rP').textContent=G.score;$('rS').textContent=G.best+'x';$('rTm').textContent=avg+'s';
+ let t,d;
+ if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, '+G.name+'! Kamu menguasai gravitasi ekstrem dengan sangat tajam.';burst('#38bdf8');burst('#ff8a3d')}
+ else if(pct>=70){t='Navigator Antarbintang 🚀';d='Hasil hebat, '+G.name+'! Pemahamanmu tentang objek paling ekstrem sudah solid.'}
+ else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, '+G.name+'! Pelajari lagi beberapa fakta di bawah.'}
+ else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, '+G.name+'. Ulangi misi untuk menaklukkan misteri kosmos!'}
+ $('rT').textContent=t;$('rD').textContent=d;
+ const rv=$('rv');rv.innerHTML='';$('rvL').classList.toggle('hidden',!G.wrong.length);
+ G.wrong.forEach(w=>{const e=document.createElement('div');e.textContent=w.q;const s=document.createElement('small');s.textContent='✔ '+w.a;e.appendChild(s);rv.appendChild(e)});
+ const b=ls.g('isea_lb',[]);G.rid=Date.now();b.push({n:G.name,s:G.score,p:pct,ok:G.ok,t:n,m:cfg.mode,d:G.rid});ls.s('isea_lb',b.slice(-300));
+ const rk=[...b].sort((x,y)=>y.s-x.s).findIndex(x=>x.d===G.rid)+1;toast('🏆 Peringkat #'+rk+' dari '+b.length+' permainan');
+ if(db)db.ref('scores').push({n:G.name,s:G.score,ok:G.ok,t:n,d:G.rid});
+}
+let lbS='best';
+function paint(list,rm){
+ const l=$('lbL');l.innerHTML='';
+ if(!list.length)l.innerHTML='<li>Belum ada data. Jadilah yang pertama! 🚀</li>';
+ list.forEach(x=>{const r=rm.get(x.d),li=document.createElement('li');if(x.d===G.rid)li.className='me';
+  li.innerHTML=`<span>${['🥇','🥈','🥉'][r-1]||r}</span><div><b></b><small></small></div><em>${x.s}</em>`;
+  li.querySelector('b').textContent=x.n;
+  li.querySelector('small').textContent=(x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+new Date(x.d).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  l.appendChild(li)});
+}
+function board(){
+ au.clk();[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
+ if(lbS==='all'){
+  if(!db){$('lbL').innerHTML='<li>Fitur online belum aktif. Isi config Firebase di file dulu.</li>';return}
+  $('lbL').innerHTML='<li>Memuat...</li>';
+  db.ref('scores').orderByChild('s').limitToLast(50).once('value').then(sn=>{const a=[];sn.forEach(c=>{a.push(c.val())});a.reverse();paint(a,new Map(a.map((x,i)=>[x.d,i+1])))}).catch(()=>{$('lbL').innerHTML='<li>Gagal memuat data</li>'});
+  return}
+ const b=ls.g('isea_lb',[]),rank=[...b].sort((x,y)=>y.s-x.s),rm=new Map(rank.map((x,i)=>[x.d,i+1]));
+ paint(lbS==='best'?rank:[...b].reverse(),rm);
+}
+$('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;board()}};
+$('bRk').onclick=async()=>{const b=ls.g('isea_lb',[]).sort((x,y)=>y.s-x.s);if(!b.length)return toast('Belum ada data');
+ const t='🏆 Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} poin)`).join('\n');
+ try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}};
+/* ===== ONLINE: siapa yang lagi buka web (Firebase Realtime Database) ===== */
+const FB={apiKey:"",authDomain:"",databaseURL:"",projectId:""}; // <-- ISI dari Firebase Console
+const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
+let db=null,meRef=null,cur='Di menu',OL={};
+function presence(st){cur=st;if(!db||!meRef)return;meRef.set({n:$('name').value.trim()||'Tamu',st:st,t:firebase.database.ServerValue.TIMESTAMP}).catch(()=>{})}
+function drawOn(){
+ const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');l.innerHTML='';
+ $('onC').textContent=a.length+' orang sedang membuka web';
+ a.forEach(([k,v])=>{const li=document.createElement('li');if(k===pid)li.className='me';li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
+  li.querySelector('b').textContent=v.n||'Tamu';li.querySelector('small').textContent=v.st||'';li.querySelector('em').textContent=k===pid?'kamu':'';l.appendChild(li)});
+}
+function initOnline(){
+ if(!FB.databaseURL||typeof firebase==='undefined')return;
+ try{
+  firebase.initializeApp(FB);db=firebase.database();meRef=db.ref('online/'+pid);
+  db.ref('.info/connected').on('value',x=>{if(x.val()){meRef.onDisconnect().remove();presence(cur)}});
+  db.ref('online').on('value',x=>{OL=x.val()||{};$('bOn').textContent='🟢 '+Object.keys(OL).length;if(!scr.on.classList.contains('hidden'))drawOn()});
+  $('bOn').classList.remove('hidden');
+ }catch(e){}
+}
+$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
+$('bOnBack').onclick=()=>{au.clk();show('start')};
+let nt;$('name').addEventListener('input',()=>{clearTimeout(nt);nt=setTimeout(()=>presence(cur),600)});
+$('bLb').onclick=board;$('bLb2').onclick=board;
+$('bBack').onclick=()=>{au.clk();show('start')};
+$('bClr').onclick=()=>{if(confirm('Hapus semua peringkat?')){ls.s('isea_lb',[]);board()}};
+$('bGo').onclick=start;$('bAg').onclick=start;
+$('bHm').onclick=()=>{au.clk();newFact();presence('Di menu');show('start')};
+$('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
+$('bSh').onclick=async()=>{
+ const t=`🚀 ${G.name} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
+ try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
+};
+/* ===== JELAJAH ===== */
+const EX=[
+['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh. Gravitasinya begitu kuat hingga cahaya pun tak bisa lolos dari event horizon.'],
+['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Bersemayam di pusat hampir semua galaksi besar. Asal-usulnya masih diteliti, dan keberadaannya memengaruhi pertumbuhan galaksi.'],
+['💫','Bintang Neutron',['Diameter ±20 km','Massa 1,4 – 2,2 M☉'],'Sisa inti bintang masif setelah supernova. Hampir seluruhnya tersusun dari neutron yang dimampatkan hingga kepadatan inti atom.'],
+['⚡','Pulsar',['Rekor ±716 putaran/detik','Tersebar sebagai jam kosmik'],'Bintang neutron berputar yang memancarkan berkas radio atau sinar-X dari kutub magnetiknya. Denyutnya sangat teratur seperti mercusuar.'],
+['🧲','Magnetar',['Medan ±10¹⁴–10¹⁵ gauss','Termasuk magnet terkuat di alam semesta'],'Bintang neutron dengan medan magnet luar biasa kuat. Perubahan medannya memicu semburan sinar-X dan sinar gamma yang dahsyat.'],
+['💥','Kilonova',['GW170817 (2017)','Sumber emas & platinum'],'Ledakan akibat tabrakan dua bintang neutron. Peristiwa ini memancarkan gelombang gravitasi dan menciptakan unsur-unsur berat.'],
+['✨','Quasar',['Inti galaksi aktif','Bisa lebih terang dari seluruh galaksinya'],'Lubang hitam supermasif yang sedang menelan banyak materi. Piringan akresinya memancarkan energi sangat besar dan terlihat dari miliaran tahun cahaya.']
+];
+EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
+ d.innerHTML='<button class="xh"><span></span><span></span><em>⌄</em></button><div class="xb"><div><p></p><div class="xs"></div></div></div>';
+ d.querySelector('.xh').children[0].textContent=x[0];d.querySelector('.xh').children[1].textContent=x[1];d.querySelector('p').textContent=x[3];
+ x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
+ d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};$('exg').appendChild(d)});
+
+/* ===== KOSMO AI ===== */
+const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
+function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
+ CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
+ return b||'Aku belum menemukan jawabannya di mode offline. Coba kata kunci seperti "pulsar", "event horizon", atau "magnetar". Fakta acak: '+FACTS[Math.random()*FACTS.length|0]}
+function msg(t,w){const d=document.createElement('div');d.className='m '+w;d.textContent=t;$('chat').appendChild(d);$('chat').scrollTop=1e9;return d}
+let hist=[];
+async function ask(q){
+ q=q.trim();if(!q)return;$('aiIn').value='';msg(q,'u');const b=msg('','b');b.innerHTML='<span class="dots"><i></i><i></i><i></i></span>';
+ const key=ls.g('isea_key','');let a;
+ if(key){try{hist.push({role:'user',content:q});
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,system:'Kamu Kosmo, asisten ramah dari ISEA (International Space Education Association) buatan KovTheGreat. Jawab dalam bahasa Indonesia, singkat (maks 5 kalimat), akurat, mudah dipahami pelajar. Fokus pada astrofisika, lubang hitam, bintang neutron, dan kosmos.',messages:hist.slice(-10)})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
+  a=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:a})}
+  catch(e){hist.pop();a='⚠️ AI online gagal ('+e.message+').\n\nJawaban offline: '+offline(q)}}
+ else a=offline(q)+'\n\n(Mode offline. Tekan ⚙️ Kunci AI untuk mengaktifkan Kosmo AI penuh.)';
+ b.textContent=a;$('chat').scrollTop=1e9}
+msg('Halo! Aku Kosmo 🚀 Tanya apa saja soal lubang hitam dan bintang neutron.','b');
+['Apa itu lubang hitam?','Kenapa pulsar berdenyut?','Beda magnetar dan pulsar?','Apa itu kilonova?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
+$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+$('aiK').onclick=()=>{const k=prompt('Tempel API key Anthropic (disimpan hanya di perangkat ini). Kosongkan untuk menghapus:',ls.g('isea_key',''));if(k!==null){ls.s('isea_key',k.trim());toast(k.trim()?'Kunci AI tersimpan ✅':'Kunci dihapus')}};
+$('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Jelaskan lebih dalam dan sederhana: "'+q.q+'" (jawaban benar: '+q.o[0]+')')};
+
+/* ===== NAV BAWAH ===== */
+$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;
+ if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
+
+/* ===== LOADING SCREEN ===== */
+(function(){const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat 30 soal kosmik…','Menyapa Kosmo AI…','Siap meluncur 🚀'];let p=0,i=0;
+ const t=setInterval(()=>{p=Math.min(100,p+16+Math.random()*14);$('ldI').style.width=p+'%';$('ldM').textContent=M[Math.min(M.length-1,i++)];
+  if(p>=100){clearInterval(t);setTimeout(()=>{$('ld').classList.add('out');setTimeout(()=>$('ld').remove(),800);scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter')},350)}},380)})();
+initOnline();
+</script>
 </body>
 </html>
