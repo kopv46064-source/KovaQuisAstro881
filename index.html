@@ -94,17 +94,13 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1e293b;border:1px solid var(--bd);padding:11px 20px;border-radius:999px;font-size:.88rem;font-weight:600;opacity:0;transition:all .4s var(--sp);z-index:60;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .toast.v{opacity:1;transform:translate(-50%,0)}
 html{scroll-behavior:smooth}
-#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .6s var(--sm),visibility .6s,transform .6s var(--sm)}
-#ld.out{opacity:0;visibility:hidden;transform:scale(1.06)}
+#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s var(--sm),visibility .5s}
+#ld.out{opacity:0;visibility:hidden;pointer-events:none}
 .orb{width:96px;height:96px;border-radius:50%;background:#010103;position:relative;box-shadow:0 0 45px rgba(255,138,61,.5),inset 0 0 0 3px rgba(255,200,140,.9);animation:pul 2.4s ease-in-out infinite}
 .orb:before{content:"";position:absolute;inset:-28px;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(255,138,61,.85),rgba(56,189,248,.65),transparent 70%);-webkit-mask:radial-gradient(circle,transparent 56%,#000 58%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 56%,#000 58%,#000 70%,transparent 72%);animation:spn 1.8s linear infinite}
 @keyframes spn{to{transform:rotate(360deg)}}@keyframes pul{50%{transform:scale(1.08)}}
 .ldt{font:800 2.2rem 'Space Grotesk',sans-serif;letter-spacing:.3em;padding-left:.3em}
 .lds{font-size:.72rem;letter-spacing:.22em;color:var(--mu);font-weight:700}
-.ldb{width:230px;height:5px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:8px}
-.ldb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8a3d,#a855f7,#38bdf8);transition:width .35s var(--sm)}
-.ldm{font-size:.8rem;color:var(--mu);min-height:1em}
-.by{font-size:.74rem;color:var(--mu);margin-top:4px;letter-spacing:.09em}
 .leave{opacity:0!important;transform:translateY(-14px) scale(.98)!important;transition:all .22s ease-in}
 .shell{padding-bottom:104px}
 .hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px}
@@ -149,7 +145,7 @@ html{scroll-behavior:smooth}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
-<div id="ld"><div class="orb"></div><div class="ldt">ISEA</div><div class="lds">KOSMOS QUIZ • BY KOVTHEGREAT</div><div class="ldb"><i id="ldI"></i></div><div class="ldm" id="ldM">Menyalakan teleskop…</div></div>
+<div id="ld"><div class="orb"></div><div class="ldt">ISEA</div><div class="lds">KOSMOS QUIZ • BY KOVTHEGREAT</div></div>
 <canvas id="cv"></canvas>
 <header class="top">
   <div class="grp">
@@ -383,21 +379,15 @@ seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
 /* ===== SISTEM PENGAMAN OWNER VS USER UMUM (MASTER KEY LOKAL) ===== */
-const OWNER_SECRET_TOKEN = 'kov_absolute_owner_key_2026';
+const MASTER_SECRET_KEY = 'KovTheGreat2026MasterKey';
 let myDeviceToken = ls.g('isea_device_token', '');
 if(!myDeviceToken){
     myDeviceToken = 'dev_' + Math.random().toString(36).slice(2, 10);
     ls.s('isea_device_token', myDeviceToken);
 }
 
-// Cek apakah perangkat ini adalah pemilik master key KovTheGreat
 function isOwnerDevice() {
-    return myDeviceToken === OWNER_SECRET_TOKEN || ls.g('is_true_owner', false) === true;
-}
-
-// Jika ingin mendaftarkan browser lu sebagai owner permanen (cukup jalankan sekali / otomatis)
-if(!ls.g('is_true_owner', false)) {
-    ls.s('is_true_owner', true);
+    return ls.g('is_true_owner', false) === true;
 }
 
 function initNameSystem() {
@@ -407,13 +397,11 @@ function initNameSystem() {
     if(!nameInput) return;
 
     if(isOwnerDevice()) {
-        // KHUSUS LU (OWNER): Otomatis dikunci mutlak sebagai KovTheGreat tanpa bisa diganti
         nameInput.value = 'KovTheGreat';
         nameInput.disabled = true;
         if(bSetName) bSetName.disabled = true;
         if(notice) notice.textContent = '👑 Mode Owner Aktif: Nama terkunci mutlak sebagai KovTheGreat.';
     } else {
-        // UNTUK ORANG LAIN: Bebas isi nama, ada batasan cooldown 15 hari & tidak boleh pakai KovTheGreat
         let savedName = ls.g('isea_username', '');
         let lastChange = ls.g('isea_name_time', 0);
         let now = Date.now();
@@ -429,32 +417,42 @@ function initNameSystem() {
             } else {
                 nameInput.disabled = false;
                 if(bSetName) bSetName.disabled = false;
-                if(notice) notice.textContent = '✨ Kamu bisa mengganti nama penjelajahmu.';
+                if(notice) notice.textContent = '✨ Kamu bisa mengganti nama penjelajahmu (Bisa ketik kunci owner jika kamu KovTheGreat).';
             }
         } else {
             nameInput.value = '';
             nameInput.disabled = false;
             if(bSetName) bSetName.disabled = false;
-            if(notice) notice.textContent = '✨ Masukkan nama penjelajahmu (Dilarang pakai KovTheGreat).';
+            if(notice) notice.textContent = '✨ Masukkan nama atau masukkan Kunci Owner untuk jadi KovTheGreat.';
         }
 
         if(bSetName) {
             bSetName.onclick = () => {
-                let newName = nameInput.value.trim();
-                if(!newName) return toast('Nama tidak boleh kosong!');
-                if(newName.toLowerCase() === 'kovthegreat') {
-                    toast('❌ Nama KovTheGreat dilindungi dan khusus untuk Owner!');
+                let val = nameInput.value.trim();
+                if(!val) return toast('Nama tidak boleh kosong!');
+
+                // JIKA USER MEMASUKKAN MASTER KEY
+                if(val === MASTER_SECRET_KEY) {
+                    ls.s('is_true_owner', true);
+                    toast('👑 Berhasil! Kunci Owner diterima. Kamu adalah KovTheGreat!');
+                    initNameSystem();
+                    return;
+                }
+
+                if(val.toLowerCase() === 'kovthegreat') {
+                    toast('❌ Nama KovTheGreat dilindungi kunci khusus Owner!');
                     nameInput.value = '';
                     return;
                 }
-                // Cek duplikat di riwayat lokal
+
                 let lb = ls.g('isea_lb', []);
-                let exists = lb.some(x => x.n.toLowerCase() === newName.toLowerCase());
+                let exists = lb.some(x => x.n.toLowerCase() === val.toLowerCase());
                 if(exists) {
-                    toast('❌ Nama sudah dipakai penjelajah lain! Pilih nama lain.');
+                    toast('❌ Nama sudah dipakai penjelajah lain!');
                     return;
                 }
-                ls.s('isea_username', newName);
+
+                ls.s('isea_username', val);
                 ls.s('isea_name_time', Date.now());
                 nameInput.disabled = true;
                 bSetName.disabled = true;
@@ -599,7 +597,6 @@ let lbS='best';
 function paint(rawList){
  const l=$('lbL');if(!l)return;l.innerHTML='';
  
- // Bersihkan nama KovTheGreat palsu dari user lain
  const cleanList = (rawList || []).filter(x => {
      if(!x.n) return false;
      if(x.n.trim().toLowerCase() === 'kovthegreat' && !x.isOwner) return false;
@@ -607,7 +604,6 @@ function paint(rawList){
  });
  cleanList.sort((x,y)=>lbS==='new'?(y.d||0)-(x.d||0):(y.s||0)-(x.s||0));
 
- // Pinned KovTheGreat Owner di urutan paling atas secara mutlak
  const ownerEntry = {
      n: 'KovTheGreat',
      s: 99999,
@@ -655,7 +651,7 @@ function paint(rawList){
 }
 
 function board(){
- au.clk();if($('segL'))[...$('segL'].children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
+ au.clk();if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
  if(lbS==='all'){
   if(!db){
       paint(ls.g('isea_lb',[]));
@@ -669,7 +665,7 @@ function board(){
           loaded = true;
           paint(ls.g('isea_lb',[]));
       }
-  }, 1500);
+  }, 1200);
 
   db.ref('scores').orderByChild('s').limitToLast(50).once('value').then(sn=>{
       if(loaded) return;
@@ -847,38 +843,27 @@ if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)retur
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
- $('aiK'].onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
+ $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
  $('modalCancel').onclick = () => aiModal.classList.remove('active');
  $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
 }
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADER AMAN & ANTI STUCK (TIMEOUT 1 DETIK) ===== */
+/* ===== LOADER AMAN & ANTI STUCK MUTLAK (TIMEOUT 0.8 DETIK) ===== */
 (function(){
- const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
- let p=0,i=0,done=false;
- 
+ const ld=$('ld');
  function hideLoader(){
-  if(done)return;
-  done=true;
-  const ld=$('ld');
-  if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
+  if(ld){ld.classList.add('out');}
   if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
   initNameSystem();
   presence('Di menu');
   addLog('Sistem satelit online dan siap beroperasi.');
-  if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu? +FACTS[Math.random()*FACTS.length|0]</b>';
+  if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
 
- const t=setInterval(()=>{
-  p=Math.min(100,p+40);
-  if($('ldI'))$('ldI').style.width=p+'%';
-  if($('ldM'))$('ldM'].textContent=M[Math.min(M.length-1,i++)];
-  if(p>=100){clearInterval(t);hideLoader();}
- },80);
-
- setTimeout(hideLoader, 1000);
+ // Jaminan pengaman mutlak: Maksimal 0.8 detik loader wajib hilang apapun yang terjadi
+ setTimeout(hideLoader, 800);
 
  try{initOnline();}catch(e){console.warn(e);}
 })();
