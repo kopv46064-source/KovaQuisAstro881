@@ -20,7 +20,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:no
 .gb.a-ns{border-color:var(--ns);box-shadow:0 0 20px rgba(56,189,248,.25)}
 .shell{position:relative;z-index:10;width:100%;max-width:880px;padding:84px 20px 20px;margin:auto 0;display:flex;flex-direction:column;align-items:center}
 .org{text-align:center;margin-bottom:20px}
-.acr{font:800 1.7rem 'Space Grotesk',sans-serif;letter-spacing:.32em;padding-left:.32em;background:linear-gradient(90deg,#7dd3fc,#f8fafc 55%,#fdba74);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:default;user-select:none;-webkit-user-select:none}
+.acr{font:800 1.7rem 'Space Grotesk',sans-serif;letter-spacing:.32em;padding-left:.32em;background:linear-gradient(90deg,#7dd3fc,#f8fafc 55%,#fdba74);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .full{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mu);margin-top:2px}
 .card{width:100%;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bd);border-radius:32px;padding:38px 34px;box-shadow:0 35px 90px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.1)}
 .hidden{display:none!important}
@@ -396,54 +396,77 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== OWNER (PASSPHRASE) & GANTI NAMA ===== */
-/* Setup: biarkan OWNER_HASH kosong, ketuk logo ISEA 5x, buat passphrase,
-   salin hash yang muncul ke OWNER_HASH di bawah, lalu simpan/deploy ulang. */
-const OWNER_HASH='';
-const OWNER_SIGNATURES=['kovthegreat','kova','kovo'];
-let OWNER=false;
-try{OWNER=sessionStorage.getItem('isea_owner')==='1'}catch(e){}
-const isOfficialOwner=n=>!!n&&OWNER_SIGNATURES.some(s=>n.trim().toLowerCase().includes(s));
-const blocked=n=>isOfficialOwner(n)&&!OWNER;
-async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-(()=>{let taps=0,tm;
- const el=document.querySelector('.acr');if(!el)return;
- el.addEventListener('click',async()=>{
-  clearTimeout(tm);tm=setTimeout(()=>taps=0,2000);
-  if(++taps<5)return;taps=0;
-  const p=prompt(OWNER_HASH?'Kunci owner:':'Buat kunci owner baru:');
-  if(!p)return;
-  let h;try{h=await sha(p)}catch(e){return toast('Butuh HTTPS untuk fitur ini')}
-  if(!OWNER_HASH){prompt('Salin hash ini ke OWNER_HASH di kode, lalu simpan:',h);return}
-  if(h===OWNER_HASH){OWNER=true;try{sessionStorage.setItem('isea_owner','1')}catch(e){}toast('👑 Owner aktif');checkNameLock()}
-  else toast('Kunci salah');
- });
-})();
+/* ===== KEAMANAN OWNER EKSKLUSIF BERBASIS TOKEN PERANGKAT ===== */
+let myDeviceToken = ls.g('isea_owner_token', null);
+if(!myDeviceToken){
+    myDeviceToken = 'owner_' + Math.random().toString(36).substring(2) + Date.now();
+    ls.s('isea_owner_token', myDeviceToken);
+}
 
-function checkNameLock(){
- let savedName=ls.g('isea_name','');
- if(blocked(savedName)){savedName='';ls.s('isea_name','')}
- const nameInput=$('name'),notice=$('nameNotice');
- if(!nameInput)return;
- nameInput.value=savedName;nameInput.disabled=false;
- if(notice)notice.textContent=OWNER?'👑 Owner: bebas ganti nama.':'';
+function isOfficialOwner(nameStr) {
+    const registeredToken = ls.g('isea_owner_token', '');
+    return registeredToken === myDeviceToken;
 }
-function renameScores(oldN,newN){
- if(!newN||oldN===newN)return;
- const b=ls.g('isea_lb',[]);
- b.forEach(x=>{if(x.pid===pid||(!x.pid&&x.n===oldN))x.n=newN});
- ls.s('isea_lb',b);
- if(!db)return;
- const fix=sn=>sn.forEach(c=>{const v=c.val();if(v.pid===pid||(!v.pid&&v.n===oldN))c.ref.update({n:newN,pid:pid}).catch(()=>{})});
- db.ref('scores').orderByChild('pid').equalTo(pid).once('value').then(fix).catch(()=>{});
- if(oldN)db.ref('scores').orderByChild('n').equalTo(oldN).once('value').then(fix).catch(()=>{});
+
+const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
+function checkNameLock() {
+    let savedName = ls.g('isea_name', '');
+    if(!savedName) savedName = '';
+    const lastChange = ls.g('isea_name_time', 0);
+    const now = Date.now();
+    const nameInput = $('name');
+    const notice = $('nameNotice');
+    if(!nameInput) return;
+
+    nameInput.value = savedName;
+
+    if (isOfficialOwner(savedName)) {
+        if(notice) notice.textContent = '👑 Status Owner Terdeteksi: Akses penuh perangkat ini (Bebas ganti nama).';
+        nameInput.disabled = false;
+        return;
+    }
+
+    const elapsed = now - lastChange;
+    if (elapsed < FOURTEEN_DAYS && lastChange > 0) {
+        const remainingDays = Math.ceil((FOURTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
+        nameInput.disabled = true;
+        if(notice) notice.textContent = `🔒 Nama dikunci. Bisa ganti dalam ${remainingDays} hari.`;
+    } else {
+        nameInput.disabled = false;
+        if(notice) notice.textContent = 'ℹ️ Member hanya dapat mengganti nama 1 kali dalam 14 hari.';
+    }
 }
+
 if($('name')){
- $('name').addEventListener('input',()=>presence(cur));
- $('name').addEventListener('change',()=>{
-  const typed=$('name').value.trim(),old=ls.g('isea_name','');
-  if(blocked(typed)){toast('Nama ini khusus owner 👑');$('name').value=old;return}
-  if(typed&&typed!==old){ls.s('isea_name',typed);renameScores(old,typed);toast('✅ Nama diperbarui!');presence(cur)}
+ $('name').addEventListener('input', () => {
+    if (isOfficialOwner($('name').value)) {
+        if($('nameNotice')) $('nameNotice').textContent = '👑 Status Owner Resmi Aktif!';
+    }
+    presence(cur);
+ });
+
+ $('name').addEventListener('change', () => {
+    const typed = $('name').value.trim();
+    const oldName = ls.g('isea_name', '');
+
+    if (typed !== oldName) {
+        if (!isOfficialOwner(typed) && oldName !== '') {
+            const lastChange = ls.g('isea_name_time', 0);
+            const now = Date.now();
+            if (now - lastChange < FOURTEEN_DAYS && lastChange > 0) {
+                toast('⚠️ Belum 14 hari! Nama tidak dapat diubah.');
+                $('name').value = oldName;
+                return;
+            }
+        }
+        ls.s('isea_name', typed);
+        if (!isOfficialOwner(typed)) {
+            ls.s('isea_name_time', Date.now());
+        }
+        toast('✅ Nama diperbarui!');
+        checkNameLock();
+        presence(cur);
+    }
  });
 }
 
@@ -453,10 +476,20 @@ function start(){
  const nameInput = $('name');
  const name = nameInput ? nameInput.value.trim() : '';
  if(!name){if(nameInput)nameInput.focus();return toast('Isi namamu dulu ya 🚀')}
- if(blocked(name)){return toast('Nama ini khusus owner 👑')}
+
+ const oldName = ls.g('isea_name', '');
+ const now = Date.now();
+ const lastChange = ls.g('isea_name_time', 0);
  
- const oldName=ls.g('isea_name','');
- if(name!==oldName){ls.s('isea_name',name);renameScores(oldName,name)}
+ if(name !== oldName) {
+     if(!isOfficialOwner(name) && oldName !== '' && (now - lastChange < FOURTEEN_DAYS) && lastChange > 0) {
+         return toast('⚠️ Gagal: Member hanya bisa ganti nama 14 hari sekali!');
+     }
+     ls.s('isea_name', name);
+     if(!isOfficialOwner(name)) {
+         ls.s('isea_name_time', now);
+     }
+ }
 
  au.clk();
  let pool=QS.filter(q=>cfg.mode==='all'||q.m===cfg.mode);
@@ -564,11 +597,11 @@ function results(){
  const b=ls.g('isea_lb',[]);G.rid=Date.now();
  const currentName = G.name;
  if (!isOfficialOwner(currentName)) {
-     b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid, pid: pid});
+     b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
      ls.s('isea_lb', b.slice(-300));
  }
  ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
- if(db && !isOfficialOwner(currentName)) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, pid: pid});
+ if(db && !isOfficialOwner(currentName)) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
  addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
 }
 
@@ -610,7 +643,7 @@ function paint(rawList){
   const nameBox = li.querySelector('b');
   
   if(isOwnerPinned) {
-      nameBox.textContent = 'KovTheGreat';
+      nameBox.textContent = x.n || 'KovTheGreat';
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
@@ -666,8 +699,7 @@ let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
  cur=st;if(!db||!meRef)return;
  const nameInput = $('name');
- let currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'Penjelajah';
- if(blocked(currentActiveName)) currentActiveName = 'Penjelajah';
+ const currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'Penjelajah';
  meRef.set({n: currentActiveName, st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
@@ -682,7 +714,7 @@ function drawOn(){
   const userName = v.n || 'Penjelajah';
   
   if(isOfficialOwner(userName)) {
-      nameBox.textContent = 'KovTheGreat';
+      nameBox.textContent = userName;
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
