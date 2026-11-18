@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#030408" />
-<title>ISEA Kuis Kosmos — by KovTheGreat</title>
+<title>ISEA Kuis Kosmos — by KovTheGreat (Mega Edition)</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
 :root{--bg:#030408;--glass:rgba(10,14,28,.84);--bd:rgba(125,211,252,.16);--bh:#ff8a3d;--ns:#38bdf8;--tx:#f8fafc;--mu:#94a3b8;--ok:#10b981;--no:#f43f5e;--sp:cubic-bezier(.16,1,.3,1);--sm:cubic-bezier(.22,1,.36,1)}
@@ -18,7 +18,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:no
 .gb:active{transform:scale(.94)}
 .gb.a-bh{border-color:var(--bh);box-shadow:0 0 20px rgba(255,138,61,.25)}
 .gb.a-ns{border-color:var(--ns);box-shadow:0 0 20px rgba(56,189,248,.25)}
-.shell{position:relative;z-index:10;width:100%;max-width:880px;padding:84px 20px 20px;margin:auto 0;display:flex;flex-direction:column;align-items:center}
+.shell{position:relative;z-index:10;width:100%;max-width:920px;padding:84px 20px 20px;margin:auto 0;display:flex;flex-direction:column;align-items:center}
 .org{text-align:center;margin-bottom:20px}
 .acr{font:800 1.7rem 'Space Grotesk',sans-serif;letter-spacing:.32em;padding-left:.32em;background:linear-gradient(90deg,#7dd3fc,#f8fafc 55%,#fdba74);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .full{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mu);margin-top:2px}
@@ -108,7 +108,7 @@ html{scroll-behavior:smooth}
 @keyframes spnRev{to{transform:rotate(-360deg)}}
 @keyframes pulOrb{0%,100%{transform:scale(.95);box-shadow:0 0 40px rgba(255,138,61,.5)}50%{transform:scale(1.08);box-shadow:0 0 75px rgba(56,189,248,.9)}}
 .ldt{font:800 2.4rem 'Space Grotesk',sans-serif;letter-spacing:.35em;padding-left:.35em;background:linear-gradient(90deg,#38bdf8,#a855f7,#ff8a3d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glowText 1.8s ease-in-out infinite alternate}
-@keyframes glowText{from{filter:drop-shadow(0 0 8px rgba(56,189,248,.4))}to{filter:drop-shadow(0 0 22px rgba(255,138,61,.8))}}
+@keyframes glowText{from{filter:drop-shadow(0 0 8px rgba(56,189,248,.4))}to{filter:drop-shadow(0 0 22px rgba(255,138,61,.8)}}
 .lds{font-size:.74rem;letter-spacing:.25em;color:var(--mu);font-weight:700;text-transform:uppercase;animation:pulseSub 1.5s ease-in-out infinite alternate}
 @keyframes pulseSub{from{opacity:.5}to{opacity:1}}
 
@@ -162,7 +162,7 @@ html{scroll-behavior:smooth}
 .tool-card{background:rgba(15,23,42,.7);border:1px solid rgba(125,211,252,.2);border-radius:20px;padding:18px}
 .tool-card h3{font:700 1.05rem 'Space Grotesk',sans-serif;margin-bottom:8px;color:#7dd3fc}
 .tool-card p{font-size:.85rem;color:var(--mu);margin-bottom:12px;line-height:1.5}
-@media(min-width:760px){.shell{max-width:880px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
+@media(min-width:760px){.shell{max-width:920px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
 @media(max-width:520px){.card{padding:24px 18px;border-radius:24px}.hm{display:none}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -195,10 +195,10 @@ html{scroll-behavior:smooth}
   <div class="org"><div class="acr">ISEA</div><div class="full">International Space Education Association</div><div class="by">by <span class="cn">KovTheGreat</span></div></div>
 
   <section id="sStart" class="card enter">
-    <div class="badge">✨ Simulasi Kosmik Interaktif</div>
+    <div class="badge">✨ Simulasi Kosmik Interaktif Mega Edition</div>
     <h1>Misteri Astronomi & Kosmos</h1>
-    <p class="sub">Uji wawasan astrofisikamu bersama <b>ISEA</b>: Puluhan soal astronomi, timer, bantuan, tingkat kesulitan berlipat ganda, dan papan peringkat global.</p>
-    <div class="hero"><div><b>30+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>🔭</b><span>Jelajah</span></div></div>
+    <p class="sub">Uji wawasan astrofisikamu bersama <b>ISEA</b>: Puluhan soal astronomi, timer, bantuan, tingkat kesulitan berlipat ganda, kalkulator gravitasi, ensiklopedia tata surya, dan papan peringkat global.</p>
+    <div class="hero"><div><b>40+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>🔭</b><span>Jelajah</span></div></div>
     
     <label class="l" for="name">Nama Penjelajah</label>
     <div class="name-group">
@@ -264,10 +264,30 @@ html{scroll-behavior:smooth}
   </section>
 
   <section id="sExp" class="card hidden">
-    <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos</h1>
-    <p class="sub" style="margin:6px 0 0">Ketuk kartu untuk membuka detail objek paling ekstrem di alam semesta.</p>
+    <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos & Tata Surya</h1>
+    <p class="sub" style="margin:6px 0 0">Eksplorasi objek ekstrem, ensiklopedia planet tata surya, dan teleskop luar angkasa.</p>
+    
+    <label class="l">Sistem Tata Surya & Planet</label>
+    <div class="chips" id="planetChips" style="margin-bottom:16px">
+      <button class="on" data-p="mercury">Mercury</button>
+      <button data-p="venus">Venus</button>
+      <button data-p="earth">Earth</button>
+      <button data-p="mars">Mars</button>
+      <button data-p="jupiter">Jupiter</button>
+      <button data-p="saturn">Saturn</button>
+      <button data-p="uranus">Uranus</button>
+      <button data-p="neptune">Neptune</button>
+    </div>
+    <div id="planetInfo" class="tool-card" style="margin-bottom:20px;border-color:rgba(56,189,248,.4)">
+      <h3 id="planetTitle">🌍 Bumi (Earth)</h3>
+      <p id="planetDesc">Satu-satunya planet di tata surya yang diketahui memiliki kehidupan. Memiliki atmosfer kaya oksigen dan air cair di permukaannya.</p>
+      <div id="planetStats" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+    </div>
+
+    <label class="l">Objek Ekstrem & Astrofisika</label>
     <div class="exg" id="exg"></div>
-    <div class="extra-box" style="display:grid;gap:12px;margin-top:16px">
+
+    <div class="extra-box" style="display:grid;gap:14px;margin-top:20px">
       <div class="tool-card">
         <h3>⚡ Kalkulator Dilatasi Waktu Gravitasi</h3>
         <p>Simulasikan seberapa lambat waktu berjalan di dekat cakrawala peristiwa lubang hitam berdasarkan massa.</p>
@@ -287,7 +307,7 @@ html{scroll-behavior:smooth}
 
   <section id="sAI" class="card hidden">
     <div class="aih"><h1 style="font-size:1.7rem">🤖 Kosmo AI</h1><button id="aiK" class="gb">⚙️ Kunci AI</button></div>
-    <p class="sub" style="margin:6px 0 0">Tanya apa saja soal lubang hitam, bintang neutron, dan kosmos.</p>
+    <p class="sub" style="margin:6px 0 0">Tanya apa saja soal lubang hitam, bintang neutron, planet, dan kosmos.</p>
     <div class="chat" id="chat"></div>
     <div class="chips" id="chips"></div>
     <div class="ci"><input id="aiIn" maxlength="300" placeholder="Tanya Kosmo..." autocomplete="off"><button id="aiGo" class="pb">➤</button></div>
@@ -316,7 +336,7 @@ html{scroll-behavior:smooth}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BANK SOAL ===== */
+/* ===== BANK SOAL MEGA EDITION (40+ Soal) ===== */
 const Q=(m,q,o,e)=>({m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -349,7 +369,11 @@ Q('bh','Di mana cahaya dapat mengorbit lubang hitam dalam lintasan tak stabil?',
 Q('ns','Pulsar dijuluki "jam kosmik" karena...',['Denyutannya sangat teratur, setara jam atom','Mengeluarkan bunyi tik-tik','Berputar sesuai waktu Bumi','Hanya terlihat siang hari'],'Stabilitasnya dipakai untuk mendeteksi gelombang gravitasi dan navigasi pesawat luar angkasa.'),
 Q('bh','Titik berkepadatan tak hingga di pusat lubang hitam menurut relativitas umum disebut...',['Singularitas','Horizon','Ergosfer','Nebula'],'Di sini hukum fisika yang kita kenal diperkirakan runtuh; butuh teori gravitasi kuantum.'),
 Q('ns','Apa nama batas luar ergosfer pada lubang hitam berputar (Kerr)?',['Static limit (Batas statis)','Horizon peristiwa','Photon sphere','Cincin Planck'],'Di dalam ergosfer, ruang-waktu terseret oleh rotasi lubang hitam sehingga benda tidak bisa diam.'),
-Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?',['Sekitar 100 miliar derajat Celsius','1 juta derajat Celsius','5.000 derajat Celsius','0 derajat Celsius'],'Suhu yang sangat ekstrem ini mendingin seiring waktu melalui pancaran neutrino.')
+Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?',['Sekitar 100 miliar derajat Celsius','1 juta derajat Celsius','5.000 derajat Celsius','0 derajat Celsius'],'Suhu yang sangat ekstrem ini mendingin seiring waktu melalui pancaran neutrino.'),
+Q('bh','Siapa fisikawan yang pertama kali menurunkan solusi matematis lubang hitam dari teori relativitas umum pada 1916?',['Karl Schwarzschild','Albert Einstein','Stephen Hawking','J. Robert Oppenheimer'],'Karl Schwarzschild menemukan solusi eksak persamaan medan Einstein saat bertugas di garis depan Perang Dunia I.'),
+Q('ns','Apa nama satelit ruang angkasa NASA yang dikhususkan memetakan sinar-X dari pulsar dan bintang neutron?',['NICER (Neutron star Interior Composition Explorer)','Hubble Space Telescope','James Webb Space Telescope','Voyager 1'],'NICER dipasang di Stasiun Luar Angkasa Internasional (ISS) untuk mengukur struktur bintang neutron dengan presisi tinggi.'),
+Q('bh','Apa efek yang terjadi jika dua lubang hitam supermasif bergabung?',['Memancarkan gelombang gravitasi dahsyat ke seluruh alam semesta','Menghasilkan supernova tipe II','Membentuk bintang neutron baru','Menghilang seketika tanpa jejak'],'Penggabungan lubang hitam merusak kelengkungan ruang-waktu dan mengirim riak gelombang gravitasi.'),
+Q('ns','Apa nama unsur terberat yang berhasil dideteksi dalam sisa tabrakan kilonova selain emas?',['Platina dan Uranium','Besi murni','Karbon aktif','Silikon cair'],'Kilonova adalah satu-satunya pabrik kosmik utama yang mampu mencetak unsur berat seperti emas dan uranium.')
 ];
 const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.'];
 
@@ -926,6 +950,41 @@ if($('calcBtn')){
  };
 }
 
+/* ===== TATA SURYA & PLANET ENCYCLOPEDIA ===== */
+const PLANETS = {
+  mercury: {name:'Mercury', icon:'🪐', dist:'57.9 juta km dari Matahari', temp:'-180°C s.d. 430°C', desc:'Planet terkecil di tata surya dan paling dekat dengan Matahari. Permukaannya penuh kawah meteorit.'},
+  venus: {name:'Venus', icon:'🌕', dist:'108.2 juta km dari Matahari', temp:'±465°C', desc:'Planet paling panas akibat efek rumah kaca ekstrem dengan atmosfer tebal asam sulfat.'},
+  earth: {name:'Earth (Bumi)', icon:'🌍', dist:'149.6 juta km dari Matahari', temp:'±15°C rata-rata', desc:'Rumah kita tercinta. Satu-satunya planet yang diketahui memiliki air cair dan kehidupan biologis.'},
+  mars: {name:'Mars', icon:'🔴', dist:'227.9 juta km dari Matahari', temp:'-60°C rata-rata', desc:'Planet merah yang memiliki gunung berapi tertinggi di tata surya (Olympus Mons) serta bekas aliran sungai purba.'},
+  jupiter: {name:'Jupiter', icon:'🟠', dist:'778.5 juta km dari Matahari', temp:'-110°C', desc:'Planet raksasa gas terbesar di tata surya dengan Badai Bintik Merah Raksasa yang sudah berlangsung ratusan tahun.'},
+  saturn: {name:'Saturn', icon:'🪐', dist:'1.43 miliar km dari Matahari', temp:'-140°C', desc:'Terkenal dengan sistem cincin es dan batuan spektakuler yang mengelilinginya serta puluhan bulan.'},
+  uranus: {name:'Uranus', icon:'🔵', dist:'2.87 miliar km dari Matahari', temp:'-195°C', desc:'Planet es raksasa unik yang berotasi miring hampir 90 derajat pada porosnya.'},
+  neptune: {name:'Neptune', icon:'🔷', dist:'4.50 miliar km dari Matahari', temp:'-200°C', desc:'Planet terjauh dari Matahari dengan angin supersonik terkuat di tata surya dan warna biru pekat.'}
+};
+
+const planetChips = $('planetChips');
+if(planetChips){
+ planetChips.onclick = e => {
+  const b = e.target.closest('button');
+  if(!b) return;
+  au.clk();
+  [...planetChips.children].forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  const pKey = b.dataset.p;
+  const p = PLANETS[pKey];
+  if(p){
+   $('planetTitle').textContent = `${p.icon} ${p.name}`;
+   $('planetDesc').textContent = p.desc;
+   $('planetStats').innerHTML = `<span class="tag">Jarak: ${p.dist}</span><span class="tag">Suhu: ${p.temp}</span>`;
+  }
+ };
+ // Init default earth
+ const earthP = PLANETS['earth'];
+ $('planetTitle').textContent = `🌍 ${earthP.name}`;
+ $('planetDesc').textContent = earthP.desc;
+ $('planetStats').innerHTML = `<span class="tag">Jarak: ${earthP.dist}</span><span class="tag">Suhu: ${earthP.temp}</span>`;
+}
+
 /* ===== JELAJAH KOSMOS ===== */
 const EX=[
 ['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh. Gravitasinya begitu kuat hingga cahaya pun tak bisa lolos dari event horizon.'],
@@ -952,7 +1011,7 @@ function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);l
  if(q.toLowerCase().includes('kov') || q.toLowerCase().includes('owner') || q.toLowerCase().includes('pembuat')) {
      return 'Web ISEA Kuis Kosmos ini dirancang dan dimiliki sepenuhnya oleh KovTheGreat (Kova)! Beliau adalah kreator jenius di balik sistem antarbintang ini. 👑✨';
  }
- return b||'Aku Kosmo, asisten virtual cerdas di ISEA Kosmos. Tanyakan apa saja tentang astrofisika, lubang hitam, bintang neutron, atau misteri alam semesta!';
+ return b||'Aku Kosmo, asisten virtual cerdas di ISEA Kosmos. Tanyakan apa saja tentang astrofisika, lubang hitam, bintang neutron, planet, atau misteri alam semesta!';
 }
 function msg(t,w){const chat=$('chat');if(!chat)return;const d=document.createElement('div');d.className='m '+w;d.textContent=t;chat.appendChild(d);chat.scrollTop=1e9;return d}
 let hist=[];
@@ -972,7 +1031,7 @@ async function ask(q){
 
 const chips = $('chips');
 if(chips){
- ['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana cara kerja pulsar?','Ceritakan fakta unik kosmos'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
+ ['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana kondisi planet Mars?','Ceritakan fakta unik kosmos'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
