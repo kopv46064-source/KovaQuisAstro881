@@ -957,7 +957,7 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== RESTORE SESI & LOADER AMAN ===== */
+/* ===== RESTORE SESI & LOADER AMAN (ANTI STUCK) ===== */
 (function(){
  const ld=$('ld');
  function hideLoader(){
@@ -984,7 +984,8 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
 
- setTimeout(hideLoader, 800);
+ // Eksekusi instan max 300ms agar dijamin tidak pernah stuck loading
+ setTimeout(hideLoader, 300);
 
  try{initOnline();}catch(e){console.warn(e);}
 })();
