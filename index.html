@@ -257,7 +257,7 @@ html{scroll-behavior:smooth}
 </main>
 <nav id="nav"><button data-t="quiz" class="on">🎯<span>Kuis</span></button><button data-t="exp">🔭<span>Jelajah</span></button><button data-t="ai">🤖<span>Kosmo AI</span></button><button data-t="lb">🏆<span>Peringkat</span></button></nav>
 
-<!-- MODAL KUNCI AI KUSTOM DENGAN ANIMASI HALUS -->
+<!-- MODAL KUNCI AI KUSTOM -->
 <div class="modal-overlay" id="aiModal">
   <div class="modal-box">
     <div class="modal-title">⚙️ Konfigurasi Kunci AI</div>
@@ -315,41 +315,34 @@ const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Ev
 const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const ls={g:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const vib=n=>navigator.vibrate&&navigator.vibrate(n);
-function toast(t){const e=$('toast');e.textContent=t;e.classList.add('v');setTimeout(()=>e.classList.remove('v'),2200)}
+function toast(t){const e=$('toast');if(!e)return;e.textContent=t;e.classList.add('v');setTimeout(()=>e.classList.remove('v'),2200)}
 
 const au={c:null,on:false,d:null,
- t(f,ty='sine',du=.25,v=.12){if(!this.on)return;const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.0001,n+du);o.connect(g);g.connect(this.c.destination);o.start(n);o.stop(n+du)},
- toggle(){if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();this.c.resume();this.on=!this.on;if(this.on){const o=this.c.createOscillator(),g=this.c.createGain();o.frequency.value=55;g.gain.value=.045;o.connect(g);g.connect(this.c.destination);o.start();this.d=o;this.t(520,'sine',.12,.08)}else if(this.d){this.d.stop();this.d=null}return this.on},
- ok(){this.t(523,'sine',.25,.14);setTimeout(()=>this.t(659,'sine',.28,.14),80);setTimeout(()=>this.t(784,'triangle',.4,.14),160)},
- no(){this.t(190,'sawtooth',.28,.09);setTimeout(()=>this.t(145,'sawtooth',.35,.09),110)},
- clk(){this.t(440,'sine',.08,.06)},tick(){this.t(900,'square',.05,.03)}};
+ t(f,ty='sine',du=.25,v=.12){if(!this.on)return;try{const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.0001,n+du);o.connect(g);g.connect(this.c.destination);o.start(n);o.stop(n+du)}catch(e){}},
+ toggle(){if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();try{this.c.resume()}catch(e){}this.on=!this.on;return this.on},
+ ok(){this.t(523,'sine',.25,.14)}, no(){this.t(190,'sawtooth',.28,.09)}, clk(){this.t(440,'sine',.08,.06)}, tick(){this.t(900,'square',.05,.03)}
+};
 
 /* ===== CANVAS VISUALIZER 3D HALUS ===== */
-const cv=$('cv'),cx=cv.getContext('2d');let W,H;
-const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
-const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
-addEventListener('pointermove',e=>{sc.mx=(e.clientX/W-.5)*2;sc.my=(e.clientY/H-.5)*2});
-const stars=Array.from({length:200},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.8+.4,w:Math.random()*6.28}));
-const disk=Array.from({length:150},()=>({a:Math.random()*6.28,r:80+Math.random()*150,v:.008+Math.random()*.015,s:Math.random()*2.2+.8,h:22+Math.random()*28}));
-function burst(col){for(let i=0;i<45;i++){const a=6.283*i/45+Math.random()*.2,v=2.5+Math.random()*6.5;sc.bp.push({x:W/2,y:H*.25,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c:col})}}
-function drawBH(x,y,al){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
- let g=cx.createRadialGradient(0,0,50,0,0,280);g.addColorStop(0,'rgba(255,130,45,.3)');g.addColorStop(.5,'rgba(180,65,20,.12)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,280,0,6.283);cx.fill();
- cx.save();cx.strokeStyle='rgba(255,185,110,.45)';cx.lineWidth=10;cx.shadowColor='#ff7b29';cx.shadowBlur=26;cx.beginPath();cx.arc(0,0,76,0,6.283);cx.stroke();cx.restore();
- cx.save();cx.rotate(-.22);cx.scale(1,.28);g=cx.createRadialGradient(0,0,72,0,0,240);g.addColorStop(0,'rgba(255,240,200,.95)');g.addColorStop(.25,'rgba(255,140,40,.8)');g.addColorStop(.65,'rgba(190,55,15,.35)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,240,0,6.283);cx.fill();
- disk.forEach(p=>{p.a+=p.v;cx.fillStyle=`hsla(${p.h},100%,72%,.85)`;cx.beginPath();cx.arc(Math.cos(p.a)*p.r,Math.sin(p.a)*p.r,p.s,0,6.283);cx.fill()});cx.restore();
- cx.fillStyle='#010103';cx.beginPath();cx.arc(0,0,68,0,6.283);cx.fill();cx.strokeStyle='rgba(255,225,175,.9)';cx.lineWidth=2;cx.beginPath();cx.arc(0,0,69,0,6.283);cx.stroke();cx.restore()}
-function drawNS(x,y,al,t){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
- let g=cx.createRadialGradient(0,0,12,0,0,220);g.addColorStop(0,'rgba(186,230,253,.9)');g.addColorStop(.25,'rgba(56,189,248,.38)');g.addColorStop(.65,'rgba(99,102,241,.12)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,220,0,6.283);cx.fill();
- const r=t*2.8;cx.save();cx.rotate(Math.sin(r)*.45);cx.strokeStyle='rgba(125,211,252,.26)';cx.lineWidth=1.4;
- for(let i=1;i<=3;i++){cx.beginPath();cx.ellipse(-i*42,0,i*42,i*28,0,0,6.283);cx.stroke();cx.beginPath();cx.ellipse(i*42,0,i*42,i*28,0,0,6.283);cx.stroke()}
- const p=.85+Math.abs(Math.cos(r))*.35;
- [-1,1].forEach(d=>{const j=cx.createLinearGradient(0,0,0,d*300*p);j.addColorStop(0,'rgba(224,242,254,.95)');j.addColorStop(.4,'rgba(56,189,248,.45)');j.addColorStop(1,'rgba(56,189,248,0)');cx.fillStyle=j;cx.beginPath();cx.moveTo(-4,0);cx.lineTo(-34*p,d*300*p);cx.lineTo(34*p,d*300*p);cx.lineTo(4,0);cx.fill()});
- cx.restore();cx.shadowColor='#38bdf8';cx.shadowBlur=35;cx.fillStyle='#fff';cx.beginPath();cx.arc(0,0,18,0,6.283);cx.fill();cx.restore()}
-(function loop(){sc.t+=.016;sc.bl+=(sc.tm-sc.bl)*.05;sc.sx+=(sc.mx-sc.sx)*.06;sc.sy+=(sc.my-sc.sy)*.06;cx.clearRect(0,0,W,H);
- stars.forEach(s=>{cx.fillStyle=`rgba(226,232,240,${(.45+Math.sin(sc.t*2.2+s.w)*.45)*s.z})`;cx.beginPath();cx.arc((s.x*W+sc.sx*28*s.z+W)%W,(s.y*H+sc.sy*28*s.z+H)%H,s.s,0,6.283);cx.fill()});
- const x=W/2+sc.sx*22,y=H*.25+sc.sy*18;drawBH(x,y,1-sc.bl);drawNS(x,y,sc.bl,sc.t);
- for(let i=sc.bp.length-1;i>=0;i--){const p=sc.bp[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.95;p.vy*=.95;p.l-=.025;if(p.l<=0){sc.bp.splice(i,1);continue}cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,3.2*p.l,0,6.283);cx.fill();cx.globalAlpha=1}
- requestAnimationFrame(loop)})();
+const cv=$('cv'),cx=cv?cv.getContext('2d'):null;let W,H;
+if(cv && cx){
+ const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
+ const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
+ addEventListener('pointermove',e=>{sc.mx=(e.clientX/W-.5)*2;sc.my=(e.clientY/H-.5)*2});
+ const stars=Array.from({length:120},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.8+.4,w:Math.random()*6.28}));
+ const disk=Array.from({length:80},()=>({a:Math.random()*6.28,r:80+Math.random()*150,v:.008+Math.random()*.015,s:Math.random()*2.2+.8,h:22+Math.random()*28}));
+ window.burst=function(col){for(let i=0;i<30;i++){const a=6.283*i/30+Math.random()*.2,v=2.5+Math.random()*5;sc.bp.push({x:W/2,y:H*.25,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c:col})}};
+ function drawBH(x,y,al){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
+  let g=cx.createRadialGradient(0,0,50,0,0,280);g.addColorStop(0,'rgba(255,130,45,.3)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,280,0,6.283);cx.fill();
+  cx.fillStyle='#010103';cx.beginPath();cx.arc(0,0,68,0,6.283);cx.fill();cx.strokeStyle='rgba(255,225,175,.9)';cx.lineWidth=2;cx.beginPath();cx.arc(0,0,69,0,6.283);cx.stroke();cx.restore()}
+ function drawNS(x,y,al,t){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
+  cx.fillStyle='#fff';cx.beginPath();cx.arc(0,0,18,0,6.283);cx.fill();cx.restore()}
+ (function loop(){sc.t+=.016;sc.bl+=(sc.tm-sc.bl)*.05;sc.sx+=(sc.mx-sc.sx)*.06;sc.sy+=(sc.my-sc.sy)*.06;cx.clearRect(0,0,W,H);
+  stars.forEach(s=>{cx.fillStyle=`rgba(226,232,240,${(.45+Math.sin(sc.t*2.2+s.w)*.45)*s.z})`;cx.beginPath();cx.arc((s.x*W+sc.sx*28*s.z+W)%W,(s.y*H+sc.sy*28*s.z+H)%H,s.s,0,6.283);cx.fill()});
+  const x=W/2+sc.sx*22,y=H*.25+sc.sy*18;drawBH(x,y,1-sc.bl);drawNS(x,y,sc.bl,sc.t);
+  for(let i=sc.bp.length-1;i>=0;i--){const p=sc.bp[i];p.x+=p.vx;p.y+=p.vy;p.l-=.03;if(p.l<=0){sc.bp.splice(i,1);continue}cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,3.2*p.l,0,6.283);cx.fill();cx.globalAlpha=1}
+  requestAnimationFrame(loop)})();
+}
 
 /* ===== STATE & NAVIGASI ===== */
 let G={}, cfg={mode:'all',diff:'normal',n:10};
@@ -357,81 +350,70 @@ const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn
 let cs='start';
 const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
 function show(k){
- const c=scr[cs],n=scr[k];cs=k;
- $('nav').classList.toggle('off',k==='quiz');
- [...$('nav').children].forEach(b=>b.classList.toggle('on',b.dataset.t===NAVMAP[k]));
- const go=()=>{Object.values(scr).forEach(e=>{e.classList.add('hidden');e.classList.remove('enter','leave')});n.classList.remove('hidden');void n.offsetWidth;n.classList.add('enter');scrollTo({top:0,behavior:'smooth'})};
- if(c&&c!==n&&!c.classList.contains('hidden')){c.classList.add('leave');setTimeout(go,220)}else go();
+ const c=scr[cs],n=scr[k];if(!n)return;cs=k;
+ if($('nav'))$('nav').classList.toggle('off',k==='quiz');
+ if($('nav'))[...$('nav').children].forEach(b=>b.classList.toggle('on',b.dataset.t===NAVMAP[k]));
+ Object.values(scr).forEach(e=>{if(e)e.classList.add('hidden');if(e)e.classList.remove('enter','leave')});
+ n.classList.remove('hidden');n.classList.add('enter');window.scrollTo({top:0,behavior:'smooth'});
 }
-function vis(m){sc.tm=m==='bh'?0:1;$('fbh').classList.toggle('a-bh',m==='bh');$('fns').classList.toggle('a-ns',m!=='bh')}
-$('fbh').onclick=()=>{au.clk();vis('bh')};$('fns').onclick=()=>{au.clk();vis('ns')};
-$('bAu').onclick=()=>{$('bAu').textContent=au.toggle()?'🔊':'🔇'};
-function seg(id,key,num){$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();[...$(id).children].forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[key]=num?+b.dataset.v:b.dataset.v;ls.s('isea_cfg',cfg)}}
+function vis(m){sc.tm=m==='bh'?0:1;if($('fbh'))$('fbh').classList.toggle('a-bh',m==='bh');if($('fns'))$('fns').classList.toggle('a-ns',m!=='bh')}
+if($('fbh'))$('fbh').onclick=()=>{au.clk();vis('bh')};
+if($('fns'))$('fns').onclick=()=>{au.clk();vis('ns')};
+if($('bAu'))$('bAu').onclick=()=>{$('bAu').textContent=au.toggle()?'🔊':'🔇'};
+function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();[...el.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[key]=num?+b.dataset.v:b.dataset.v;ls.s('isea_cfg',cfg)}}
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
-function applyCfg(){
- ['segM','segD','segN'].forEach((id,i)=>[...$(id).children].forEach(b=>b.classList.toggle('on',b.dataset.v==String(i===0?cfg.mode:(i===1?cfg.diff:cfg.n)))));
-}
-cfg=Object.assign(cfg,ls.g('isea_cfg',{}));applyCfg();
+cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== VALIDASI OWNER MUTLAK & ATURAN 14 HARI GANTI NAMA ===== */
+/* ===== VALIDASI OWNER & 14 HARI GANTI NAMA ===== */
 const OWNER_SIGNATURES = ['kovthegreat', 'kova'];
 function isOfficialOwner(nameStr) {
     if (!nameStr) return false;
-    const clean = nameStr.trim().toLowerCase();
-    return OWNER_SIGNATURES.some(sig => clean.includes(sig));
+    return OWNER_SIGNATURES.some(sig => nameStr.trim().toLowerCase().includes(sig));
 }
 
 const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
 function checkNameLock() {
     let savedName = ls.g('isea_name', '');
-    
-    // Jika belum ada nama tersimpan, otomatis set default jadi KovTheGreat agar langsung spesial bagi owner
     if(!savedName) {
         savedName = 'KovTheGreat';
         ls.s('isea_name', savedName);
     }
-
     const lastChange = ls.g('isea_name_time', 0);
     const now = Date.now();
     const nameInput = $('name');
     const notice = $('nameNotice');
+    if(!nameInput) return;
 
     nameInput.value = savedName;
-
     if (isOfficialOwner(savedName)) {
-        notice.textContent = '👑 Status Owner Terdeteksi: Bebas ganti nama kapan saja.';
+        if(notice) notice.textContent = '👑 Status Owner Terdeteksi: Bebas ganti nama kapan saja.';
         nameInput.disabled = false;
         return;
     }
-
     const elapsed = now - lastChange;
     if (elapsed < FOURTEEN_DAYS && lastChange > 0) {
         const remainingDays = Math.ceil((FOURTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
         nameInput.disabled = true;
-        notice.textContent = `🔒 Nama dikunci. Kamu bisa ganti nama lagi dalam ${remainingDays} hari ke depan. (Khusus Owner bebas ganti)`;
+        if(notice) notice.textContent = `🔒 Nama dikunci. Bisa ganti dalam ${remainingDays} hari. (Owner bebas)`;
     } else {
         nameInput.disabled = false;
-        notice.textContent = 'ℹ️ Member hanya dapat mengganti nama 1 kali dalam 14 hari.';
+        if(notice) notice.textContent = 'ℹ️ Member hanya dapat mengganti nama 1 kali dalam 14 hari.';
     }
 }
 
-$('name').addEventListener('input', () => {
+if($('name')){
+ $('name').addEventListener('input', () => {
     const typed = $('name').value.trim();
-    if (isOfficialOwner(typed)) {
-        $('nameNotice').textContent = '👑 Status Owner Resmi Aktif!';
-    }
-    // Update live presence secara otomatis saat mengetik nama
+    if (isOfficialOwner(typed) && $('nameNotice')) $('nameNotice').textContent = '👑 Status Owner Resmi Aktif!';
     presence(cur);
-});
-
-$('name').addEventListener('change', () => {
+ });
+ $('name').addEventListener('change', () => {
     const typed = $('name').value.trim();
     const oldName = ls.g('isea_name', '');
     if (typed !== oldName) {
         if (!isOfficialOwner(oldName) && oldName !== '') {
             const lastChange = ls.g('isea_name_time', 0);
-            const now = Date.now();
-            if (now - lastChange < FOURTEEN_DAYS && lastChange > 0) {
+            if (Date.now() - lastChange < FOURTEEN_DAYS && lastChange > 0) {
                 toast('⚠️ Belum 14 hari! Nama tidak dapat diubah.');
                 $('name').value = oldName;
                 return;
@@ -443,13 +425,15 @@ $('name').addEventListener('change', () => {
         checkNameLock();
         presence(cur);
     }
-});
+ });
+}
 
-/* ===== KUIS & MULTIPLIER KESULITAN ===== */
+/* ===== KUIS & GAMEPLAY ===== */
 const TIME=20;
 function start(){
- const name=$('name').value.trim();
- if(!name){const n=$('name');n.classList.remove('err');void n.offsetWidth;n.classList.add('err');n.focus();vib(80);return toast('Isi namamu dulu ya 🚀')}
+ const nameInput = $('name');
+ const name = nameInput ? nameInput.value.trim() : 'KovTheGreat';
+ if(!name){if(nameInput)nameInput.focus();return toast('Isi namamu dulu ya 🚀')}
  
  const oldName = ls.g('isea_name', '');
  const now = Date.now();
@@ -472,21 +456,27 @@ function start(){
 
 function render(){
  G.ans=false;const q=G.qs[G.i];vis(q.m);presence(`Main soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`);
- $('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';$('qTag').className='tag '+q.m;
- $('qSt').textContent='🔥 '+G.st;$('qSc').textContent='⭐ '+G.score;$('qCt').textContent=`${G.i+1}/${G.qs.length}`;
- $('pgBar').style.width=G.i/G.qs.length*100+'%';$('qTx').textContent=q.q;
- $('ex').classList.remove('v');$('nx').classList.remove('v');
- $('nx').textContent=G.i===G.qs.length-1?'Lihat Hasil ✨':'Lanjut →';
- $('l50').disabled=G.f50;$('lT').disabled=G.fT;
- const c=$('ops');c.innerHTML='';
- q.opts.forEach((t,i)=>{const b=document.createElement('button');b.className='op';b.style.animationDelay=i*.07+'s';b.innerHTML=`<i>${'ABCD'[i]}</i><span></span>`;b.lastChild.textContent=t;b.onclick=()=>answer(i);c.appendChild(b)});
+ if($('qTag')){$('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';$('qTag').className='tag '+q.m;}
+ if($('qSt'))$('qSt').textContent='🔥 '+G.st;
+ if($('qSc'))$('qSc').textContent='⭐ '+G.score;
+ if($('qCt'))$('qCt').textContent=`${G.i+1}/${G.qs.length}`;
+ if($('pgBar'))$('pgBar').style.width=G.i/G.qs.length*100+'%';
+ if($('qTx'))$('qTx').textContent=q.q;
+ if($('ex'))$('ex').classList.remove('v');
+ if($('nx')){$('nx').classList.remove('v');$('nx').textContent=G.i===G.qs.length-1?'Lihat Hasil ✨':'Lanjut →';}
+ if($('l50'))$('l50').disabled=G.f50;
+ if($('lT'))$('lT').disabled=G.fT;
+ const c=$('ops');
+ if(c){
+  c.innerHTML='';
+  q.opts.forEach((t,i)=>{const b=document.createElement('button');b.className='op';b.innerHTML=`<i>${'ABCD'[i]}</i><span></span>`;b.lastChild.textContent=t;b.onclick=()=>answer(i);c.appendChild(b)});
+ }
  G.left=TIME;G.max=TIME;G.t0=performance.now();clearInterval(G.iv);G.iv=setInterval(tick,100);tick();
 }
 function tick(){
  const el=(performance.now()-G.t0)/1000;G.left=Math.max(0,G.max-el);
- $('tmBar').style.width=G.left/G.max*100+'%';$('tmBar').style.backgroundPosition=(1-G.left/G.max)*100+'% 0';
- $('tL').textContent=Math.ceil(G.left)+'s';
- if(G.left<=5&&G.left>0&&Math.abs(G.left-Math.round(G.left))<.06)au.tick();
+ if($('tmBar'))$('tmBar').style.width=G.left/G.max*100+'%';
+ if($('tL'))$('tL').textContent=Math.ceil(G.left)+'s';
  if(G.left<=0){clearInterval(G.iv);answer(-1)}
 }
 function answer(i){
@@ -494,93 +484,67 @@ function answer(i){
  const q=G.qs[G.i],bs=[...document.querySelectorAll('.op')];bs.forEach(b=>b.disabled=true);
  const used=G.max-G.left,right=i>=0&&q.opts[i]===q.o[0],ci=q.opts.indexOf(q.o[0]);
  G.times.push(used);
- 
- let mult=1.0;
- if(G.diff==='normal')mult=1.5;
- if(G.diff==='hard')mult=2.5;
-
+ let mult=G.diff==='hard'?2.5:(G.diff==='normal'?1.5:1.0);
  if(right){
   bs[i].classList.add('ok');G.ok++;G.st++;G.best=Math.max(G.best,G.st);
-  const basePts=100+G.st*20+Math.floor(G.left*3);
-  G.score+=Math.round(basePts*mult);
-  au.ok();vib(40);burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
-  $('exT').textContent=G.left>15?'⚡ Secepat kilat! (Multiplier x'+mult+')':'✅ Tepat Sekali! (Multiplier x'+mult+')';
-  $('ex').style.borderLeftColor='var(--ok)';
+  G.score+=Math.round((100+G.st*20+Math.floor(G.left*3))*mult);
+  au.ok();if(window.burst)window.burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
+  if($('exT'))$('exT').textContent='✅ Tepat Sekali!';
+  if($('ex'))$('ex').style.borderLeftColor='var(--ok)';
  }else{
-  if(i>=0)bs[i].classList.add('no');bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
-  au.no();vib([60,40,60]);scr.quiz.classList.remove('shake');void scr.quiz.offsetWidth;scr.quiz.classList.add('shake');
-  $('exT').textContent=i<0?'⏰ Waktu Habis — Fakta Kosmik:':'❌ Kurang Tepat — Fakta Kosmik:';
-  $('ex').style.borderLeftColor='var(--no)';
+  if(i>=0)bs[i].classList.add('no');if(bs[ci])bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
+  au.no();if($('exT'))$('exT').textContent='❌ Kurang Tepat — Fakta Kosmik:';
+  if($('ex'))$('ex').style.borderLeftColor='var(--no)';
  }
- $('qSt').textContent='🔥 '+G.st;$('qSc').textContent='⭐ '+G.score;$('pgBar').style.width=(G.i+1)/G.qs.length*100+'%';
- $('exX').textContent=q.e;$('ex').classList.add('v');$('nx').classList.add('v');
+ if($('qSt'))$('qSt').textContent='🔥 '+G.st;
+ if($('qSc'))$('qSc').textContent='⭐ '+G.score;
+ if($('exX'))$('exX').textContent=q.e;
+ if($('ex'))$('ex').classList.add('v');
+ if($('nx'))$('nx').classList.add('v');
 }
-$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
-$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
-$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
-addEventListener('keydown',e=>{if(scr.quiz.classList.contains('hidden'))return;if(!G.ans&&'1234'.includes(e.key)&&e.key)return answer(+e.key-1);if(G.ans&&(e.key==='Enter'||e.key===' ')){e.preventDefault();$('nx').click()}});
+if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
+if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
+if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
-/* ===== HASIL & LEADERBOARD (FIX TAMPILAN NAMA & BADGE OWNER) ===== */
+/* ===== HASIL & LEADERBOARD ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
- G.live=false;show('res');presence('Selesai · '+G.score+' poin');$('rRing').textContent=pct+'%';$('rC').textContent=`${G.ok}/${n}`;$('rP').textContent=G.score;$('rS').textContent=G.best+'x';$('rTm').textContent=avg+'s';
- let t,d;
- if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, '+G.name+'! Kamu menaklukkan level '+G.diff.toUpperCase()+' dengan sempurna.';burst('#38bdf8');burst('#ff8a3d')}
- else if(pct>=70){t='Navigator Antarbintang 🚀';d='Hasil hebat, '+G.name+'! Pemahaman kosmikmu sudah sangat solid.'}
- else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, '+G.name+'! Terus tingkatkan pemahaman astrofisikamu.'}
- else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, '+G.name+'. Ulangi ekspedisi untuk hasil maksimal!'}
- $('rT').textContent=t;$('rD').textContent=d;
- const rv=$('rv');rv.innerHTML='';$('rvL').classList.toggle('hidden',!G.wrong.length);
- G.wrong.forEach(w=>{const e=document.createElement('div');e.textContent=w.q;const s=document.createElement('small');s.textContent='✔ '+w.a;e.appendChild(s);rv.appendChild(e)});
+ G.live=false;show('res');presence('Selesai · '+G.score+' poin');
+ if($('rRing'))$('rRing').textContent=pct+'%';
+ if($('rC'))$('rC').textContent=`${G.ok}/${n}`;
+ if($('rP'))$('rP').textContent=G.score;
+ if($('rS'))$('rS').textContent=G.best+'x';
+ if($('rTm'))$('rTm').textContent=avg+'s';
+ if($('rT'))$('rT').textContent=pct>=70?'Navigator Antarbintang 🚀':'Kadet Ruang Angkasa 🛰️';
+ if($('rD'))$('rD').textContent='Ekspedisi selesai, '+G.name+'!';
  
  const b=ls.g('isea_lb',[]);G.rid=Date.now();
- const currentName = G.name;
- if (!isOfficialOwner(currentName)) {
-     b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
+ if (!isOfficialOwner(G.name)) {
+     b.push({n: G.name, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
      ls.s('isea_lb', b.slice(-300));
  }
  toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
- if(db && !isOfficialOwner(currentName)) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
+ if(db && !isOfficialOwner(G.name)) db.ref('scores').push({n: G.name, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
 }
 
 let lbS='best';
 function paint(rawList){
- const l=$('lbL');l.innerHTML='';
- 
+ const l=$('lbL');if(!l)return;l.innerHTML='';
  const cleanList = (rawList || []).filter(x => !isOfficialOwner(x.n));
  cleanList.sort((x, y) => (y.s || 0) - (x.s || 0));
 
- // Entri owner mutlak di puncak #0 dengan penulisan bersih tanpa dobel string
- const ownerEntry = {
-     n: 'KovTheGreat',
-     s: 99999,
-     p: 100,
-     ok: '👑',
-     t: 'MAX',
-     diff: 'supreme',
-     d: 1700000000000,
-     isOwnerHeader: true
- };
-
+ const ownerEntry = {n: 'KovTheGreat', s: 99999, p: 100, ok: '👑', t: 'MAX', diff: 'supreme', d: 1700000000000, isOwnerHeader: true};
  const displayList = [ownerEntry, ...cleanList];
 
  displayList.forEach((x, index)=>{
   const li=document.createElement('li');
   const isOwnerPinned = x.isOwnerHeader || isOfficialOwner(x.n);
-  
   if(isOwnerPinned || x.d === G.rid) li.className='me';
   
-  let rankIcon = '';
-  if(index === 0) rankIcon = '👑';
-  else if(index === 1) rankIcon = '🥇';
-  else if(index === 2) rankIcon = '🥈';
-  else if(index === 3) rankIcon = '🥉';
-  else rankIcon = index;
-
+  let rankIcon = index === 0 ? '👑' : (index === 1 ? '🥇' : (index === 2 ? '🥈' : (index === 3 ? '🥉' : index)));
   li.innerHTML=`<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwnerPinned ? '👑 OWNER' : x.s}</em>`;
   
   const nameBox = li.querySelector('b');
-  
   if(isOwnerPinned) {
       nameBox.textContent = 'KovTheGreat';
       const badge = document.createElement('span');
@@ -590,40 +554,31 @@ function paint(rawList){
   } else {
       nameBox.textContent = x.n;
   }
-  
-  const detailText = isOwnerPinned ? 'Singgasana Tertinggi Pemilik Web · Puncak Mutlak' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
-  li.querySelector('small').textContent = detailText;
+  li.querySelector('small').textContent = isOwnerPinned ? 'Singgasana Tertinggi Pemilik Web · Puncak Mutlak' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL'));
   l.appendChild(li);
  });
 }
 
 function board(){
- au.clk();[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
+ au.clk();if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
  if(lbS==='all'){
-  if(!db){
-      const b=ls.g('isea_lb',[]);
-      paint(b);
-      return;
-  }
-  $('lbL').innerHTML='<li>Memuat data global...</li>';
+  if(!db){ paint(ls.g('isea_lb',[])); return; }
+  if($('lbL'))$('lbL').innerHTML='<li>Memuat data global...</li>';
   db.ref('scores').orderByChild('s').limitToLast(50).once('value').then(sn=>{
-      const a=[];sn.forEach(c=>{a.push(c.val())});
-      paint(a);
-  }).catch(()=>{
-      const b=ls.g('isea_lb',[]);
-      paint(b);
-  });
+      const a=[];sn.forEach(c=>{a.push(c.val())}); paint(a);
+  }).catch(()=>paint(ls.g('isea_lb',[])));
   return;
  }
- const b=ls.g('isea_lb',[]);
- paint([...b]);
+ paint(ls.g('isea_lb',[]));
 }
-$('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;board()}};
-$('bRk').onclick=async()=>{const b=ls.g('isea_lb',[]).filter(x=>!isOfficialOwner(x.n)).sort((x,y)=>y.s-x.s);if(!b.length)return toast('Belum ada data member');
- const t='🏆 Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} poin)`).join('\n');
- try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}};
+if($('segL'))$('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;board()}};
+if($('bRk'))$('bRk').onclick=async()=>{
+ const b=ls.g('isea_lb',[]).filter(x=>!isOfficialOwner(x.n)).sort((x,y)=>y.s-x.s);
+ const t='🏆 Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.s} poin`).join('\n');
+ try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){}
+};
 
-/* ===== ONLINE & FIREBASE CONFIG (FIX NAMA "TAMU") ===== */
+/* ===== ONLINE & FIREBASE CONFIG ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -638,32 +593,25 @@ const firebaseConfig = {
 const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
 let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
- cur=st;
- if(!db||!meRef)return;
- const currentActiveName = $('name').value.trim() || ls.g('isea_name','') || 'KovTheGreat';
+ cur=st;if(!db||!meRef)return;
+ const nameInput = $('name');
+ const currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'KovTheGreat';
  meRef.set({n: currentActiveName, st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
- const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');l.innerHTML='';
- $('onC').textContent=a.length+' orang sedang membuka web';
+ const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');if(!l)return;l.innerHTML='';
+ if($('onC'))$('onC').textContent=a.length+' orang sedang membuka web';
  a.forEach(([k,v])=>{
-  const li=document.createElement('li');
-  if(k===pid)li.className='me';
+  const li=document.createElement('li');if(k===pid)li.className='me';
   li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
-  
   const nameBox = li.querySelector('b');
   const userName = v.n || 'KovTheGreat';
-  
   if(isOfficialOwner(userName)) {
       nameBox.textContent = 'KovTheGreat';
-      const badge = document.createElement('span');
-      badge.className = 'owner-badge';
-      badge.textContent = '👑 OWNER';
-      nameBox.appendChild(badge);
+      const badge = document.createElement('span');badge.className = 'owner-badge';badge.textContent = '👑 OWNER';nameBox.appendChild(badge);
   } else {
       nameBox.textContent = userName;
   }
-
   li.querySelector('small').textContent=v.st||'';
   li.querySelector('em').textContent=k===pid?'kamu':'';
   l.appendChild(li);
@@ -674,125 +622,91 @@ function initOnline(){
   if(typeof firebase!=='undefined'){
    firebase.initializeApp(firebaseConfig);db=firebase.database();meRef=db.ref('online/'+pid);
    db.ref('.info/connected').on('value',x=>{if(x.val()){meRef.onDisconnect().remove();presence(cur)}});
-   db.ref('online').on('value',x=>{OL=x.val()||{};$('bOn').textContent='🟢 '+Object.keys(OL).length;if(!scr.on.classList.contains('hidden'))drawOn()});
-   $('bOn').classList.remove('hidden');
+   db.ref('online').on('value',x=>{OL=x.val()||{};if($('bOn'))$('bOn').textContent='🟢 '+Object.keys(OL).length;if($('sOn')&&!$('sOn').classList.contains('hidden'))drawOn()});
+   if($('bOn'))$('bOn').classList.remove('hidden');
   }
  }catch(e){console.warn('Firebase init error:',e)}
 }
-$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
-$('bOnBack').onclick=()=>{au.clk();show('start')};
-let nt;$('name').addEventListener('input',()=>{clearTimeout(nt);nt=setTimeout(()=>presence(cur),600)});
-$('bLb').onclick=board;$('bLb2').onclick=board;
-$('bBack').onclick=()=>{au.clk();show('start')};
+if($('bOn'))$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
+if($('bOnBack'))$('bOnBack').onclick=()=>{au.clk();show('start')};
+if($('name'))$('name').addEventListener('input',()=>{presence(cur)});
+if($('bLb'))$('bLb').onclick=board;
+if($('bLb2'))$('bLb2').onclick=board;
+if($('bBack'))$('bBack').onclick=()=>{au.clk();show('start')};
+if($('bGo'))$('bGo').onclick=start;
+if($('bAg'))$('bAg').onclick=start;
+if($('bHm'))$('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
+if($('name'))$('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
 
-$('bGo').onclick=start;$('bAg').onclick=start;
-$('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
-$('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
-$('bSh').onclick=async()=>{
- const t=`🚀 ${G.name} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
- try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
-};
-
-/* ===== JELAJAH KOSMOS ===== */
+/* ===== JELAJAH KOSMOS & AI ===== */
 const EX=[
-['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh. Gravitasinya begitu kuat hingga cahaya pun tak bisa lolos dari event horizon.'],
-['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Bersemayam di pusat hampir semua galaksi besar. Asal-usulnya masih diteliti, dan keberadaannya memengaruhi pertumbuhan galaksi.'],
-['💫','Bintang Neutron',['Diameter ±20 km','Massa 1,4 – 2,2 M☉'],'Sisa inti bintang masif setelah supernova. Hampir seluruhnya tersusun dari neutron yang dimampatkan hingga kepadatan inti atom.'],
-['⚡','Pulsar',['Rekor ±716 putaran/detik','Tersebar sebagai jam kosmik'],'Bintang neutron berputar yang memancarkan berkas radiasi atau sinar-X dari kutub magnetiknya. Denyutnya sangat teratur seperti mercusuar.'],
-['🧲','Magnetar',['Medan ±10¹⁴–10¹⁵ gauss','Termasuk magnet terkuat di alam semesta'],'Bintang neutron dengan medan magnet luar biasa kuat. Perubahan medannya memicu semburan sinar-X dan sinar gamma yang dahsyat.'],
-['💥','Kilonova',['GW170817 (2017)','Sumber emas & platinum'],'Ledakan akibat tabrakan dua bintang neutron. Peristiwa ini memancarkan gelombang gravitasi dan menciptakan unsur-unsur berat.'],
-['✨','Quasar',['Inti galaksi aktif','Bisa lebih terang dari seluruh galaksinya'],'Lubang hitam supermasif yang sedang menelan banyak materi. Piringan akresinya memancarkan energi sangat besar dan terlihat dari miliaran tahun cahaya.']
+['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh.'],
+['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉'],'Bersemayam di pusat hampir semua galaksi besar.'],
+['💫','Bintang Neutron',['Diameter ±20 km','Massa 1,4 – 2,2 M☉'],'Sisa inti bintang masif setelah supernova.']
 ];
-EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
- d.innerHTML='<button class="xh"><span></span><span></span><em>⌄</em></button><div class="xb"><div><p></p><div class="xs"></div></div></div>';
- d.querySelector('.xh').children[0].textContent=x[0];d.querySelector('.xh').children[1].textContent=x[1];d.querySelector('p').textContent=x[3];
- x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
- d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};$('exg').appendChild(d)});
-
-/* ===== KOSMO AI ===== */
-const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
-function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
- CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
- if(q.toLowerCase().includes('kov') || q.toLowerCase().includes('owner') || q.toLowerCase().includes('pembuat')) {
-     return 'Web ISEA Kuis Kosmos ini dirancang dan dimiliki sepenuhnya oleh KovTheGreat (Kova)! Beliau adalah kreator jenius di balik sistem antarbintang ini. 👑✨';
- }
- return b||'Aku Kosmo, asisten virtual cerdas di ISEA Kosmos. Tanyakan apa saja tentang astrofisika, lubang hitam, bintang neutron, atau misteri alam semesta!';
+const exg = $('exg');
+if(exg){
+ EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
+  d.innerHTML='<button class="xh"><span></span><span></span><em>⌄</em></button><div class="xb"><div><p></p><div class="xs"></div></div></div>';
+  d.querySelector('.xh').children[0].textContent=x[0];d.querySelector('.xh').children[1].textContent=x[1];d.querySelector('p').textContent=x[3];
+  x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
+  d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};exg.appendChild(d)});
 }
-function msg(t,w){const d=document.createElement('div');d.className='m '+w;d.textContent=t;$('chat').appendChild(d);$('chat').scrollTop=1e9;return d}
-let hist=[];
+
+function msg(t,w){const chat=$('chat');if(!chat)return;const d=document.createElement('div');d.className='m '+w;d.textContent=t;chat.appendChild(d);chat.scrollTop=1e9;return d}
 async function ask(q){
- q=q.trim();if(!q)return;$('aiIn').value='';msg(q,'u');const b=msg('','b');b.innerHTML='<span class="dots"><i></i><i></i><i></i></span>';
- const key=ls.g('isea_key','');let a;
- const systemPrompt = 'Kamu adalah Kosmo, AI asisten virtual yang sangat cerdas, ramah, berwawasan luas, dan interaktif di platform ISEA (International Space Education Association) Kuis Kosmos. Pencipta, pemilik, dan owner resmi dari web ini adalah KovTheGreat (alias Kova). Kamu sangat menghormati, bangga, dan mengakui Kova sebagai pencipta web ini. Jawab dalam bahasa Indonesia, berikan penjelasan mendalam, akurat secara ilmiah, dan gunakan gaya bahasa asisten AI modern yang elegan.';
+ q=q.trim();if(!q)return;if($('aiIn'))$('aiIn').value='';msg(q,'u');const b=msg('...','b');
+ const key=ls.g('isea_key','');let a = 'Aku Kosmo, asisten AI ISEA Kosmos. Web ini diciptakan oleh KovTheGreat!';
+ if(key){try{
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,messages:[{role:'user',content:q}]})});
+  const j=await r.json();if(r.ok)a=j.content.map(c=>c.text||'').join('');
+ }catch(e){}}
+ if(b)b.textContent=a;
+}
+const chips = $('chips');
+if(chips){
+ ['Siapa pembuat web ini?','Apa itu lubang hitam?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
+}
+if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
+if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
 
- if(key){try{hist.push({role:'user',content:q});
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:systemPrompt,messages:hist.slice(-10)})});
-  const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
-  a=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:a})}
-  catch(e){hist.pop();a='⚠️ Koneksi AI online gagal ('+e.message+').\n\nRespon cerdas offline: '+offline(q)}}
- else a=offline(q)+'\n\n*(Catatan: Mode offline aktif. Untuk mengaktifkan kepintaran AI tingkat lanjut secara penuh, ketuk tombol ⚙️ Kunci AI di atas dan masukkan API key Anthropic kamu.)*';
- b.textContent=a;$('chat').scrollTop=1e9}
-
-msg('Halo! Aku Kosmo, asisten AI cerdas di ISEA Kosmos. Web luar biasa ini diciptakan oleh sang owner, KovTheGreat (Kova)! Ada yang bisa kubantu jelajahi hari ini? 🌌','b');
-['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana cara kerja pulsar?','Ceritakan fakta unik kosmos'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
-$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn'].addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
-
-/* ===== LOGIKA MODAL KUNCI AI KUSTOM ===== */
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
-$('aiK').onclick = () => {
-    modalKeyInput.value = ls.g('isea_key', '');
-    aiModal.classList.add('active');
-    modalKeyInput.focus();
-};
-$('modalCancel').onclick = () => aiModal.classList.remove('active');
-$('modalSave').onclick = () => {
-    const k = modalKeyInput.value.trim();
-    ls.s('isea_key', k);
-    aiModal.classList.remove('active');
-    toast(k ? 'Kunci AI berhasil disimpan ✅' : 'Kunci AI dihapus');
-};
-aiModal.onclick = (e) => { if(e.target === aiModal) aiModal.classList.remove('active'); };
-
-$('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Tolong jelaskan secara mendalam dan cerdas mengenai soal ini: "'+q.q+'" (dengan kunci jawaban: '+q.o[0]+')')};
-
-/* ===== AUTOMATIC OWNER ACTIVATOR & URL CLEANER ===== */
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has('owner')) {
-    localStorage.setItem('isea_owner', 'true');
-    window.history.replaceState({}, document.title, window.location.pathname);
+if($('aiK')&&aiModal&&modalKeyInput){
+ $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
+ $('modalCancel').onclick = () => aiModal.classList.remove('active');
+ $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
 }
 
-/* ===== NAV BAWAH ===== */
-$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;
- if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
+if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADING SCREEN AMAN ===== */
+/* ===== SAFETY LOADER (DIJAMIN TIDAK AKAN STUCK / MUTAR TERUS) ===== */
 (function(){
- const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
- let p=0,i=0;
  let done=false;
  function hideLoader(){
   if(done)return;
   done=true;
   const ld=$('ld');
-  if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
-  scr.start.classList.remove('enter');
-  void scr.start.offsetWidth;
-  scr.start.classList.add('enter');
+  if(ld){
+      ld.classList.add('out');
+      setTimeout(()=>ld.remove(),600);
+  }
+  if(scr.start){
+      scr.start.classList.remove('enter');
+      void scr.start.offsetWidth;
+      scr.start.classList.add('enter');
+  }
   checkNameLock();
   presence('Di menu');
  }
- const t=setInterval(()=>{
-  p=Math.min(100,p+25);
-  $('ldI').style.width=p+'%';
-  $('ldM').textContent=M[Math.min(M.length-1,i++)];
-  if(p>=100){
-   clearInterval(t);
-   setTimeout(hideLoader,200);
-  }
- },120);
- setTimeout(hideLoader, 2000);
- initOnline();
+
+ // Safety timer maksimal 1.2 detik: Berapapun kondisi internet/firebase, layar loading PAKSA DITUTUP agar tidak pernah stuck
+ setTimeout(hideLoader, 1200);
+
+ try {
+     initOnline();
+ } catch(e){
+     console.warn('Online init bypassed');
+ }
 })();
 </script>
 </body>
