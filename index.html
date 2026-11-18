@@ -97,8 +97,8 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .toast.v{opacity:1;transform:translate(-50%,0)}
 html{scroll-behavior:smooth}
 
-/* ===== ANIMASI LOADING KOSMIK PREMIUM YANG MULUS ===== */
-#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .7s var(--sm),visibility .7s}
+/* ===== ANIMASI LOADING KOSMIK PREMIUM YANG AMAN & ANTI-STUCK ===== */
+#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .6s var(--sm),visibility .6s}
 #ld.out{opacity:0;visibility:hidden;pointer-events:none}
 .loader-container{position:relative;display:flex;align-items:center;justify-content:center;width:140px;height:140px}
 .orb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff8a3d,#010103 80%);position:relative;box-shadow:0 0 50px rgba(255,138,61,.7),inset 0 0 15px rgba(255,200,140,.9);animation:pulOrb 2s ease-in-out infinite}
@@ -971,11 +971,22 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== RESTORE SESI & ANIMASI LOADER AMAN (1.2 DETIK) ===== */
-function initAppBoot(){
- const ld=$('ld');
+/* ===== SAFETY LOADER BOOT (DOUBLE MECHANISM ANTI-STUCK) ===== */
+let isBooted = false;
+
+function launchApp(){
+ if(isBooted) return;
+ isBooted = true;
+ 
+ const ld = $('ld');
  if(ld) ld.classList.add('out');
- if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
+ 
+ if(scr.start){
+     scr.start.classList.remove('enter');
+     void scr.start.offsetWidth;
+     scr.start.classList.add('enter');
+ }
+ 
  initNameSystem();
 
  if(!isOwnerDevice()) {
@@ -994,15 +1005,14 @@ function initAppBoot(){
  }
 
  addLog('Sistem satelit online dan siap beroperasi.');
- if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
+ if($('fact')) $('fact').innerHTML = '💡 <b>Tahukah kamu?</b> ' + FACTS[Math.random() * FACTS.length | 0];
+ 
+ try{ initOnline(); }catch(e){ console.warn(e); }
 }
 
-(function(){
- // Animasi loading berjalan mulus selama 1200ms (1.2 detik) lalu otomatis masuk tanpa stuck
- setTimeout(initAppBoot, 1200);
-
- try{initOnline();}catch(e){console.warn(e);}
-})();
+// Keamanan ganda: Menjalankan peluncuran otomatis via window load ATAU timeout maksimal 700ms tanpa gagal
+window.addEventListener('load', launchApp);
+setTimeout(launchApp, 700);
 </script>
 </body>
 </html>
