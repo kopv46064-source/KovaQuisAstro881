@@ -170,10 +170,14 @@ html{scroll-behavior:smooth}
     
     <label class="l" for="name">Nama Penjelajah</label>
     <div class="name-group">
-      <input id="name" maxlength="16" autocomplete="off" placeholder="Tulis namamu..." />
+      <input id="name" maxlength="25" autocomplete="off" placeholder="Tulis namamu..." />
       <button id="bSetName">OKE</button>
     </div>
-    <div id="nameNotice" style="font-size:.72rem;color:var(--mu);margin-top:6px;font-weight:600;"></div>
+    
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+      <div id="nameNotice" style="font-size:.72rem;color:var(--mu);font-weight:600;"></div>
+      <button id="bResetOwner" style="background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;">Reset Status</button>
+    </div>
     
     <label class="l">Topik Kajian</label>
     <div class="seg" id="segM"><button data-v="all" class="on">🌌 Semua Topik</button><button data-v="bh">🕳️ Black Hole</button><button data-v="ns">💫 Bintang Neutron</button></div>
@@ -378,13 +382,8 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== SISTEM PENGAMAN OWNER VS USER UMUM (MASTER KEY LOKAL) ===== */
-const MASTER_SECRET_KEY = 'KovTheGreat2026MasterKey';
-let myDeviceToken = ls.g('isea_device_token', '');
-if(!myDeviceToken){
-    myDeviceToken = 'dev_' + Math.random().toString(36).slice(2, 10);
-    ls.s('isea_device_token', myDeviceToken);
-}
+/* ===== SISTEM KUNCI OWNER /82+791 ===== */
+const OWNER_SECRET_CODE = '/82+791';
 
 function isOwnerDevice() {
     return ls.g('is_true_owner', false) === true;
@@ -394,14 +393,17 @@ function initNameSystem() {
     const nameInput = $('name');
     const bSetName = $('bSetName');
     const notice = $('nameNotice');
+    const bReset = $('bResetOwner');
     if(!nameInput) return;
 
     if(isOwnerDevice()) {
         nameInput.value = 'KovTheGreat';
         nameInput.disabled = true;
         if(bSetName) bSetName.disabled = true;
-        if(notice) notice.textContent = '👑 Mode Owner Aktif: Nama terkunci mutlak sebagai KovTheGreat.';
+        if(notice) notice.textContent = '👑 Status: Owner Aktif (KovTheGreat)';
+        if(bReset) bReset.style.display = 'inline-block';
     } else {
+        if(bReset) bReset.style.display = 'none';
         let savedName = ls.g('isea_username', '');
         let lastChange = ls.g('isea_name_time', 0);
         let now = Date.now();
@@ -413,17 +415,17 @@ function initNameSystem() {
                 nameInput.disabled = true;
                 if(bSetName) bSetName.disabled = true;
                 let days = Math.ceil(cooldownLeft / (1000 * 60 * 60 * 24));
-                if(notice) notice.textContent = `🔒 Nama terkunci. Bisa ganti dalam ${days} hari lagi.`;
+                if(notice) notice.textContent = `🔒 Nama terkunci. Ganti dalam ${days} hari lagi.`;
             } else {
                 nameInput.disabled = false;
                 if(bSetName) bSetName.disabled = false;
-                if(notice) notice.textContent = '✨ Kamu bisa mengganti nama penjelajahmu (Bisa ketik kunci owner jika kamu KovTheGreat).';
+                if(notice) notice.textContent = '';
             }
         } else {
             nameInput.value = '';
             nameInput.disabled = false;
             if(bSetName) bSetName.disabled = false;
-            if(notice) notice.textContent = '✨ Masukkan nama atau masukkan Kunci Owner untuk jadi KovTheGreat.';
+            if(notice) notice.textContent = '';
         }
 
         if(bSetName) {
@@ -431,16 +433,18 @@ function initNameSystem() {
                 let val = nameInput.value.trim();
                 if(!val) return toast('Nama tidak boleh kosong!');
 
-                // JIKA USER MEMASUKKAN MASTER KEY
-                if(val === MASTER_SECRET_KEY) {
+                // CEK KUNCI RAHASIA OWNER: /82+791
+                if(val === OWNER_SECRET_CODE) {
                     ls.s('is_true_owner', true);
-                    toast('👑 Berhasil! Kunci Owner diterima. Kamu adalah KovTheGreat!');
+                    ls.s('isea_username', 'KovTheGreat');
+                    toast('👑 Kunci diterima! Berubah jadi KovTheGreat (Owner)');
                     initNameSystem();
                     return;
                 }
 
+                // BLOKIR JIKA LANGSUNG KETIK KOVTHEGREAT
                 if(val.toLowerCase() === 'kovthegreat') {
-                    toast('❌ Nama KovTheGreat dilindungi kunci khusus Owner!');
+                    toast('❌ Nama KovTheGreat dilindungi dan khusus Owner!');
                     nameInput.value = '';
                     return;
                 }
@@ -456,10 +460,22 @@ function initNameSystem() {
                 ls.s('isea_name_time', Date.now());
                 nameInput.disabled = true;
                 bSetName.disabled = true;
-                toast('✅ Nama berhasil disimpan & dikunci selama 15 hari!');
-                if(notice) notice.textContent = '🔒 Nama terkunci. Bisa ganti dalam 15 hari lagi.';
+                toast('✅ Nama disimpan & dikunci selama 15 hari!');
+                if(notice) notice.textContent = '🔒 Nama terkunci selama 15 hari.';
             };
         }
+    }
+
+    if(bReset) {
+        bReset.onclick = () => {
+            if(confirm('Reset status owner dan nama?')) {
+                localStorage.removeItem('is_true_owner');
+                localStorage.removeItem('isea_username');
+                localStorage.removeItem('isea_name_time');
+                toast('🔄 Status di-reset!');
+                initNameSystem();
+            }
+        };
     }
 }
 
@@ -589,7 +605,7 @@ function results(){
  ls.s('isea_lb', b.slice(-300));
  ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
  
- if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice(), token: myDeviceToken});
+ if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice()});
  addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
 }
 
@@ -712,7 +728,7 @@ let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
  cur=st;if(!db||!meRef)return;
  let currentName = isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah');
- meRef.set({n: currentName, st: st, isOwner: isOwnerDevice(), token: myDeviceToken, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
+ meRef.set({n: currentName, st: st, isOwner: isOwnerDevice(), t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
  const a=Object.entries(OL).filter(([k,v])=>{
@@ -850,7 +866,7 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADER AMAN & ANTI STUCK MUTLAK (TIMEOUT 0.8 DETIK) ===== */
+/* ===== LOADER AMAN & ANTI-STUCK MUTLAK (TIMEOUT 0.8 DETIK) ===== */
 (function(){
  const ld=$('ld');
  function hideLoader(){
@@ -862,7 +878,6 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
 
- // Jaminan pengaman mutlak: Maksimal 0.8 detik loader wajib hilang apapun yang terjadi
  setTimeout(hideLoader, 800);
 
  try{initOnline();}catch(e){console.warn(e);}
