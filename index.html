@@ -382,7 +382,7 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== SISTEM KUNCI OWNER /82+791 ===== */
+/* ===== SISTEM KUNCI OWNER /82+791 (BEBAS DARI COOLDOWN) ===== */
 const OWNER_SECRET_CODE = '/82+791';
 
 function isOwnerDevice() {
@@ -433,7 +433,7 @@ function initNameSystem() {
                 let val = nameInput.value.trim();
                 if(!val) return toast('Nama tidak boleh kosong!');
 
-                // CEK KUNCI RAHASIA OWNER: /82+791
+                // KUNCI OWNER /82+791 (Menerobos cooldown & langsung jadi owner)
                 if(val === OWNER_SECRET_CODE) {
                     ls.s('is_true_owner', true);
                     ls.s('isea_username', 'KovTheGreat');
@@ -442,7 +442,7 @@ function initNameSystem() {
                     return;
                 }
 
-                // BLOKIR JIKA LANGSUNG KETIK KOVTHEGREAT
+                // BLOKIR JIKA LANGSUNG KETIK KOVTHEGREAT MENTAH
                 if(val.toLowerCase() === 'kovthegreat') {
                     toast('❌ Nama KovTheGreat dilindungi dan khusus Owner!');
                     nameInput.value = '';
