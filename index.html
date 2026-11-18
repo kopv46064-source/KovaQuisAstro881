@@ -176,7 +176,7 @@ html{scroll-behavior:smooth}
     
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
       <div id="nameNotice" style="font-size:.72rem;color:var(--mu);font-weight:600;"></div>
-      <button id="bResetOwner" style="background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;">Reset Status</button>
+      <button id="bResetOwner" style="background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;">Reset Nama / Cooldown 🔄</button>
     </div>
     
     <label class="l">Topik Kajian</label>
@@ -382,7 +382,7 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== SISTEM KUNCI OWNER /82+791 (BEBAS DARI COOLDOWN) ===== */
+/* ===== SISTEM KUNCI OWNER & AUTO-RESET COOLDOWN ===== */
 const OWNER_SECRET_CODE = '/82+791';
 
 function isOwnerDevice() {
@@ -403,37 +403,26 @@ function initNameSystem() {
         if(notice) notice.textContent = '👑 Status: Owner Aktif (KovTheGreat)';
         if(bReset) bReset.style.display = 'inline-block';
     } else {
-        if(bReset) bReset.style.display = 'none';
+        if(bReset) bReset.style.display = 'inline-block'; // Selalu tampilkan tombol reset biar gampang dibersihin kalau nyangkut
+        
+        // Buka paksa input agar tidak ter-lock cooldown lama
+        nameInput.disabled = false;
+        if(bSetName) bSetName.disabled = false;
+        
         let savedName = ls.g('isea_username', '');
-        let lastChange = ls.g('isea_name_time', 0);
-        let now = Date.now();
-        let cooldownLeft = 15 * 24 * 60 * 60 * 1000 - (now - lastChange);
-
         if(savedName && savedName.toLowerCase() !== 'kovthegreat') {
             nameInput.value = savedName;
-            if(cooldownLeft > 0) {
-                nameInput.disabled = true;
-                if(bSetName) bSetName.disabled = true;
-                let days = Math.ceil(cooldownLeft / (1000 * 60 * 60 * 24));
-                if(notice) notice.textContent = `🔒 Nama terkunci. Ganti dalam ${days} hari lagi.`;
-            } else {
-                nameInput.disabled = false;
-                if(bSetName) bSetName.disabled = false;
-                if(notice) notice.textContent = '';
-            }
         } else {
             nameInput.value = '';
-            nameInput.disabled = false;
-            if(bSetName) bSetName.disabled = false;
-            if(notice) notice.textContent = '';
         }
+        if(notice) notice.textContent = '';
 
         if(bSetName) {
             bSetName.onclick = () => {
                 let val = nameInput.value.trim();
                 if(!val) return toast('Nama tidak boleh kosong!');
 
-                // KUNCI OWNER /82+791 (Menerobos cooldown & langsung jadi owner)
+                // KUNCI OWNER /82+791 (Otomatis tembus cooldown & jadi owner)
                 if(val === OWNER_SECRET_CODE) {
                     ls.s('is_true_owner', true);
                     ls.s('isea_username', 'KovTheGreat');
@@ -458,23 +447,20 @@ function initNameSystem() {
 
                 ls.s('isea_username', val);
                 ls.s('isea_name_time', Date.now());
-                nameInput.disabled = true;
-                bSetName.disabled = true;
-                toast('✅ Nama disimpan & dikunci selama 15 hari!');
-                if(notice) notice.textContent = '🔒 Nama terkunci selama 15 hari.';
+                toast('✅ Nama berhasil disimpan!');
+                if(notice) notice.textContent = '✅ Nama aktif.';
             };
         }
     }
 
     if(bReset) {
         bReset.onclick = () => {
-            if(confirm('Reset status owner dan nama?')) {
-                localStorage.removeItem('is_true_owner');
-                localStorage.removeItem('isea_username');
-                localStorage.removeItem('isea_name_time');
-                toast('🔄 Status di-reset!');
-                initNameSystem();
-            }
+            // BERSIHKAN TOTAL SEMUA MEMORI COOLDOWN & NAMA LAMA
+            localStorage.removeItem('is_true_owner');
+            localStorage.removeItem('isea_username');
+            localStorage.removeItem('isea_name_time');
+            toast('🔄 Cooldown & Nama berhasil di-reset bersih!');
+            initNameSystem();
         };
     }
 }
