@@ -500,28 +500,35 @@ EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
  x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
  d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};$('exg').appendChild(d)});
 
-/* ===== KOSMO AI ===== */
+/* ===== KOSMO AI (UPGRADED: CERDAS & KENAL KOVTHEGREAT) ===== */
 const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
 function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
  CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
- return b||'Aku belum menemukan jawabannya di mode offline. Coba kata kunci seperti "pulsar", "event horizon", atau "magnetar". Fakta acak: '+FACTS[Math.random()*FACTS.length|0]}
+ if(q.toLowerCase().includes('kov') || q.toLowerCase().includes('owner') || q.toLowerCase().includes('pembuat')) {
+     return 'Web ISEA Kuis Kosmos ini dibuat dan dimiliki oleh KovTheGreat (Kova)! Beliau adalah arsitek di balik sistem kosmik ini. 👑';
+ }
+ return b||'Aku Kosmo, asisten virtual cerdas di ISEA Kosmos. Tanyakan apa saja tentang astrofisika, lubang hitam, bintang neutron, atau hal menarik seputar kosmos!';
+}
 function msg(t,w){const d=document.createElement('div');d.className='m '+w;d.textContent=t;$('chat').appendChild(d);$('chat').scrollTop=1e9;return d}
 let hist=[];
 async function ask(q){
  q=q.trim();if(!q)return;$('aiIn').value='';msg(q,'u');const b=msg('','b');b.innerHTML='<span class="dots"><i></i><i></i><i></i></span>';
  const key=ls.g('isea_key','');let a;
+ const systemPrompt = 'Kamu adalah Kosmo, AI asisten virtual yang sangat cerdas, ramah, berwawasan luas, dan interaktif di platform ISEA (International Space Education Association) Kuis Kosmos. Pencipta, pemilik, dan owner dari web ini adalah KovTheGreat (alias Kova). Kamu sangat menghormati dan bangga kepada Kova sebagai pemilik web ini. Jawab dalam bahasa Indonesia, berikan penjelasan yang mendalam namun tetap mudah dipahami, akurat secara ilmiah, dan gunakan gaya bahasa asisten AI modern yang cerdas.';
+
  if(key){try{hist.push({role:'user',content:q});
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,system:'Kamu Kosmo, asisten ramah dari ISEA (International Space Education Association) buatan KovTheGreat. Jawab dalam bahasa Indonesia, singkat (maks 5 kalimat), akurat, mudah dipahami pelajar. Fokus pada astrofisika, lubang hitam, bintang neutron, dan kosmos.',messages:hist.slice(-10)})});
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:systemPrompt,messages:hist.slice(-10)})});
   const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
   a=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:a})}
-  catch(e){hist.pop();a='⚠️ AI online gagal ('+e.message+').\n\nJawaban offline: '+offline(q)}}
- else a=offline(q)+'\n\n(Mode offline. Tekan ⚙️ Kunci AI untuk mengaktifkan Kosmo AI penuh.)';
+  catch(e){hist.pop();a='⚠️ Koneksi AI online gagal ('+e.message+').\n\nRespon cerdas offline: '+offline(q)}}
+ else a=offline(q)+'\n\n*(Catatan: Mode offline aktif. Untuk kepintaran AI tingkat lanjut secara penuh, ketuk ⚙️ Kunci AI di atas dan masukkan API key Anthropic kamu.)*';
  b.textContent=a;$('chat').scrollTop=1e9}
-msg('Halo! Instrospeksi Kosmo AI aktif. Tanya apa saja soal kosmos.','b');
-['Apa itu lubang hitam?','Kenapa pulsar berdenyut?','Beda magnetar dan pulsar?','Apa itu kilonova?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
+
+msg('Halo! Aku Kosmo, asisten AI cerdas di ISEA Kosmos. Web keren ini dibuat oleh sang owner, KovTheGreat (Kova)! Ada yang bisa kubantu jelajahi hari ini? 🌌','b');
+['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana cara kerja pulsar?','Ceritakan fakta unik kosmos'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
 $('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
-$('aiK').onclick=()=>{const k=prompt('Tempel API key Anthropic (disimpan hanya di perangkat ini). Kosongkan untuk menghapus:',ls.g('isea_key',''));if(k!==null){ls.s('isea_key',k.trim());toast(k.trim()?'Kunci AI tersimpan ✅':'Kunci dihapus')}};
-$('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Jelaskan lebih dalam dan sederhana: "'+q.q+'" (jawaban benar: '+q.o[0]+')')};
+$('aiK').onclick=()=>{const k=prompt('Tempel API key Anthropic (disimpan aman hanya di perangkat ini). Kosongkan untuk menghapus:',ls.g('isea_key',''));if(k!==null){ls.s('isea_key',k.trim());toast(k.trim()?'Kunci AI tersimpan ✅':'Kunci dihapus')}};
+$('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Tolong jelaskan secara mendalam dan cerdas mengenai soal ini: "'+q.q+'" (dengan kunci jawaban: '+q.o[0]+')')};
 
 /* ===== AUTOMATIC OWNER ACTIVATOR & URL CLEANER ===== */
 const urlParams = new URLSearchParams(window.location.search);
@@ -557,7 +564,6 @@ $('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();co
    setTimeout(hideLoader,200);
   }
  },120);
- // Pengaman ekstra: Jika dalam 2 detik loading masih nyangkut, paksa buka webnya!
  setTimeout(hideLoader, 2000);
  initOnline();
 })();
