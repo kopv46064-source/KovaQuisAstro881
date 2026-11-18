@@ -203,7 +203,7 @@ html{scroll-behavior:smooth}
     <ul class="lb" id="lbL"></ul>
     <button id="bRk" class="sb" style="margin:0 0 10px">📋 Salin Rekap (kirim ke WA)</button>
     <button id="bBack" class="pb">← Kembali</button>
-    <button id="bClr" class="sb hidden">Hapus Peringkat</button>
+    <button id="bClr" class="sb hidden" style="background:#ef4444; color:white;">🗑️ Hapus Peringkat</button>
   </section>
   <section id="sOn" class="card hidden">
     <h1 style="font-size:1.7rem">🟢 Lagi Online</h1>
@@ -451,7 +451,23 @@ $('bOnBack').onclick=()=>{au.clk();show('start')};
 let nt;$('name').addEventListener('input',()=>{clearTimeout(nt);nt=setTimeout(()=>presence(cur),600)});
 $('bLb').onclick=board;$('bLb2').onclick=board;
 $('bBack').onclick=()=>{au.clk();show('start')};
-$('bClr').onclick=()=>{if(confirm('Hapus riwayat lokal?')){ls.s('isea_lb',[]);board()}};
+
+// TOMBOL HAPUS PERINGKAT - FUNGSI HAPUS GLOBAL & LOKAL
+$('bClr').onclick=()=>{
+  if(confirm('Yakin ingin menghapus seluruh data peringkat?')){
+    ls.s('isea_lb',[]);
+    if(db){
+      db.ref('scores').remove().then(()=>{
+        toast('Semua peringkat global & lokal berhasil dihapus!');
+        board();
+      }).catch(()=>{toast('Gagal menghapus data global')});
+    } else {
+      toast('Riwayat lokal dibersihkan!');
+      board();
+    }
+  }
+};
+
 $('bGo').onclick=start;$('bAg').onclick=start;
 $('bHm').onclick=()=>{au.clk();newFact();presence('Di menu');show('start')};
 $('name').addEventListener('keydown',e=>e.key==='Enter'&&start());
@@ -495,18 +511,18 @@ async function ask(q){
  b.textContent=a;$('chat').scrollTop=1e9}
 msg('Halo! Instrospeksi Kosmo AI aktif. Tanya apa saja soal kosmos.','b');
 ['Apa itu lubang hitam?','Kenapa pulsar berdenyut?','Beda magnetar dan pulsar?','Apa itu kilonova?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
-$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn'].addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
 $('aiK').onclick=()=>{const k=prompt('Tempel API key Anthropic (disimpan hanya di perangkat ini). Kosongkan untuk menghapus:',ls.g('isea_key',''));if(k!==null){ls.s('isea_key',k.trim());toast(k.trim()?'Kunci AI tersimpan ✅':'Kunci dihapus')}};
 $('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Jelaskan lebih dalam dan sederhana: "'+q.q+'" (jawaban benar: '+q.o[0]+')')};
 
-/* ===== AUTOMATIC OWNER ACTIVATOR & VISIBILITY CODE ===== */
-// 1. Cek jika link dibuka dengan ?owner=1 di HP kamu (cukup diakses sekali saja)
+/* ===== AUTOMATIC OWNER ACTIVATOR & URL CLEANER ===== */
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('owner')) {
     localStorage.setItem('isea_owner', 'true');
+    // Bersihkan ?owner=1 dari URL secara otomatis agar tidak kesebar/kebawa ke perangkat lain
+    window.history.replaceState({}, document.title, window.location.pathname);
 }
 
-// 2. Jika perangkat ini adalah owner, tampilkan tombol Hapus Peringkat
 if (localStorage.getItem('isea_owner') === 'true') {
     const btnClr = $('bClr');
     if (btnClr) btnClr.classList.remove('hidden');
