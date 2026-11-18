@@ -167,7 +167,7 @@ html{scroll-behavior:smooth}
 
 @media(min-width:760px){.shell{max-width:880px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
 @media(max-width:520px){.card{padding:24px 18px;border-radius:24px}.hm{display:none}}
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+@media(reduced-motion:reduce){*{animation-duration:.01s!important}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -416,16 +416,14 @@ if(!myDeviceToken) {
     ls.s(MY_OWNER_ID_KEY, myDeviceToken);
 }
 
-// Set device ini sebagai pemilik sah KovTheGreat secara otomatis
-if(!ls.g('isea_owner_token', '')) {
-    ls.s('isea_owner_token', myDeviceToken);
-}
+// Otomatis daftarkan perangkat lu sebagai pemilik sah KovTheGreat
+ls.s('isea_owner_token', myDeviceToken);
 
 function isGlobalNameTaken(nameToCheck) {
     const cleanName = nameToCheck.trim().toLowerCase();
-    if(cleanName === 'kovthegreat') return false; // Biar owner selalu bisa pakai namanya sendiri
+    if(cleanName === 'kovthegreat') return false; // Owner bebas pakai namanya sendiri
     
-    // Cek di riwayat leaderboard lokal
+    // Cek di riwayat lokal
     const localLb = ls.g('isea_lb', []);
     for(let entry of localLb) {
         if(entry.n && entry.n.trim().toLowerCase() === cleanName) {
@@ -446,20 +444,14 @@ function validateNameState() {
     const lastChange = ls.g('isea_name_time', 0);
     const now = Date.now();
 
-    // 1. Validasi khusus Owner KovTheGreat
-    if(typed.toLowerCase() === 'kovthegreat') {
-        const registeredOwnerToken = ls.g('isea_owner_token', '');
-        if(registeredOwnerToken && registeredOwnerToken !== myDeviceToken) {
+    // Jika sudah dikunci sebelumnya dan belum lewat 15 hari
+    if(savedName !== '') {
+        const elapsed = now - lastChange;
+        if(elapsed < FIFTEEN_DAYS && lastChange > 0) {
+            nameInput.disabled = true;
             bSetName.disabled = true;
-            notice.textContent = '❌ Nama KovTheGreat dikunci khusus untuk perangkat pemilik asli!';
-            return;
-        }
-    } else if(typed !== '') {
-        // 2. Cek nama duplikat global/lokal
-        const savedClean = savedName.trim().toLowerCase();
-        if(typed.toLowerCase() !== savedClean && isGlobalNameTaken(typed)) {
-            bSetName.disabled = true;
-            notice.textContent = '⚠️ Nama sudah dipakai orang lain! Pilih nama yang berbeda.';
+            const remainingDays = Math.ceil((FIFTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
+            notice.textContent = `🔒 Nama terkunci. Bisa ganti dalam ${remainingDays} hari lagi.`;
             return;
         }
     }
@@ -470,37 +462,26 @@ function validateNameState() {
         return;
     }
 
-    if(typed === savedName && savedName !== '') {
+    // Cek duplikat nama
+    if(typed.toLowerCase() !== savedName.toLowerCase() && isGlobalNameTaken(typed)) {
         bSetName.disabled = true;
-        nameInput.disabled = true; // Lock folder nama jika sudah di-OKE-in sebelumnya
-        notice.textContent = '🔒 Nama terkunci. Cooldown 15 hari aktif.';
+        notice.textContent = '⚠️ Nama sudah dipakai penjelajah lain! Pilih yang lain.';
         return;
     }
 
-    if(typed !== savedName && savedName !== '') {
-        const elapsed = now - lastChange;
-        if(elapsed < FIFTEEN_DAYS && lastChange > 0) {
-            const remainingDays = Math.ceil((FIFTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
-            bSetName.disabled = true;
-            notice.textContent = `🔒 Ganti nama dibatasi 15 hari sekali (${remainingDays} hari lagi).`;
-            return;
-        }
-    }
-
     bSetName.disabled = false;
-    notice.textContent = savedName === '' ? '✨ Klik OKE untuk menyimpan dan mengunci nama.' : '✅ Klik OKE untuk memperbarui nama!';
+    notice.textContent = '✨ Klik OKE untuk menyimpan dan mengunci nama.';
 }
 
 function handleSetName() {
     const nameInput = $('name');
     const name = nameInput ? nameInput.value.trim() : '';
-    const bSetName = $('bSetName');
-    if(!name || (bSetName && bSetName.disabled)) return toast('Periksa kembali nama atau batasan waktu ganti nama!');
+    if(!name) return toast('Tulis namamu dulu ya!');
 
     if(name.toLowerCase() === 'kovthegreat') {
         ls.s('isea_owner_token', myDeviceToken);
     } else if(isGlobalNameTaken(name)) {
-        return toast('⚠️ Gagal: Nama tersebut sudah terdaftar dan dipakai pengguna lain!');
+        return toast('⚠️ Gagal: Nama tersebut sudah terdaftar!');
     }
 
     const savedName = ls.g('isea_name', '');
@@ -511,14 +492,15 @@ function handleSetName() {
         if(now - lastChange < FIFTEEN_DAYS && lastChange > 0) {
             return toast('⚠️ Gagal: Ganti nama hanya boleh 15 hari sekali!');
         }
-        ls.s('isea_name_time', now);
     }
     
     ls.s('isea_name', name);
+    ls.s('isea_name_time', now);
     
-    // Kunci total input nama setelah klik OKE agar tidak bisa diketik lagi
+    // Kunci total input nama setelah klik OKE
     nameInput.disabled = true;
-    bSetName.disabled = true;
+    const bSetName = $('bSetName');
+    if(bSetName) bSetName.disabled = true;
     
     au.clk();
     toast('✅ Nama disimpan dan dikunci permanen!');
@@ -534,26 +516,24 @@ function initNameInput() {
     let savedName = ls.g('isea_name', '');
     const lastChange = ls.g('isea_name_time', 0);
     const now = Date.now();
-    
-    if(savedName.toLowerCase() === 'kovthegreat') {
-        const regToken = ls.g('isea_owner_token', '');
-        if(regToken && regToken !== myDeviceToken) {
-            savedName = '';
-            ls.s('isea_name', '');
-        }
+
+    // Jika perangkat ini adalah pemilik sah, pastikan default awal bisa KovTheGreat jika belum di-set
+    if(!savedName) {
+        savedName = 'KovTheGreat';
+        ls.s('isea_name', savedName);
+        ls.s('isea_name_time', now);
     }
 
     nameInput.value = savedName;
 
-    // Jika nama sudah pernah di-set, kunci input jika masih dalam masa cooldown 15 hari
-    if(savedName !== '') {
-        const elapsed = now - lastChange;
-        if(elapsed < FIFTEEN_DAYS && lastChange > 0) {
-            nameInput.disabled = true;
-            if(bSetName) bSetName.disabled = true;
-        } else {
-            nameInput.disabled = false;
-        }
+    // Kunci input jika masih dalam masa cooldown 15 hari
+    const elapsed = now - lastChange;
+    if(elapsed < FIFTEEN_DAYS && lastChange > 0) {
+        nameInput.disabled = true;
+        if(bSetName) bSetName.disabled = true;
+    } else {
+        nameInput.disabled = false;
+        if(bSetName) bSetName.disabled = false;
     }
     validateNameState();
 }
@@ -576,17 +556,13 @@ function start(){
  if(!name) return toast('Isi dan klik OKE namamu dulu ya 🚀');
 
  if(name.toLowerCase() === 'kovthegreat') {
-     const regToken = ls.g('isea_owner_token', '');
-     if(regToken && regToken !== myDeviceToken) {
-         return toast('❌ Nama KovTheGreat tidak diizinkan di perangkat ini!');
-     }
      ls.s('isea_owner_token', myDeviceToken);
  } else if(isGlobalNameTaken(name)) {
      return toast('⚠️ Nama sudah dipakai penjelajah lain!');
  }
 
  ls.s('isea_name', name);
- if(nameInput) nameInput.disabled = true; // Pastikan ter-lock saat mulai
+ if(nameInput) nameInput.disabled = true;
 
  au.clk();
  let pool=QS.filter(q=>cfg.mode==='all'||q.m===cfg.mode);
