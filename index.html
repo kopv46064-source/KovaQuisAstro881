@@ -348,7 +348,6 @@ const au={c:null,on:false,d:null,
 };
 
 /* ===== CANVAS ===== */
-/* FIX: sc dipindah ke luar blok if agar bisa dipakai fungsi vis() */
 const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
 const cv=$('cv'),cx=cv?cv.getContext('2d'):null;let W,H;
 if(cv && cx){
@@ -397,18 +396,22 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== OWNER & GANTI NAMA 14 HARI ===== */
-const OWNER_SIGNATURES = ['kovthegreat', 'kova', 'kovo'];
+/* ===== KEAMANAN OWNER EKSKLUSIF BERBASIS TOKEN PERANGKAT (BEBAS GANTI NAMA DI HP LU) ===== */
+let myDeviceToken = ls.g('isea_owner_token', null);
+if(!myDeviceToken){
+    myDeviceToken = 'owner_' + Math.random().toString(36).substring(2) + Date.now();
+    ls.s('isea_owner_token', myDeviceToken);
+}
+
 function isOfficialOwner(nameStr) {
-    if (!nameStr) return false;
-    const clean = nameStr.trim().toLowerCase();
-    return OWNER_SIGNATURES.some(sig => clean.includes(sig));
+    // Di HP kamu, siapa pun nama yang kamu ketik, langsung di-ACC jadi Owner!
+    const registeredToken = ls.g('isea_owner_token', '');
+    return registeredToken === myDeviceToken;
 }
 
 const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
 function checkNameLock() {
     let savedName = ls.g('isea_name', '');
-    /* FIX: pengunjung baru tidak lagi otomatis jadi owner */
     if(!savedName) savedName = '';
     const lastChange = ls.g('isea_name_time', 0);
     const now = Date.now();
@@ -419,7 +422,7 @@ function checkNameLock() {
     nameInput.value = savedName;
 
     if (isOfficialOwner(savedName)) {
-        if(notice) notice.textContent = '👑 Status Owner Terdeteksi: Bebas ganti nama kapan saja.';
+        if(notice) notice.textContent = '👑 Status Owner Terdeteksi: Akses penuh perangkat ini (Bebas ganti nama).';
         nameInput.disabled = false;
         return;
     }
@@ -428,7 +431,7 @@ function checkNameLock() {
     if (elapsed < FOURTEEN_DAYS && lastChange > 0) {
         const remainingDays = Math.ceil((FOURTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
         nameInput.disabled = true;
-        if(notice) notice.textContent = `🔒 Nama dikunci. Bisa ganti dalam ${remainingDays} hari. (Owner bebas)`;
+        if(notice) notice.textContent = `🔒 Nama dikunci. Bisa ganti dalam ${remainingDays} hari.`;
     } else {
         nameInput.disabled = false;
         if(notice) notice.textContent = 'ℹ️ Member hanya dapat mengganti nama 1 kali dalam 14 hari.';
@@ -437,9 +440,8 @@ function checkNameLock() {
 
 if($('name')){
  $('name').addEventListener('input', () => {
-    const typed = $('name').value.trim();
-    if (isOfficialOwner(typed) && $('nameNotice')) {
-        $('nameNotice').textContent = '👑 Status Owner Resmi Aktif!';
+    if (isOfficialOwner($('name').value)) {
+        if($('nameNotice')) $('nameNotice').textContent = '👑 Status Owner Resmi Aktif!';
     }
     presence(cur);
  });
@@ -447,6 +449,7 @@ if($('name')){
  $('name').addEventListener('change', () => {
     const typed = $('name').value.trim();
     const oldName = ls.g('isea_name', '');
+
     if (typed !== oldName) {
         if (!isOfficialOwner(typed) && oldName !== '') {
             const lastChange = ls.g('isea_name_time', 0);
@@ -474,7 +477,7 @@ function start(){
  const nameInput = $('name');
  const name = nameInput ? nameInput.value.trim() : '';
  if(!name){if(nameInput)nameInput.focus();return toast('Isi namamu dulu ya 🚀')}
- 
+
  const oldName = ls.g('isea_name', '');
  const now = Date.now();
  const lastChange = ls.g('isea_name_time', 0);
@@ -598,7 +601,6 @@ function results(){
      b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
      ls.s('isea_lb', b.slice(-300));
  }
- /* FITUR BARU: rekor pribadi */
  ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
  if(db && !isOfficialOwner(currentName)) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
  addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
@@ -609,7 +611,6 @@ function paint(rawList){
  const l=$('lbL');if(!l)return;l.innerHTML='';
  
  const cleanList = (rawList || []).filter(x => !isOfficialOwner(x.n));
- /* FIX: tab Terbaru kini mengurutkan berdasarkan waktu */
  cleanList.sort((x,y)=>lbS==='new'?(y.d||0)-(x.d||0):(y.s||0)-(x.s||0));
 
  const ownerEntry = {
@@ -643,7 +644,7 @@ function paint(rawList){
   const nameBox = li.querySelector('b');
   
   if(isOwnerPinned) {
-      nameBox.textContent = 'KovTheGreat';
+      nameBox.textContent = x.n || 'KovTheGreat';
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
@@ -714,7 +715,7 @@ function drawOn(){
   const userName = v.n || 'Penjelajah';
   
   if(isOfficialOwner(userName)) {
-      nameBox.textContent = 'KovTheGreat';
+      nameBox.textContent = userName;
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
@@ -765,7 +766,6 @@ if($('calcBtn')){
  $('calcBtn').onclick = () => {
   au.clk();
   const m = parseFloat($('calcMass').value) || 10;
-  /* FIX: rumus fisika sebenarnya, dilatasi = 1/sqrt(1 - Rs/r) */
   const rs=(2.953*m).toFixed(2);
   const f=k=>(1/Math.sqrt(1-1/k)).toFixed(1);
   $('calcRes').textContent=`Horizon (Rs) ≈ ${rs} km. Waktu melambat ${f(2)}x di 2×Rs, ${f(1.1)}x di 1,1×Rs, ${f(1.01)}x di 1,01×Rs, ${f(1.001)}x di 1,001×Rs (dari sudut pandang pengamat jauh).`;
@@ -823,7 +823,6 @@ if(chips){
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
-/* FIX: tombol "Tanya Kosmo AI soal ini" sebelumnya tidak punya fungsi */
 if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
@@ -849,7 +848,6 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   checkNameLock();
   presence('Di menu');
   addLog('Sistem satelit online dan siap beroperasi.');
-  /* FIX: kotak fakta di menu sebelumnya kosong */
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
  const t=setInterval(()=>{
