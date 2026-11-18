@@ -167,6 +167,7 @@ html{scroll-behavior:smooth}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head>
 <body>
 <div id="ld">
@@ -185,6 +186,7 @@ html{scroll-behavior:smooth}
     <button id="fns" class="gb">💫 <span class="hm">Neutron Star</span></button>
   </div>
   <div class="grp">
+    <button id="bGAuth" class="gb" type="button" title="Login Google Owner">🔑</button>
     <button id="bOn" class="gb hidden">🟢 0</button>
     <button id="bLb" class="gb">🏆</button>
     <button id="bAu" class="gb">🔇</button>
@@ -350,7 +352,7 @@ Q('ns','Peristiwa apa yang biasanya melahirkan bintang neutron?',['Supernova run
 Q('bh','Menurut Stephen Hawking, bagaimana lubang hitam bisa kehilangan massa?',['Melalui Radiasi Hawking dekat Event Horizon','Penguapan air di piringan akresi','Angin matahari bintang terdekat','Peluruhan radioaktif inti besi'],'Efek kuantum di dekat horizon membuat lubang hitam memancarkan radiasi dan perlahan menguap.'),
 Q('ns','Tabrakan dua bintang neutron (kilonova) penting karena menghasilkan...',['Gelombang gravitasi dan unsur berat seperti emas & platinum','Hidrogen murni pertama','Lapisan ozon planet','Cincin es planet raksasa'],'Penggabungan bintang neutron memicu proses-r yang menciptakan logam berat.'),
 Q('bh','Jari-jari Schwarzschild menentukan...',['Ukuran event horizon lubang hitam tak berputar','Suhu piringan akresi','Kecepatan rotasi lubang hitam','Umur lubang hitam'],'Rumusnya R = 2GM/c². Makin besar massa, makin besar horizonnya.'),
-Q('ns','Siapa yang pertama menemukan pulsar pada 1967?',['Jocelyn Bell Burnell','Stephen Hawking','Carl Sagan','Edwin Hubble'],'Jocelyn Bell Burnell mendeteksi sinyal radio berdenyut teratur; awalnya sempat dijuluki "LGM-1".'),
+Q('ns','Siapa yang pertama kali menemukan pulsar pada 1967?',['Jocelyn Bell Burnell','Stephen Hawking','Carl Sagan','Edwin Hubble'],'Jocelyn Bell Burnell mendeteksi sinyal radio berdenyut teratur; awalnya sempat dijuluki "LGM-1".'),
 Q('bh','Gambar pertama lubang hitam (2019) menunjukkan lubang hitam di galaksi...',['Messier 87','Bima Sakti','Andromeda','Galaksi Segitiga'],'Event Horizon Telescope merilis citra bayangan M87* pada April 2019.'),
 Q('ns','Sekitar berapa diameter bintang neutron?',['±20 kilometer','±2.000 kilometer','±200.000 kilometer','±2 kilometer'],'Seukuran sebuah kota, tetapi massanya lebih dari Matahari.'),
 Q('bh','Gelombang gravitasi dari penggabungan lubang hitam pertama kali dideteksi oleh...',['LIGO pada 2015','Hubble pada 1990','Voyager pada 1977','Kepler pada 2009'],'Sinyal GW150914 membuktikan prediksi Einstein dan keberadaan lubang hitam biner.'),
@@ -424,7 +426,7 @@ if(cv && cx){
 let G={}, cfg={mode:'all',diff:'normal',n:10};
 const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
 let cs='start';
-const NAVMAP={start:'quiz',quiz:'quiz',res:$('quiz'),on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
+const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
 function show(k){
  const c=scr[cs],n=scr[k];if(!n)return;cs=k;
  if($('nav'))$('nav').classList.toggle('off',k==='quiz');
@@ -440,11 +442,21 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== SISTEM KEAMANAN TOKEN OWNER TERVERIFIKASI ===== */
+/* ===== SISTEM KEAMANAN TOKEN & GOOGLE AUTH OWNER ===== */
 const OWNER_SECRET_TOKEN = 'KOV_SUPER_SECURE_TOKEN_2026_XYZ';
+const OWNER_GOOGLE_UID = 'GANTI_DENGAN_USER_UID_LU'; // Isi setelah User UID muncul di tab Users
+let GOOGLE_AUTH_USER = null;
+
+function isGoogleOwnerVerified(){
+  return Boolean(
+    GOOGLE_AUTH_USER &&
+    OWNER_GOOGLE_UID !== 'GANTI_DENGAN_USER_UID_LU' &&
+    GOOGLE_AUTH_USER.uid === OWNER_GOOGLE_UID
+  );
+}
 
 function isOwnerDevice() {
-    return ls.g('is_true_owner_token', '') === OWNER_SECRET_TOKEN;
+    return isGoogleOwnerVerified() || ls.g('is_true_owner_token', '') === OWNER_SECRET_TOKEN;
 }
 
 function initNameSystem() {
@@ -458,7 +470,7 @@ function initNameSystem() {
         nameInput.value = 'KovTheGreat';
         nameInput.disabled = true;
         if(bSetName) bSetName.disabled = true;
-        if(notice) notice.textContent = '👑 Status: KovTheGreat (Owner Terverifikasi)';
+        if(notice) notice.textContent = '';
         if(bReset) bReset.style.display = 'none';
     } else {
         if(bReset) bReset.style.display = 'inline-block';
@@ -532,6 +544,44 @@ function initNameSystem() {
             initNameSystem();
         };
     }
+}
+
+function initGoogleOwnerAuth(){
+  if(typeof firebase === 'undefined' || !firebase.auth) return;
+  const gBtn = $('bGAuth');
+  if(gBtn){
+    gBtn.onclick = async () => {
+      try{
+        au.clk();
+        const provider = new firebase.auth.GoogleAuthProvider();
+        if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+          await firebase.auth().signInWithRedirect(provider);
+        }else{
+          await firebase.auth().signInWithPopup(provider);
+        }
+      }catch(err){
+        toast('❌ Gagal login Google: ' + (err.message || err));
+      }
+    };
+  }
+  firebase.auth().onAuthStateChanged((user) => {
+    GOOGLE_AUTH_USER = user || null;
+    if(gBtn){
+      if(user){
+        gBtn.textContent = isGoogleOwnerVerified() ? '👑' : '✅';
+        gBtn.title = `Login: ${user.email || user.uid} | UID: ${user.uid}`;
+      }else{
+        gBtn.textContent = '🔑';
+        gBtn.title = 'Login Google Owner';
+      }
+    }
+    initNameSystem();
+    if(user){
+      console.log('[ISEA] Google User UID:', user.uid);
+      if(typeof presence === 'function') presence(cur || 'Di menu utama');
+    }
+    if($('sOn') && !$('sOn').classList.contains('hidden')) drawOn();
+  });
 }
 
 /* ===== KUIS & ANTI-CHEAT SESI BERJALAN ===== */
@@ -1045,7 +1095,7 @@ if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)retur
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
  $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
- $('modalCancel').onclick = () => modalKeyInput.value='';
+ $('modalCancel').onclick = () => {modalKeyInput.value='';aiModal.classList.remove('active');};
  $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
 }
 
@@ -1088,6 +1138,7 @@ function launchApp(){
  if($('fact')) $('fact').innerHTML = '💡 <b>Tahukah kamu?</b> ' + FACTS[Math.random() * FACTS.length | 0];
  
  try{ initOnline(); }catch(e){ console.warn(e); }
+ try{ initGoogleOwnerAuth(); }catch(e){ console.warn(e); }
 }
 
 window.addEventListener('load', launchApp);
