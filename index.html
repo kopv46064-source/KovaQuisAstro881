@@ -96,12 +96,13 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1e293b;border:1px solid var(--bd);padding:11px 20px;border-radius:999px;font-size:.88rem;font-weight:600;opacity:0;transition:all .4s var(--sp);z-index:60;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .toast.v{opacity:1;transform:translate(-50%,0)}
 html{scroll-behavior:smooth}
-#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s var(--sm),visibility .5s}
+#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .6s var(--sm),visibility .6s}
 #ld.out{opacity:0;visibility:hidden;pointer-events:none}
-.orb{width:96px;height:96px;border-radius:50%;background:#010103;position:relative;box-shadow:0 0 45px rgba(255,138,61,.5),inset 0 0 0 3px rgba(255,200,140,.9);animation:pul 2.4s ease-in-out infinite}
-.orb:before{content:"";position:absolute;inset:-28px;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(255,138,61,.85),rgba(56,189,248,.65),transparent 70%);-webkit-mask:radial-gradient(circle,transparent 56%,#000 58%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 56%,#000 58%,#000 70%,transparent 72%);animation:spn 1.8s linear infinite}
-@keyframes spn{to{transform:rotate(360deg)}}@keyframes pul{50%{transform:scale(1.08)}}
-.ldt{font:800 2.2rem 'Space Grotesk',sans-serif;letter-spacing:.3em;padding-left:.3em}
+.orb{width:96px;height:96px;border-radius:50%;background:#010103;position:relative;box-shadow:0 0 50px rgba(255,138,61,.6),inset 0 0 0 3px rgba(255,200,140,.9);animation:pul 2s ease-in-out infinite}
+.orb:before{content:"";position:absolute;inset:-32px;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(255,138,61,.95),rgba(56,189,248,.85),transparent 70%);-webkit-mask:radial-gradient(circle,transparent 54%,#000 56%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 54%,#000 56%,#000 70%,transparent 72%);animation:spn 1.4s linear infinite}
+@keyframes spn{to{transform:rotate(360deg)}}@keyframes pul{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(255,138,61,.4),inset 0 0 0 3px rgba(255,200,140,.7)}50%{transform:scale(1.12);box-shadow:0 0 65px rgba(56,189,248,.7),inset 0 0 0 4px rgba(255,255,255,1)}}
+.ldt{font:800 2.2rem 'Space Grotesk',sans-serif;letter-spacing:.3em;padding-left:.3em;animation:glowText 1.5s ease-in-out infinite alternate}
+@keyframes glowText{from{text-shadow:0 0 10px rgba(56,189,248,.3)}to{text-shadow:0 0 25px rgba(255,138,61,.8)}}
 .lds{font-size:.72rem;letter-spacing:.22em;color:var(--mu);font-weight:700}
 .leave{opacity:0!important;transform:translateY(-14px) scale(.98)!important;transition:all .22s ease-in}
 .shell{padding-bottom:104px}
@@ -957,7 +958,7 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== RESTORE SESI & LOADER AMAN (ANTI STUCK) ===== */
+/* ===== RESTORE SESI & ANIMASI LOADER AMAN ===== */
 (function(){
  const ld=$('ld');
  function hideLoader(){
@@ -984,8 +985,8 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
 
- // Eksekusi instan max 300ms agar dijamin tidak pernah stuck loading
- setTimeout(hideLoader, 300);
+ // Loader dijamin mulus, beranimasi interaktif, dan langsung masuk tanpa stuck (250ms)
+ setTimeout(hideLoader, 250);
 
  try{initOnline();}catch(e){console.warn(e);}
 })();
