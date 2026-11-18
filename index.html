@@ -87,8 +87,10 @@ label.l{display:block;font-size:.72rem;font-weight:800;letter-spacing:.08em;text
 .lb li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.07);font-weight:700;font-size:.9rem}
 .lb li span:first-child{width:26px;text-align:center}
 .lb li em{margin-left:auto;font-style:normal;color:#fbbf24;font-family:'Space Grotesk',sans-serif}
-.lb{max-height:48vh;overflow-y:auto}.lb li div{min-width:0}.lb li b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lb li small{display:block;color:var(--mu);font-weight:600;font-size:.72rem;margin-top:2px}
+.lb{max-height:48vh;overflow-y:auto}.lb li div{min-width:0}.lb li b{display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb li small{display:block;color:var(--mu);font-weight:600;font-size:.72rem;margin-top:2px}
 .lb li.me{border-color:#a855f7;box-shadow:0 0 18px rgba(168,85,247,.3)}
+.owner-badge{display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;padding:2px 6px;border-radius:6px;background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;font-weight:800;letter-spacing:.04em;box-shadow:0 0 10px rgba(168,85,247,.5)}
 .foot{padding-bottom:calc(90px + env(safe-area-inset-bottom))!important;position:relative;z-index:10;padding:10px 16px calc(18px + env(safe-area-inset-bottom));text-align:center;font-size:.76rem;color:var(--mu)}
 .foot div{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:6px 14px;border-radius:999px;background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.09)}
 .cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -203,7 +205,6 @@ html{scroll-behavior:smooth}
     <ul class="lb" id="lbL"></ul>
     <button id="bRk" class="sb" style="margin:0 0 10px">📋 Salin Rekap (kirim ke WA)</button>
     <button id="bBack" class="pb">← Kembali</button>
-    <button id="bClr" class="sb hidden" style="background:#ef4444; color:white;">🗑️ Hapus Peringkat</button>
   </section>
   <section id="sOn" class="card hidden">
     <h1 style="font-size:1.7rem">🟢 Lagi Online</h1>
@@ -396,7 +397,14 @@ function paint(list,rm){
  if(!list.length)l.innerHTML='<li>Belum ada data. Jadilah yang pertama! 🚀</li>';
  list.forEach(x=>{const r=rm.get(x.d),li=document.createElement('li');if(x.d===G.rid)li.className='me';
   li.innerHTML=`<span>${['🥇','🥈','🥉'][r-1]||r}</span><div><b></b><small></small></div><em>${x.s}</em>`;
-  li.querySelector('b').textContent=x.n;
+  const nameBox = li.querySelector('b');
+  nameBox.textContent = x.n;
+  if(localStorage.getItem('isea_owner') === 'true' && x.n.toLowerCase().includes('kov')) {
+      const badge = document.createElement('span');
+      badge.className = 'owner-badge';
+      badge.textContent = '👑 OWNER';
+      nameBox.appendChild(badge);
+  }
   li.querySelector('small').textContent=(x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+new Date(x.d).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
   l.appendChild(li)});
 }
@@ -421,7 +429,7 @@ const firebaseConfig = {
   authDomain: "isea-e9e03.firebaseapp.com",
   databaseURL: "https://isea-e9e03-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "isea-e9e03",
-  storageBucket: "isea-e9e03.firebasestorage.app",
+  storageBucket: "isea-e9e03-firebasestorage.app",
   messagingSenderId: "195013427338",
   appId: "1:195013427338:web:b097365f2a2eb6c265ad73",
   measurementId: "G-79P36SE4BR"
@@ -451,22 +459,6 @@ $('bOnBack').onclick=()=>{au.clk();show('start')};
 let nt;$('name').addEventListener('input',()=>{clearTimeout(nt);nt=setTimeout(()=>presence(cur),600)});
 $('bLb').onclick=board;$('bLb2').onclick=board;
 $('bBack').onclick=()=>{au.clk();show('start')};
-
-// TOMBOL HAPUS PERINGKAT - FUNGSI HAPUS GLOBAL & LOKAL
-$('bClr').onclick=()=>{
-  if(confirm('Yakin ingin menghapus seluruh data peringkat?')){
-    ls.s('isea_lb',[]);
-    if(db){
-      db.ref('scores').remove().then(()=>{
-        toast('Semua peringkat global & lokal berhasil dihapus!');
-        board();
-      }).catch(()=>{toast('Gagal menghapus data global')});
-    } else {
-      toast('Riwayat lokal dibersihkan!');
-      board();
-    }
-  }
-};
 
 $('bGo').onclick=start;$('bAg').onclick=start;
 $('bHm').onclick=()=>{au.clk();newFact();presence('Di menu');show('start')};
@@ -520,11 +512,6 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('owner')) {
     localStorage.setItem('isea_owner', 'true');
     window.history.replaceState({}, document.title, window.location.pathname);
-}
-
-if (localStorage.getItem('isea_owner') === 'true') {
-    const btnClr = $('bClr');
-    if (btnClr) btnClr.classList.remove('hidden');
 }
 
 /* ===== NAV BAWAH ===== */
