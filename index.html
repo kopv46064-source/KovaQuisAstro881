@@ -483,7 +483,7 @@ function initNameSystem() {
 const TIME=20;
 
 function saveActiveQuizState() {
-    if(isOwnerDevice()) return; // Owner kebal dari proteksi sesi ini
+    if(isOwnerDevice()) return; 
     if(G && G.live) {
         ls.s('isea_active_quiz', G);
     }
@@ -946,7 +946,7 @@ if(chips){
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
-if($('exAI'))$('exAI'.click=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
+if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
@@ -965,7 +965,6 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
   initNameSystem();
 
-  // CEK APAKAH ADA SESI KUIS YANG TERGANTUNG / KELUAR PAKSA SEBELUMNYA (KECUALI OWNER)
   if(!isOwnerDevice()) {
       const savedQuiz = ls.g('isea_active_quiz', null);
       if(savedQuiz && savedQuiz.live && savedQuiz.i < savedQuiz.qs.length) {
