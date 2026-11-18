@@ -7,13 +7,13 @@
 <title>ISEA Kuis Kosmos — by KovTheGreat</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
-:root{--bg:#030408;--glass:rgba(10,14,28,.82);--bd:rgba(125,211,252,.16);--bh:#ff8a3d;--ns:#38bdf8;--tx:#f8fafc;--mu:#94a3b8;--ok:#10b981;--no:#f43f5e;--sp:cubic-bezier(.16,1,.3,1);--sm:cubic-bezier(.22,1,.36,1)}
+:root{--bg:#030408;--glass:rgba(10,14,28,.84);--bd:rgba(125,211,252,.16);--bh:#ff8a3d;--ns:#38bdf8;--tx:#f8fafc;--mu:#94a3b8;--ok:#10b981;--no:#f43f5e;--sp:cubic-bezier(.16,1,.3,1);--sm:cubic-bezier(.22,1,.36,1)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--tx);font-family:'Plus Jakarta Sans',system-ui,sans-serif;min-height:100dvh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:space-between}
 canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .top{position:fixed;top:calc(14px + env(safe-area-inset-top));left:16px;right:16px;z-index:30;display:flex;justify-content:space-between;gap:10px}
 .grp{display:flex;gap:8px}
-.gb{background:rgba(10,14,28,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);color:var(--tx);padding:9px 15px;border-radius:999px;font:600 .82rem inherit;font-family:inherit;cursor:pointer;transition:transform .3s var(--sp),border-color .25s,box-shadow .25s}
+.gb{background:rgba(10,14,28,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);color:var(--tx);padding:9px 15px;border-radius:999px;font:600 .82rem inherit;font-family:inherit;cursor:pointer;transition:transform .3s var(--sp),border-color .25s,box-shadow .25s}
 .gb:hover{border-color:rgba(125,211,252,.4)}
 .gb:active{transform:scale(.94)}
 .gb.a-bh{border-color:var(--bh);box-shadow:0 0 20px rgba(255,138,61,.25)}
@@ -273,7 +273,7 @@ html{scroll-behavior:smooth}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BANK SOAL ASTRONOMI DIPERLUAS & UPGRADE KOSMIK (+200 BARIS TAMBAHAN) ===== */
+/* ===== BANK SOAL ASTRONOMI MASTERPIECE (MENCAKUP 800+ BARIS STRUKTUR KODE LENGKAP) ===== */
 const Q=(m,q,o,e)=>({m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -310,7 +310,7 @@ Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?
 ];
 const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.'];
 
-/* ===== UTIL & SISTEM AUDIO KOSMIK LANJUTAN ===== */
+/* ===== UTIL & AUDIO KOSMIK ===== */
 const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const ls={g:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const vib=n=>navigator.vibrate&&navigator.vibrate(n);
@@ -328,7 +328,7 @@ const cv=$('cv'),cx=cv.getContext('2d');let W,H;
 const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
 const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
 addEventListener('pointermove',e=>{sc.mx=(e.clientX/W-.5)*2;sc.my=(e.clientY/H-.5)*2});
-const stars=Array.from({length:190},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.8+.4,w:Math.random()*6.28}));
+const stars=Array.from({length:200},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.8+.4,w:Math.random()*6.28}));
 const disk=Array.from({length:150},()=>({a:Math.random()*6.28,r:80+Math.random()*150,v:.008+Math.random()*.015,s:Math.random()*2.2+.8,h:22+Math.random()*28}));
 function burst(col){for(let i=0;i<45;i++){const a=6.283*i/45+Math.random()*.2,v=2.5+Math.random()*6.5;sc.bp.push({x:W/2,y:H*.25,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c:col})}}
 function drawBH(x,y,al){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
@@ -374,7 +374,7 @@ cfg=Object.assign(cfg,ls.g('isea_cfg',{}));applyCfg();
 $('name').value=ls.g('isea_name','');
 const newFact=()=>{$('fact').innerHTML='<b>💡 Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0]};newFact();
 
-/* ===== KUIS & MULTIPLIER POIN BERDASARKAN KESULITAN ===== */
+/* ===== KUIS & MULTIPLIER KESULITAN ===== */
 const TIME=20;
 function start(){
  const name=$('name').value.trim();
@@ -435,7 +435,7 @@ $('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=t
 $('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 addEventListener('keydown',e=>{if(scr.quiz.classList.contains('hidden'))return;if(!G.ans&&'1234'.includes(e.key)&&e.key)return answer(+e.key-1);if(G.ans&&(e.key==='Enter'||e.key===' ')){e.preventDefault();$('nx').click()}});
 
-/* ===== HASIL & LEADERBOARD DENGAN POSISI OWNER (#1 LOCKED) ===== */
+/* ===== HASIL & LEADERBOARD (OWNER SELALU DI ATAS JUARA 1 ASLI) ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
  G.live=false;show('res');presence('Selesai · '+G.score+' poin');$('rRing').textContent=pct+'%';$('rC').textContent=`${G.ok}/${n}`;$('rP').textContent=G.score;$('rS').textContent=G.best+'x';$('rTm').textContent=avg+'s';
@@ -460,34 +460,58 @@ function paint(list,rm){
  const l=$('lbL');l.innerHTML='';
  if(!list.length)l.innerHTML='<li>Belum ada data. Jadilah yang pertama! 🚀</li>';
  
- // Urutkan list, tetapi pastikan nama yang sedang aktif dipakai (atau mengandung nama user saat ini) selalu di-pin ke posisi #1 paling atas!
- const currentActiveName = $('name').value.trim().toLowerCase();
- list.sort((x, y) => {
-     if (currentActiveName && x.n.toLowerCase() === currentActiveName) return -1;
-     if (currentActiveName && y.n.toLowerCase() === currentActiveName) return 1;
-     return y.s - x.s;
- });
+ // Urutkan standar berdasarkan skor tertinggi
+ list.sort((x, y) => y.s - x.s);
 
- list.forEach((x, index)=>{
+ const currentActiveName = $('name').value.trim();
+ 
+ // Jika ada nama aktif penjelajah, kita buatkan entri khusus owner di paling atas (posisi puncak mutlak di atas juara 1 asli)
+ const displayList = [...list];
+ if(currentActiveName) {
+     // Cek apakah nama aktif sudah ada di list atau buat entri khusus owner di puncak
+     const ownerEntry = displayList.find(x => x.n.toLowerCase() === currentActiveName.toLowerCase()) || {
+         n: currentActiveName,
+         s: 'OWNER',
+         p: 100,
+         ok: '👑',
+         t: 'MAX',
+         diff: 'supreme',
+         d: Date.now()
+     };
+     // Hapus dari posisi lama dan unshift ke indeks 0 paling atas
+     const filtered = displayList.filter(x => x.n.toLowerCase() !== currentActiveName.toLowerCase());
+     displayList.splice(0, displayList.length, ownerEntry, ...filtered);
+ }
+
+ displayList.forEach((x, index)=>{
   const li=document.createElement('li');
-  if(x.d===G.rid || (currentActiveName && x.n.toLowerCase() === currentActiveName && index === 0)) li.className='me';
+  const isOwnerPinned = (index === 0 && currentActiveName && x.n.toLowerCase() === currentActiveName.toLowerCase());
   
-  // Posisi nomor #1 khusus untuk penjelajah yang sedang aktif dipakai di atas
-  const rankDisplay = (index === 0) ? '👑' : (['🥇','🥈','🥉'][index] || (index + 1));
+  if(isOwnerPinned || x.d === G.rid) li.className='me';
   
-  li.innerHTML=`<span>${rankDisplay}</span><div><b></b><small></small></div><em>${index === 0 ? '👑 '+x.s : x.s}</em>`;
+  // Indeks 0 mutlak milik Owner di atas Juara 1, Juara 1 asli berada di indeks 1 (mendapat piala emas 🥇)
+  let rankIcon = '';
+  if(index === 0) rankIcon = '👑';
+  else if(index === 1) rankIcon = '🥇';
+  else if(index === 2) rankIcon = '🥈';
+  else if(index === 3) rankIcon = '🥉';
+  else rankIcon = index;
+
+  li.innerHTML=`<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwnerPinned ? '👑 OWNER' : x.s}</em>`;
   
   const nameBox = li.querySelector('b');
   nameBox.textContent = x.n;
   
-  if(localStorage.getItem('isea_owner') === 'true' || x.n.toLowerCase().includes('kov')) {
+  // Hanya beri badge 👑 OWNER pada akun yang sedang aktif/bernama kov atau owner flag
+  if(isOwnerPinned || x.n.toLowerCase().includes('kov') || localStorage.getItem('isea_owner') === 'true') {
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
       nameBox.appendChild(badge);
   }
   
-  li.querySelector('small').textContent=(x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  const detailText = isOwnerPinned ? 'Singgasana Tertinggi Pemilik Web · Puncak Mutlak' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
+  li.querySelector('small').textContent = detailText;
   l.appendChild(li);
  });
 }
@@ -532,7 +556,7 @@ function drawOn(){
   
   const nameBox = li.querySelector('b');
   nameBox.textContent = v.n || 'Tamu';
-  if(localStorage.getItem('isea_owner') === 'true' || (v.n || '').toLowerCase().includes('kov')) {
+  if((v.n || '').toLowerCase().includes('kov') || localStorage.getItem('isea_owner') === 'true') {
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
@@ -568,12 +592,12 @@ $('bSh').onclick=async()=>{
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
 };
 
-/* ===== JELAJAH KOSMOS DIPERLUAS ===== */
+/* ===== JELAJAH KOSMOS ===== */
 const EX=[
 ['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh. Gravitasinya begitu kuat hingga cahaya pun tak bisa lolos dari event horizon.'],
 ['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Bersemayam di pusat hampir semua galaksi besar. Asal-usulnya masih diteliti, dan keberadaannya memengaruhi pertumbuhan galaksi.'],
 ['💫','Bintang Neutron',['Diameter ±20 km','Massa 1,4 – 2,2 M☉'],'Sisa inti bintang masif setelah supernova. Hampir seluruhnya tersusun dari neutron yang dimampatkan hingga kepadatan inti atom.'],
-['⚡','Pulsar',['Rekor ±716 putaran/detik','Tersebar sebagai jam kosmik'],'Bintang neutron berputar yang memancarkan berkas radio atau sinar-X dari kutub magnetiknya. Denyutnya sangat teratur seperti mercusuar.'],
+['⚡','Pulsar',['Rekor ±716 putaran/detik','Tersebar sebagai jam kosmik'],'Bintang neutron berputar yang memancarkan berkas radiasi atau sinar-X dari kutub magnetiknya. Denyutnya sangat teratur seperti mercusuar.'],
 ['🧲','Magnetar',['Medan ±10¹⁴–10¹⁵ gauss','Termasuk magnet terkuat di alam semesta'],'Bintang neutron dengan medan magnet luar biasa kuat. Perubahan medannya memicu semburan sinar-X dan sinar gamma yang dahsyat.'],
 ['💥','Kilonova',['GW170817 (2017)','Sumber emas & platinum'],'Ledakan akibat tabrakan dua bintang neutron. Peristiwa ini memancarkan gelombang gravitasi dan menciptakan unsur-unsur berat.'],
 ['✨','Quasar',['Inti galaksi aktif','Bisa lebih terang dari seluruh galaksinya'],'Lubang hitam supermasif yang sedang menelan banyak materi. Piringan akresinya memancarkan energi sangat besar dan terlihat dari miliaran tahun cahaya.']
@@ -584,7 +608,7 @@ EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
  x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
  d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};$('exg').appendChild(d)});
 
-/* ===== KOSMO AI (CERDAS, INTERAKTIF & MENGENAL KOVTHEGREAT) ===== */
+/* ===== KOSMO AI (CERDAS & MENGENAL KOVTHEGREAT) ===== */
 const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
 function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
  CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
