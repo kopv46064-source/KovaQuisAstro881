@@ -175,9 +175,9 @@ html{scroll-behavior:smooth}
     <label class="l" for="name">Nama Penjelajah</label>
     <div class="name-group">
       <input id="name" maxlength="16" autocomplete="off" placeholder="Tulis namamu..." />
-      <button id="bSetName" disabled>OKE</button>
+      <button id="bSetName">OKE</button>
     </div>
-    <div id="nameNotice" style="font-size:.72rem;color:var(--mu);margin-top:6px;font-weight:600;">👑 Terdeteksi sebagai Owner Mutlak (KovTheGreat).</div>
+    <div id="nameNotice" style="font-size:.72rem;color:var(--mu);margin-top:6px;font-weight:600;"></div>
     
     <label class="l">Topik Kajian</label>
     <div class="seg" id="segM"><button data-v="all" class="on">🌌 Semua Topik</button><button data-v="bh">🕳️ Black Hole</button><button data-v="ns">💫 Bintang Neutron</button></div>
@@ -382,30 +382,105 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== INISIALISASI OWNER MUTLAK (INSTAN & TANPA STUCK) ===== */
-const MASTER_OWNER_TOKEN = 'kov_master_key_secure_2026';
+/* ===== SISTEM PENGAMAN OWNER VS USER UMUM (MASTER KEY LOKAL) ===== */
+const OWNER_SECRET_TOKEN = 'kov_absolute_owner_key_2026';
 let myDeviceToken = ls.g('isea_device_token', '');
 if(!myDeviceToken){
     myDeviceToken = 'dev_' + Math.random().toString(36).slice(2, 10);
     ls.s('isea_device_token', myDeviceToken);
 }
 
-function initOwnerIdentity() {
+// Cek apakah perangkat ini adalah pemilik master key KovTheGreat
+function isOwnerDevice() {
+    return myDeviceToken === OWNER_SECRET_TOKEN || ls.g('is_true_owner', false) === true;
+}
+
+// Jika ingin mendaftarkan browser lu sebagai owner permanen (cukup jalankan sekali / otomatis)
+if(!ls.g('is_true_owner', false)) {
+    ls.s('is_true_owner', true);
+}
+
+function initNameSystem() {
     const nameInput = $('name');
+    const bSetName = $('bSetName');
+    const notice = $('nameNotice');
     if(!nameInput) return;
-    // Paksa set secara lokal sebagai KovTheGreat tanpa blocking
-    ls.s('isea_name', 'KovTheGreat');
-    nameInput.value = 'KovTheGreat';
-    nameInput.disabled = true; 
+
+    if(isOwnerDevice()) {
+        // KHUSUS LU (OWNER): Otomatis dikunci mutlak sebagai KovTheGreat tanpa bisa diganti
+        nameInput.value = 'KovTheGreat';
+        nameInput.disabled = true;
+        if(bSetName) bSetName.disabled = true;
+        if(notice) notice.textContent = '👑 Mode Owner Aktif: Nama terkunci mutlak sebagai KovTheGreat.';
+    } else {
+        // UNTUK ORANG LAIN: Bebas isi nama, ada batasan cooldown 15 hari & tidak boleh pakai KovTheGreat
+        let savedName = ls.g('isea_username', '');
+        let lastChange = ls.g('isea_name_time', 0);
+        let now = Date.now();
+        let cooldownLeft = 15 * 24 * 60 * 60 * 1000 - (now - lastChange);
+
+        if(savedName && savedName.toLowerCase() !== 'kovthegreat') {
+            nameInput.value = savedName;
+            if(cooldownLeft > 0) {
+                nameInput.disabled = true;
+                if(bSetName) bSetName.disabled = true;
+                let days = Math.ceil(cooldownLeft / (1000 * 60 * 60 * 24));
+                if(notice) notice.textContent = `🔒 Nama terkunci. Bisa ganti dalam ${days} hari lagi.`;
+            } else {
+                nameInput.disabled = false;
+                if(bSetName) bSetName.disabled = false;
+                if(notice) notice.textContent = '✨ Kamu bisa mengganti nama penjelajahmu.';
+            }
+        } else {
+            nameInput.value = '';
+            nameInput.disabled = false;
+            if(bSetName) bSetName.disabled = false;
+            if(notice) notice.textContent = '✨ Masukkan nama penjelajahmu (Dilarang pakai KovTheGreat).';
+        }
+
+        if(bSetName) {
+            bSetName.onclick = () => {
+                let newName = nameInput.value.trim();
+                if(!newName) return toast('Nama tidak boleh kosong!');
+                if(newName.toLowerCase() === 'kovthegreat') {
+                    toast('❌ Nama KovTheGreat dilindungi dan khusus untuk Owner!');
+                    nameInput.value = '';
+                    return;
+                }
+                // Cek duplikat di riwayat lokal
+                let lb = ls.g('isea_lb', []);
+                let exists = lb.some(x => x.n.toLowerCase() === newName.toLowerCase());
+                if(exists) {
+                    toast('❌ Nama sudah dipakai penjelajah lain! Pilih nama lain.');
+                    return;
+                }
+                ls.s('isea_username', newName);
+                ls.s('isea_name_time', Date.now());
+                nameInput.disabled = true;
+                bSetName.disabled = true;
+                toast('✅ Nama berhasil disimpan & dikunci selama 15 hari!');
+                if(notice) notice.textContent = '🔒 Nama terkunci. Bisa ganti dalam 15 hari lagi.';
+            };
+        }
+    }
 }
 
 /* ===== KUIS ===== */
 const TIME=20;
 function start(){
  const nameInput = $('name');
- const name = 'KovTheGreat';
- ls.s('isea_name', name);
- if(nameInput) nameInput.disabled = true;
+ let name = '';
+ if(isOwnerDevice()) {
+     name = 'KovTheGreat';
+ } else {
+     name = nameInput ? nameInput.value.trim() : '';
+     if(!name || name.toLowerCase() === 'kovthegreat') {
+         toast('⚠️ Masukkan nama yang valid terlebih dahulu!');
+         if(nameInput) nameInput.focus();
+         return;
+     }
+     ls.s('isea_username', name);
+ }
 
  au.clk();
  let pool=QS.filter(q=>cfg.mode==='all'||q.m===cfg.mode);
@@ -497,10 +572,10 @@ function results(){
  if($('rTm'))$('rTm').textContent=avg+'s';
  
  let t,d;
- if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, KovTheGreat! Kamu menaklukkan level '+G.diff.toUpperCase()+' dengan sempurna.';if(window.burst){burst('#38bdf8');burst('#ff8a3d')}}
- else if(pct>=70){t='Navigator Antarbintang 🚀';d='Hasil hebat, KovTheGreat! Pemahaman kosmikmu sudah sangat solid.'}
- else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, KovTheGreat! Terus tingkatkan pemahaman astrofisikamu.'}
- else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, KovTheGreat. Ulangi ekspedisi untuk hasil maksimal!'}
+ if(pct>=90){t='Astrofisikawan Legendaris 🌌';d=`Luar biasa, ${G.name}! Kamu menaklukkan level ${G.diff.toUpperCase()} dengan sempurna.`;if(window.burst){burst('#38bdf8');burst('#ff8a3d')}}
+ else if(pct>=70){t='Navigator Antarbintang 🚀';d=`Hasil hebat, ${G.name}! Pemahaman kosmikmu sudah sangat solid.`}
+ else if(pct>=50){t='Penjelajah Kosmik 🔭';d=`Lumayan, ${G.name}! Terus tingkatkan pemahaman astrofisikamu.`}
+ else{t='Kadet Ruang Angkasa 🛰️';d=`Perjalananmu baru dimulai, ${G.name}. Ulangi ekspedisi untuk hasil maksimal!`}
  if($('rT'))$('rT').textContent=t;
  if($('rD'))$('rD').textContent=d;
  
@@ -511,13 +586,12 @@ function results(){
  }
  
  const b=ls.g('isea_lb',[]);G.rid=Date.now();
- const currentName = 'KovTheGreat';
- b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
+ const currentName = G.name;
+ b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice()});
  ls.s('isea_lb', b.slice(-300));
  ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
  
- // Kirim ke Firebase di background (aman, tidak bikin stuck)
- if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, token: myDeviceToken});
+ if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice(), token: myDeviceToken});
  addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
 }
 
@@ -525,10 +599,15 @@ let lbS='best';
 function paint(rawList){
  const l=$('lbL');if(!l)return;l.innerHTML='';
  
- // Pastikan nama KovTheGreat di-filter bersih dari list luar, lalu dipinned khusus sebagai OWNER mutlak di urutan paling atas
- const cleanList = (rawList || []).filter(x => x.n && x.n.trim().toLowerCase() !== 'kovthegreat');
+ // Bersihkan nama KovTheGreat palsu dari user lain
+ const cleanList = (rawList || []).filter(x => {
+     if(!x.n) return false;
+     if(x.n.trim().toLowerCase() === 'kovthegreat' && !x.isOwner) return false;
+     return true;
+ });
  cleanList.sort((x,y)=>lbS==='new'?(y.d||0)-(x.d||0):(y.s||0)-(x.s||0));
 
+ // Pinned KovTheGreat Owner di urutan paling atas secara mutlak
  const ownerEntry = {
      n: 'KovTheGreat',
      s: 99999,
@@ -544,7 +623,7 @@ function paint(rawList){
 
  displayList.forEach((x, index)=>{
   const li=document.createElement('li');
-  const isOwnerPinned = x.isOwnerHeader || (x.n && x.n.trim().toLowerCase() === 'kovthegreat');
+  const isOwnerPinned = x.isOwnerHeader || (x.n && x.n.trim().toLowerCase() === 'kovthegreat' && x.isOwner);
   
   if(isOwnerPinned || x.d === G.rid) li.className='me';
   
@@ -576,7 +655,7 @@ function paint(rawList){
 }
 
 function board(){
- au.clk();if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
+ au.clk();if($('segL'))[...$('segL'].children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
  if(lbS==='all'){
   if(!db){
       paint(ls.g('isea_lb',[]));
@@ -584,7 +663,6 @@ function board(){
   }
   if($('lbL'))$('lbL').innerHTML='<li>Memuat data global...</li>';
   
-  // Ambil data dengan pengaman timeout 1.5 detik agar leaderboard tidak pernah muter/stuck selamanya
   let loaded = false;
   const timeoutId = setTimeout(() => {
       if(!loaded){
@@ -599,10 +677,7 @@ function board(){
       clearTimeout(timeoutId);
       const a=[];sn.forEach(c=>{
           const val = c.val();
-          // Blokir user lain yang coba-coba ngaku jadi KovTheGreat di database global
-          if(val.n && val.n.trim().toLowerCase() === 'kovthegreat' && val.token !== myDeviceToken) {
-              return; // Lewati/abaikan
-          }
+          if(val.n && val.n.trim().toLowerCase() === 'kovthegreat' && !val.isOwner) return;
           a.push(val);
       });
       paint(a);
@@ -640,12 +715,12 @@ const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.
 let db=null,meRef=null,cur='Di menu',OL={};
 function presence(st){
  cur=st;if(!db||!meRef)return;
- meRef.set({n: 'KovTheGreat', st: st, token: myDeviceToken, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
+ let currentName = isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah');
+ meRef.set({n: currentName, st: st, isOwner: isOwnerDevice(), token: myDeviceToken, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
  const a=Object.entries(OL).filter(([k,v])=>{
-  // Jika ada user lain menyamar jadi KovTheGreat tapi tokennya beda, sembunyikan/filter dari online list
-  if(v.n && v.n.trim().toLowerCase() === 'kovthegreat' && v.token !== myDeviceToken) return false;
+  if(v.n && v.n.trim().toLowerCase() === 'kovthegreat' && !v.isOwner) return false;
   return true;
  }).sort((x,y)=>(x[1].t||0)-(y[1].t||0));
 
@@ -657,7 +732,7 @@ function drawOn(){
   li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
   const nameBox = li.querySelector('b');
   const userName = v.n || 'Penjelajah';
-  if(userName.toLowerCase() === 'kovthegreat') {
+  if(userName.toLowerCase() === 'kovthegreat' && v.isOwner) {
       nameBox.textContent = 'KovTheGreat';
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
@@ -693,7 +768,8 @@ if($('bGo'))$('bGo').onclick=start;
 if($('bAg'))$('bAg').onclick=start;
 if($('bHm'))$('bHm').onclick=()=>{au.clk();presence('Di menu');show('start')};
 if($('bSh'))$('bSh').onclick=async()=>{
- const t=`🚀 KovTheGreat meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
+ const myName = isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah');
+ const t=`🚀 ${myName} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
 };
 
@@ -771,14 +847,14 @@ if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)retur
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
- $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
+ $('aiK'].onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
  $('modalCancel').onclick = () => aiModal.classList.remove('active');
  $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
 }
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADER AMAN & ANTI STUCK MUTLAK (TIMEOUT 1 DETIK) ===== */
+/* ===== LOADER AMAN & ANTI STUCK (TIMEOUT 1 DETIK) ===== */
 (function(){
  const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
  let p=0,i=0,done=false;
@@ -789,20 +865,19 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   const ld=$('ld');
   if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
   if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
-  initOwnerIdentity();
+  initNameSystem();
   presence('Di menu');
   addLog('Sistem satelit online dan siap beroperasi.');
-  if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
+  if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu? +FACTS[Math.random()*FACTS.length|0]</b>';
  }
 
  const t=setInterval(()=>{
   p=Math.min(100,p+40);
   if($('ldI'))$('ldI').style.width=p+'%';
-  if($('ldM'))$('ldM').textContent=M[Math.min(M.length-1,i++)];
+  if($('ldM'))$('ldM'].textContent=M[Math.min(M.length-1,i++)];
   if(p>=100){clearInterval(t);hideLoader();}
  },80);
 
- // Jaminan pengaman mutlak: Maksimal 1 detik loader wajib hilang apapun yang terjadi
  setTimeout(hideLoader, 1000);
 
  try{initOnline();}catch(e){console.warn(e);}
