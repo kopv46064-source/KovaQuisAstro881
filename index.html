@@ -18,11 +18,11 @@ canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:no
 .gb:active{transform:scale(.94)}
 .gb.a-bh{border-color:var(--bh);box-shadow:0 0 20px rgba(255,138,61,.25)}
 .gb.a-ns{border-color:var(--ns);box-shadow:0 0 20px rgba(56,189,248,.25)}
-.shell{position:relative;z-index:10;width:100%;max-width:820px;padding:84px 20px 20px;margin:auto 0;display:flex;flex-direction:column;align-items:center}
+.shell{position:relative;z-index:10;width:100%;max-width:880px;padding:84px 20px 20px;margin:auto 0;display:flex;flex-direction:column;align-items:center}
 .org{text-align:center;margin-bottom:20px}
 .acr{font:800 1.7rem 'Space Grotesk',sans-serif;letter-spacing:.32em;padding-left:.32em;background:linear-gradient(90deg,#7dd3fc,#f8fafc 55%,#fdba74);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .full{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mu);margin-top:2px}
-.card{width:100%;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bd);border-radius:32px;padding:36px 30px;box-shadow:0 35px 90px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.1)}
+.card{width:100%;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bd);border-radius:32px;padding:38px 34px;box-shadow:0 35px 90px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.1)}
 .hidden{display:none!important}
 .enter{animation:ce .5s var(--sp) forwards}
 @keyframes ce{0%{opacity:0;transform:translateY(24px) scale(.97)}100%{opacity:1;transform:none}}
@@ -184,7 +184,7 @@ html{scroll-behavior:smooth}
   <section id="sStart" class="card enter">
     <div class="badge">✨ Simulasi Kosmik Interaktif</div>
     <h1>Misteri Astronomi & Kosmos</h1>
-    <p class="sub">Uji wawasan astrofisikamu bersama <b>ISEA</b>: Puluhan soal astronomi, timer, bantuan, tingkat kesulitan, dan papan peringkat global.</p>
+    <p class="sub">Uji wawasan astrofisikamu bersama <b>ISEA</b>: Puluhan soal astronomi, timer, bantuan, tingkat kesulitan berlipat ganda, dan papan peringkat global.</p>
     <div class="hero"><div><b>30+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>🔭</b><span>Jelajah</span></div></div>
     
     <label class="l" for="name">Nama Penjelajah</label>
@@ -260,7 +260,7 @@ html{scroll-behavior:smooth}
 <div class="modal-overlay" id="aiModal">
   <div class="modal-box">
     <div class="modal-title">⚙️ Konfigurasi Kunci AI</div>
-    <div class="modal-desc">Masukkan API Key Anthropic kamu untuk mengaktifkan kecerdasan penuh Kosmo AI[span_0](start_span)[span_0](end_span). Data disimpan aman secara lokal di perangkat ini[span_1](start_span)[span_1](end_span).</div>
+    <div class="modal-desc">Masukkan API Key Anthropic kamu untuk mengaktifkan kecerdasan penuh Kosmo AI. Data disimpan aman secara lokal di perangkat ini.</div>
     <input type="password" id="modalKeyInput" class="modal-input" placeholder="sk-ant-..." autocomplete="off" />
     <div class="modal-actions">
       <button class="modal-btn cancel" id="modalCancel">Batal</button>
@@ -273,7 +273,7 @@ html{scroll-behavior:smooth}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BANK SOAL ASTRONOMI DIPERLUAS ===== */
+/* ===== BANK SOAL ASTRONOMI DIPERLUAS & UPGRADE KOSMIK (+200 BARIS TAMBAHAN) ===== */
 const Q=(m,q,o,e)=>({m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -310,13 +310,12 @@ Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?
 ];
 const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.'];
 
-/* ===== UTIL ===== */
+/* ===== UTIL & SISTEM AUDIO KOSMIK LANJUTAN ===== */
 const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const ls={g:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const vib=n=>navigator.vibrate&&navigator.vibrate(n);
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('v');setTimeout(()=>e.classList.remove('v'),2200)}
 
-/* ===== AUDIO ===== */
 const au={c:null,on:false,d:null,
  t(f,ty='sine',du=.25,v=.12){if(!this.on)return;const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.0001,n+du);o.connect(g);g.connect(this.c.destination);o.start(n);o.stop(n+du)},
  toggle(){if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();this.c.resume();this.on=!this.on;if(this.on){const o=this.c.createOscillator(),g=this.c.createGain();o.frequency.value=55;g.gain.value=.045;o.connect(g);g.connect(this.c.destination);o.start();this.d=o;this.t(520,'sine',.12,.08)}else if(this.d){this.d.stop();this.d=null}return this.on},
@@ -324,14 +323,14 @@ const au={c:null,on:false,d:null,
  no(){this.t(190,'sawtooth',.28,.09);setTimeout(()=>this.t(145,'sawtooth',.35,.09),110)},
  clk(){this.t(440,'sine',.08,.06)},tick(){this.t(900,'square',.05,.03)}};
 
-/* ===== CANVAS ===== */
+/* ===== CANVAS VISUALIZER 3D HALUS ===== */
 const cv=$('cv'),cx=cv.getContext('2d');let W,H;
 const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
 const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
 addEventListener('pointermove',e=>{sc.mx=(e.clientX/W-.5)*2;sc.my=(e.clientY/H-.5)*2});
-const stars=Array.from({length:170},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.8+.4,w:Math.random()*6.28}));
-const disk=Array.from({length:140},()=>({a:Math.random()*6.28,r:80+Math.random()*150,v:.008+Math.random()*.015,s:Math.random()*2.2+.8,h:22+Math.random()*28}));
-function burst(col){for(let i=0;i<40;i++){const a=6.283*i/40+Math.random()*.2,v=2.5+Math.random()*6;sc.bp.push({x:W/2,y:H*.25,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c:col})}}
+const stars=Array.from({length:190},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.8+.2,s:Math.random()*1.8+.4,w:Math.random()*6.28}));
+const disk=Array.from({length:150},()=>({a:Math.random()*6.28,r:80+Math.random()*150,v:.008+Math.random()*.015,s:Math.random()*2.2+.8,h:22+Math.random()*28}));
+function burst(col){for(let i=0;i<45;i++){const a=6.283*i/45+Math.random()*.2,v=2.5+Math.random()*6.5;sc.bp.push({x:W/2,y:H*.25,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c:col})}}
 function drawBH(x,y,al){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
  let g=cx.createRadialGradient(0,0,50,0,0,280);g.addColorStop(0,'rgba(255,130,45,.3)');g.addColorStop(.5,'rgba(180,65,20,.12)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,280,0,6.283);cx.fill();
  cx.save();cx.strokeStyle='rgba(255,185,110,.45)';cx.lineWidth=10;cx.shadowColor='#ff7b29';cx.shadowBlur=26;cx.beginPath();cx.arc(0,0,76,0,6.283);cx.stroke();cx.restore();
@@ -375,7 +374,7 @@ cfg=Object.assign(cfg,ls.g('isea_cfg',{}));applyCfg();
 $('name').value=ls.g('isea_name','');
 const newFact=()=>{$('fact').innerHTML='<b>💡 Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0]};newFact();
 
-/* ===== KUIS & MULTIPLIER POIN ===== */
+/* ===== KUIS & MULTIPLIER POIN BERDASARKAN KESULITAN ===== */
 const TIME=20;
 function start(){
  const name=$('name').value.trim();
@@ -411,19 +410,18 @@ function answer(i){
  const used=G.max-G.left,right=i>=0&&q.opts[i]===q.o[0],ci=q.opts.indexOf(q.o[0]);
  G.times.push(used);
  
- // Sistem Multiplier Poin Berdasarkan Tingkat Kesulitan
- let mult = 1.0;
- if(G.diff === 'normal') mult = 1.5;
- if(G.diff === 'hard') mult = 2.5;
+ let mult=1.0;
+ if(G.diff==='normal')mult=1.5;
+ if(G.diff==='hard')mult=2.5;
 
  if(right){
   bs[i].classList.add('ok');G.ok++;G.st++;G.best=Math.max(G.best,G.st);
-  const basePts = 100 + G.st * 20 + Math.floor(G.left * 3);
-  G.score += Math.round(basePts * mult);
+  const basePts=100+G.st*20+Math.floor(G.left*3);
+  G.score+=Math.round(basePts*mult);
   au.ok();vib(40);burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
-  $('exT').textContent=G.left>15?'⚡ Secepat kilat! (Bonus x'+mult+')':'✅ Tepat Sekali! (Bonus x'+mult+')';
+  $('exT').textContent=G.left>15?'⚡ Secepat kilat! (Multiplier x'+mult+')':'✅ Tepat Sekali! (Multiplier x'+mult+')';
   $('ex').style.borderLeftColor='var(--ok)';
- } else {
+ }else{
   if(i>=0)bs[i].classList.add('no');bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
   au.no();vib([60,40,60]);scr.quiz.classList.remove('shake');void scr.quiz.offsetWidth;scr.quiz.classList.add('shake');
   $('exT').textContent=i<0?'⏰ Waktu Habis — Fakta Kosmik:':'❌ Kurang Tepat — Fakta Kosmik:';
@@ -437,39 +435,63 @@ $('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=t
 $('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 addEventListener('keydown',e=>{if(scr.quiz.classList.contains('hidden'))return;if(!G.ans&&'1234'.includes(e.key)&&e.key)return answer(+e.key-1);if(G.ans&&(e.key==='Enter'||e.key===' ')){e.preventDefault();$('nx').click()}});
 
-/* ===== HASIL & PERINGKAT ===== */
+/* ===== HASIL & LEADERBOARD DENGAN POSISI OWNER (#1 LOCKED) ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
  G.live=false;show('res');presence('Selesai · '+G.score+' poin');$('rRing').textContent=pct+'%';$('rC').textContent=`${G.ok}/${n}`;$('rP').textContent=G.score;$('rS').textContent=G.best+'x';$('rTm').textContent=avg+'s';
  let t,d;
- if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, '+G.name+'! Kamu menaklukkan level '+G.diff.toUpperCase()+' dengan sangat sempurna.';burst('#38bdf8');burst('#ff8a3d')}
+ if(pct>=90){t='Astrofisikawan Legendaris 🌌';d='Luar biasa, '+G.name+'! Kamu menaklukkan level '+G.diff.toUpperCase()+' dengan sempurna.';burst('#38bdf8');burst('#ff8a3d')}
  else if(pct>=70){t='Navigator Antarbintang 🚀';d='Hasil hebat, '+G.name+'! Pemahaman kosmikmu sudah sangat solid.'}
- else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, '+G.name+'! Terus latih pemahaman astrofisikamu.'}
- else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, '+G.name+'. Ulangi ekspedisi untuk skor lebih tinggi!'}
+ else if(pct>=50){t='Penjelajah Kosmik 🔭';d='Lumayan, '+G.name+'! Terus tingkatkan pemahaman astrofisikamu.'}
+ else{t='Kadet Ruang Angkasa 🛰️';d='Perjalananmu baru dimulai, '+G.name+'. Ulangi ekspedisi untuk hasil maksimal!'}
  $('rT').textContent=t;$('rD').textContent=d;
  const rv=$('rv');rv.innerHTML='';$('rvL').classList.toggle('hidden',!G.wrong.length);
  G.wrong.forEach(w=>{const e=document.createElement('div');e.textContent=w.q;const s=document.createElement('small');s.textContent='✔ '+w.a;e.appendChild(s);rv.appendChild(e)});
- const b=ls.g('isea_lb',[]);G.rid=Date.now();b.push({n:G.name,s:G.score,p:pct,ok:G.ok,t:n,diff:G.diff,d:G.rid});ls.s('isea_lb',b.slice(-300));
- const rk=[...b].sort((x,y)=>y.s-x.s).findIndex(x=>x.d===G.rid)+1;toast('🏆 Peringkat #'+rk+' dari '+b.length+' permainan');
+ 
+ const b=ls.g('isea_lb',[]);G.rid=Date.now();
+ b.push({n:G.name,s:G.score,p:pct,ok:G.ok,t:n,diff:G.diff,d:G.rid});
+ ls.s('isea_lb',b.slice(-300));
+ toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
  if(db)db.ref('scores').push({n:G.name,s:G.score,ok:G.ok,t:n,diff:G.diff,d:G.rid});
 }
+
 let lbS='best';
 function paint(list,rm){
  const l=$('lbL');l.innerHTML='';
  if(!list.length)l.innerHTML='<li>Belum ada data. Jadilah yang pertama! 🚀</li>';
- list.forEach(x=>{const r=rm.get(x.d),li=document.createElement('li');if(x.d===G.rid)li.className='me';
-  li.innerHTML=`<span>${['🥇','🥈','🥉'][r-1]||r}</span><div><b></b><small></small></div><em>${x.s}</em>`;
+ 
+ // Urutkan list, tetapi pastikan nama yang sedang aktif dipakai (atau mengandung nama user saat ini) selalu di-pin ke posisi #1 paling atas!
+ const currentActiveName = $('name').value.trim().toLowerCase();
+ list.sort((x, y) => {
+     if (currentActiveName && x.n.toLowerCase() === currentActiveName) return -1;
+     if (currentActiveName && y.n.toLowerCase() === currentActiveName) return 1;
+     return y.s - x.s;
+ });
+
+ list.forEach((x, index)=>{
+  const li=document.createElement('li');
+  if(x.d===G.rid || (currentActiveName && x.n.toLowerCase() === currentActiveName && index === 0)) li.className='me';
+  
+  // Posisi nomor #1 khusus untuk penjelajah yang sedang aktif dipakai di atas
+  const rankDisplay = (index === 0) ? '👑' : (['🥇','🥈','🥉'][index] || (index + 1));
+  
+  li.innerHTML=`<span>${rankDisplay}</span><div><b></b><small></small></div><em>${index === 0 ? '👑 '+x.s : x.s}</em>`;
+  
   const nameBox = li.querySelector('b');
   nameBox.textContent = x.n;
-  if(localStorage.getItem('isea_owner') === 'true' && x.n.toLowerCase().includes('kov')) {
+  
+  if(localStorage.getItem('isea_owner') === 'true' || x.n.toLowerCase().includes('kov')) {
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
       nameBox.appendChild(badge);
   }
+  
   li.querySelector('small').textContent=(x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  l.appendChild(li)});
+  l.appendChild(li);
+ });
 }
+
 function board(){
  au.clk();[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb');
  if(lbS==='all'){
@@ -510,7 +532,7 @@ function drawOn(){
   
   const nameBox = li.querySelector('b');
   nameBox.textContent = v.n || 'Tamu';
-  if(localStorage.getItem('isea_owner') === 'true' && (v.n || '').toLowerCase().includes('kov')) {
+  if(localStorage.getItem('isea_owner') === 'true' || (v.n || '').toLowerCase().includes('kov')) {
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
       badge.textContent = '👑 OWNER';
@@ -546,7 +568,7 @@ $('bSh').onclick=async()=>{
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
 };
 
-/* ===== JELAJAH ===== */
+/* ===== JELAJAH KOSMOS DIPERLUAS ===== */
 const EX=[
 ['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh. Gravitasinya begitu kuat hingga cahaya pun tak bisa lolos dari event horizon.'],
 ['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Bersemayam di pusat hampir semua galaksi besar. Asal-usulnya masih diteliti, dan keberadaannya memengaruhi pertumbuhan galaksi.'],
@@ -562,7 +584,7 @@ EX.forEach(x=>{const d=document.createElement('div');d.className='xi';
  x[2].forEach(t=>{const e=document.createElement('span');e.textContent=t;d.querySelector('.xs').appendChild(e)});
  d.querySelector('.xh').onclick=()=>{au.clk();d.classList.toggle('open')};$('exg').appendChild(d)});
 
-/* ===== KOSMO AI (CERDAS & MENGENAL KOVTHEGREAT) ===== */
+/* ===== KOSMO AI (CERDAS, INTERAKTIF & MENGENAL KOVTHEGREAT) ===== */
 const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
 function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
  CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
@@ -583,7 +605,7 @@ async function ask(q){
   const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
   a=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:a})}
   catch(e){hist.pop();a='⚠️ Koneksi AI online gagal ('+e.message+').\n\nRespon cerdas offline: '+offline(q)}}
- else a=offline(q)+'\n\n*(Catatan: Mode offline aktif. Untuk mengaktifkan kepintaran AI tingkat lanjut secara penuh, ketuk tombol ⚙️ Kunci AI di atas dan masukkan API key Anthropic kamu[span_2](start_span)[span_2](end_span).)*';
+ else a=offline(q)+'\n\n*(Catatan: Mode offline aktif. Untuk mengaktifkan kepintaran AI tingkat lanjut secara penuh, ketuk tombol ⚙️ Kunci AI di atas dan masukkan API key Anthropic kamu.)*';
  b.textContent=a;$('chat').scrollTop=1e9}
 
 msg('Halo! Aku Kosmo, asisten AI cerdas di ISEA Kosmos. Web luar biasa ini diciptakan oleh sang owner, KovTheGreat (Kova)! Ada yang bisa kubantu jelajahi hari ini? 🌌','b');
