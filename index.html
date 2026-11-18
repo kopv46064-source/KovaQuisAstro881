@@ -96,14 +96,20 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1e293b;border:1px solid var(--bd);padding:11px 20px;border-radius:999px;font-size:.88rem;font-weight:600;opacity:0;transition:all .4s var(--sp);z-index:60;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .toast.v{opacity:1;transform:translate(-50%,0)}
 html{scroll-behavior:smooth}
-#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .6s var(--sm),visibility .6s}
+
+/* ===== ANIMASI LOADING KOSMIK & TOMBOL SKIP ===== */
+#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s var(--sm),visibility .5s}
 #ld.out{opacity:0;visibility:hidden;pointer-events:none}
-.orb{width:96px;height:96px;border-radius:50%;background:#010103;position:relative;box-shadow:0 0 50px rgba(255,138,61,.6),inset 0 0 0 3px rgba(255,200,140,.9);animation:pul 2s ease-in-out infinite}
-.orb:before{content:"";position:absolute;inset:-32px;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(255,138,61,.95),rgba(56,189,248,.85),transparent 70%);-webkit-mask:radial-gradient(circle,transparent 54%,#000 56%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 54%,#000 56%,#000 70%,transparent 72%);animation:spn 1.4s linear infinite}
-@keyframes spn{to{transform:rotate(360deg)}}@keyframes pul{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(255,138,61,.4),inset 0 0 0 3px rgba(255,200,140,.7)}50%{transform:scale(1.12);box-shadow:0 0 65px rgba(56,189,248,.7),inset 0 0 0 4px rgba(255,255,255,1)}}
+.orb{width:100px;height:100px;border-radius:50%;background:#010103;position:relative;box-shadow:0 0 50px rgba(255,138,61,.6),inset 0 0 0 3px rgba(255,200,140,.9);animation:pul 2s ease-in-out infinite}
+.orb:before{content:"";position:absolute;inset:-34px;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(255,138,61,.95),rgba(56,189,248,.85),transparent 70%);-webkit-mask:radial-gradient(circle,transparent 54%,#000 56%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 54%,#000 56%,#000 70%,transparent 72%);animation:spn 1.4s linear infinite}
+@keyframes spn{to{transform:rotate(360deg)}}
+@keyframes pul{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(255,138,61,.4),inset 0 0 0 3px rgba(255,200,140,.7)}50%{transform:scale(1.12);box-shadow:0 0 65px rgba(56,189,248,.7),inset 0 0 0 4px rgba(255,255,255,1)}}
 .ldt{font:800 2.2rem 'Space Grotesk',sans-serif;letter-spacing:.3em;padding-left:.3em;animation:glowText 1.5s ease-in-out infinite alternate}
 @keyframes glowText{from{text-shadow:0 0 10px rgba(56,189,248,.3)}to{text-shadow:0 0 25px rgba(255,138,61,.8)}}
 .lds{font-size:.72rem;letter-spacing:.22em;color:var(--mu);font-weight:700}
+.skip-load{margin-top:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 18px;border-radius:999px;font:700 .78rem inherit;cursor:pointer;transition:background .2s}
+.skip-load:hover{background:rgba(255,255,255,.2)}
+
 .leave{opacity:0!important;transform:translateY(-14px) scale(.98)!important;transition:all .22s ease-in}
 .shell{padding-bottom:104px}
 .hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px}
@@ -148,7 +154,13 @@ html{scroll-behavior:smooth}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
-<div id="ld"><div class="orb"></div><div class="ldt">ISEA</div><div class="lds">KOSMOS QUIZ • BY KOVTHEGREAT</div></div>
+<div id="ld">
+  <div class="orb"></div>
+  <div class="ldt">ISEA</div>
+  <div class="lds">KOSMOS QUIZ • BY KOVTHEGREAT</div>
+  <button class="skip-load" onclick="hideLoaderForce()">Lewati Loading 🚀</button>
+</div>
+
 <canvas id="cv"></canvas>
 <header class="top">
   <div class="grp">
@@ -958,35 +970,35 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== RESTORE SESI & ANIMASI LOADER AMAN ===== */
-(function(){
+/* ===== RESTORE SESI & ANIMASI LOADER ANTI-STUCK (DENGAN TOMBOL SKIP) ===== */
+function hideLoaderForce(){
  const ld=$('ld');
- function hideLoader(){
-  if(ld){ld.classList.add('out');}
-  if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
-  initNameSystem();
+ if(ld) ld.classList.add('out');
+ if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
+ initNameSystem();
 
-  if(!isOwnerDevice()) {
-      const savedQuiz = ls.g('isea_active_quiz', null);
-      if(savedQuiz && savedQuiz.live && savedQuiz.i < savedQuiz.qs.length) {
-          G = savedQuiz;
-          show('quiz');
-          render();
-          toast('⚠️ Melanjutkan sesi kuis sebelumnya yang belum selesai!');
-          addLog(`Memulihkan sesi kuis terputus untuk ${G.name} di soal ${G.i+1}`);
-      } else {
-          presence('Di menu utama');
-      }
-  } else {
-      presence('Di menu utama');
-  }
-
-  addLog('Sistem satelit online dan siap beroperasi.');
-  if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
+ if(!isOwnerDevice()) {
+     const savedQuiz = ls.g('isea_active_quiz', null);
+     if(savedQuiz && savedQuiz.live && savedQuiz.i < savedQuiz.qs.length) {
+         G = savedQuiz;
+         show('quiz');
+         render();
+         toast('⚠️ Melanjutkan sesi kuis sebelumnya yang belum selesai!');
+         addLog(`Memulihkan sesi kuis terputus untuk ${G.name} di soal ${G.i+1}`);
+     } else {
+         presence('Di menu utama');
+     }
+ } else {
+     presence('Di menu utama');
  }
 
- // Loader dijamin mulus, beranimasi interaktif, dan langsung masuk tanpa stuck (250ms)
- setTimeout(hideLoader, 250);
+ addLog('Sistem satelit online dan siap beroperasi.');
+ if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
+}
+
+(function(){
+ // Otomatis hilang dalam 500ms atau bisa di-skip manual oleh user
+ setTimeout(hideLoaderForce, 500);
 
  try{initOnline();}catch(e){console.warn(e);}
 })();
