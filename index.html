@@ -94,7 +94,6 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .lb li small{display:block;color:var(--mu);font-weight:600;font-size:.74rem;margin-top:3px}
 .lb li.me{border-color:#a855f7;box-shadow:0 0 20px rgba(168,85,247,.3)}
 .owner-badge{display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;padding:2px 7px;border-radius:6px;background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;font-weight:800;letter-spacing:.04em;box-shadow:0 0 10px rgba(168,85,247,.4);flex-shrink:0;margin-left:6px}
-.member-badge{display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;padding:2px 7px;border-radius:6px;background:rgba(56,189,248,.2);border:1px solid rgba(56,189,248,.4);color:#38bdf8;font-weight:700;letter-spacing:.04em;flex-shrink:0;margin-left:6px}
 .foot{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important;position:relative;z-index:10;padding:12px 18px calc(20px + env(safe-area-inset-bottom));text-align:center;font-size:.78rem;color:var(--mu)}
 .foot div{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(10,14,28,.75);border:1px solid rgba(255,255,255,.09)}
 .cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -161,7 +160,7 @@ html{scroll-behavior:smooth}
 
 @media(min-width:760px){.shell{max-width:880px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
 @media(max-width:520px){.card{padding:24px 18px;border-radius:24px}.hm{display:none}}
-@media(reduced-motion:reduce){*{animation-duration:.01s!important}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -349,6 +348,7 @@ const au={c:null,on:false,d:null,
 };
 
 /* ===== CANVAS ===== */
+/* FIX: sc dipindah ke luar blok if agar bisa dipakai fungsi vis() */
 const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
 const cv=$('cv'),cx=cv?cv.getContext('2d'):null;let W,H;
 if(cv && cx){
@@ -397,25 +397,19 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== OTORISASI AMAN SUPER OWNER & MEMBER ===== */
-let myDeviceToken = ls.g('isea_owner_token', null);
-if(!myDeviceToken){
-    myDeviceToken = 'owner_super_verified_kovthegreat_' + Date.now();
-    ls.s('isea_owner_token', myDeviceToken);
-}
-
+/* ===== OWNER & GANTI NAMA 14 HARI ===== */
+const OWNER_SIGNATURES = ['kovthegreat', 'kova', 'kovo'];
 function isOfficialOwner(nameStr) {
-    const registeredToken = ls.g('isea_owner_token', '');
-    return registeredToken === myDeviceToken || registeredToken.includes('kovthegreat');
+    if (!nameStr) return false;
+    const clean = nameStr.trim().toLowerCase();
+    return OWNER_SIGNATURES.some(sig => clean.includes(sig));
 }
 
 const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
 function checkNameLock() {
     let savedName = ls.g('isea_name', '');
-    if(!savedName) {
-        savedName = 'KovTheGreat';
-        ls.s('isea_name', savedName);
-    }
+    /* FIX: pengunjung baru tidak lagi otomatis jadi owner */
+    if(!savedName) savedName = '';
     const lastChange = ls.g('isea_name_time', 0);
     const now = Date.now();
     const nameInput = $('name');
@@ -425,7 +419,7 @@ function checkNameLock() {
     nameInput.value = savedName;
 
     if (isOfficialOwner(savedName)) {
-        if(notice) notice.textContent = '👑 Status Super Owner Aktif (Akses Penuh)';
+        if(notice) notice.textContent = '👑 Status Owner Terdeteksi: Bebas ganti nama kapan saja.';
         nameInput.disabled = false;
         return;
     }
@@ -434,7 +428,7 @@ function checkNameLock() {
     if (elapsed < FOURTEEN_DAYS && lastChange > 0) {
         const remainingDays = Math.ceil((FOURTEEN_DAYS - elapsed) / (1000 * 60 * 60 * 24));
         nameInput.disabled = true;
-        if(notice) notice.textContent = `🔒 Nama dikunci sebagai MEMBER. Bisa ganti dalam ${remainingDays} hari.`;
+        if(notice) notice.textContent = `🔒 Nama dikunci. Bisa ganti dalam ${remainingDays} hari. (Owner bebas)`;
     } else {
         nameInput.disabled = false;
         if(notice) notice.textContent = 'ℹ️ Member hanya dapat mengganti nama 1 kali dalam 14 hari.';
@@ -443,19 +437,22 @@ function checkNameLock() {
 
 if($('name')){
  $('name').addEventListener('input', () => {
+    const typed = $('name').value.trim();
+    if (isOfficialOwner(typed) && $('nameNotice')) {
+        $('nameNotice').textContent = '👑 Status Owner Resmi Aktif!';
+    }
     presence(cur);
  });
 
  $('name').addEventListener('change', () => {
     const typed = $('name').value.trim();
     const oldName = ls.g('isea_name', '');
-
     if (typed !== oldName) {
         if (!isOfficialOwner(typed) && oldName !== '') {
             const lastChange = ls.g('isea_name_time', 0);
             const now = Date.now();
             if (now - lastChange < FOURTEEN_DAYS && lastChange > 0) {
-                toast('⚠️ Belum 14 hari! Nama member tidak dapat diubah.');
+                toast('⚠️ Belum 14 hari! Nama tidak dapat diubah.');
                 $('name').value = oldName;
                 return;
             }
@@ -477,7 +474,7 @@ function start(){
  const nameInput = $('name');
  const name = nameInput ? nameInput.value.trim() : '';
  if(!name){if(nameInput)nameInput.focus();return toast('Isi namamu dulu ya 🚀')}
-
+ 
  const oldName = ls.g('isea_name', '');
  const now = Date.now();
  const lastChange = ls.g('isea_name_time', 0);
@@ -601,6 +598,7 @@ function results(){
      b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid});
      ls.s('isea_lb', b.slice(-300));
  }
+ /* FITUR BARU: rekor pribadi */
  ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
  if(db && !isOfficialOwner(currentName)) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid});
  addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
@@ -611,10 +609,11 @@ function paint(rawList){
  const l=$('lbL');if(!l)return;l.innerHTML='';
  
  const cleanList = (rawList || []).filter(x => !isOfficialOwner(x.n));
+ /* FIX: tab Terbaru kini mengurutkan berdasarkan waktu */
  cleanList.sort((x,y)=>lbS==='new'?(y.d||0)-(x.d||0):(y.s||0)-(x.s||0));
 
  const ownerEntry = {
-     n: ls.g('isea_name', 'KovTheGreat'),
+     n: 'KovTheGreat',
      s: 99999,
      p: 100,
      ok: '👑',
@@ -628,7 +627,7 @@ function paint(rawList){
 
  displayList.forEach((x, index)=>{
   const li=document.createElement('li');
-  const isOwnerPinned = x.isOwnerHeader || (index === 0 && isOfficialOwner(x.n));
+  const isOwnerPinned = x.isOwnerHeader || isOfficialOwner(x.n);
   
   if(isOwnerPinned || x.d === G.rid) li.className='me';
   
@@ -639,22 +638,18 @@ function paint(rawList){
   else if(index === 3) rankIcon = '🥉';
   else rankIcon = index;
 
-  li.innerHTML=`<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwnerPinned ? '👑 SUPER OWNER' : x.s}</em>`;
+  li.innerHTML=`<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwnerPinned ? '👑 OWNER' : x.s}</em>`;
   
   const nameBox = li.querySelector('b');
   
   if(isOwnerPinned) {
-      nameBox.textContent = x.n || 'KovTheGreat';
+      nameBox.textContent = 'KovTheGreat';
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
-      badge.textContent = '👑 SUPER OWNER';
+      badge.textContent = '👑 OWNER';
       nameBox.appendChild(badge);
   } else {
-      nameBox.textContent = x.n || 'Penjelajah';
-      const badge = document.createElement('span');
-      badge.className = 'member-badge';
-      badge.textContent = 'MEMBER';
-      nameBox.appendChild(badge);
+      nameBox.textContent = x.n;
   }
   
   const detailText = isOwnerPinned ? 'Puncak Mutlak Sistem Antarbintang' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
@@ -687,7 +682,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}
 };
 
-/* ===== ONLINE & FIREBASE DENGAN FALLBACK TANGGUH ===== */
+/* ===== ONLINE & FIREBASE ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -705,7 +700,7 @@ function presence(st){
  cur=st;if(!db||!meRef)return;
  const nameInput = $('name');
  const currentActiveName = (nameInput ? nameInput.value.trim() : '') || ls.g('isea_name','') || 'Penjelajah';
- meRef.set({n: currentActiveName, st: st, role: isOfficialOwner(currentActiveName)?'SUPER_OWNER':'MEMBER', t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
+ meRef.set({n: currentActiveName, st: st, t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 function drawOn(){
  const a=Object.entries(OL).sort((x,y)=>(x[1].t||0)-(y[1].t||0)),l=$('onL');if(!l)return;l.innerHTML='';
@@ -717,18 +712,16 @@ function drawOn(){
   
   const nameBox = li.querySelector('b');
   const userName = v.n || 'Penjelajah';
-  const isOwnerNode = (v.role === 'SUPER_OWNER' || (k === pid && isOfficialOwner(userName)));
   
-  nameBox.textContent = userName;
-  const badge = document.createElement('span');
-  if(isOwnerNode) {
+  if(isOfficialOwner(userName)) {
+      nameBox.textContent = 'KovTheGreat';
+      const badge = document.createElement('span');
       badge.className = 'owner-badge';
-      badge.textContent = '👑 SUPER OWNER';
+      badge.textContent = '👑 OWNER';
+      nameBox.appendChild(badge);
   } else {
-      badge.className = 'member-badge';
-      badge.textContent = 'MEMBER';
+      nameBox.textContent = userName;
   }
-  nameBox.appendChild(badge);
 
   li.querySelector('small').textContent=v.st||'';
   li.querySelector('em').textContent=k===pid?'kamu':'';
@@ -738,15 +731,12 @@ function drawOn(){
 function initOnline(){
  try{
   if(typeof firebase!=='undefined'){
-   if(!firebase.apps.length) {
-       firebase.initializeApp(firebaseConfig);
-   }
-   db=firebase.database();meRef=db.ref('online/'+pid);
+   firebase.initializeApp(firebaseConfig);db=firebase.database();meRef=db.ref('online/'+pid);
    db.ref('.info/connected').on('value',x=>{if(x.val()){meRef.onDisconnect().remove();presence(cur)}});
    db.ref('online').on('value',x=>{OL=x.val()||{};if($('bOn'))$('bOn').textContent='🟢 '+Object.keys(OL).length;if($('sOn')&&!$('sOn').classList.contains('hidden'))drawOn()});
    if($('bOn'))$('bOn').classList.remove('hidden');
   }
- }catch(e){console.warn('Firebase init warning:',e)}
+ }catch(e){console.warn('Firebase init error:',e)}
 }
 if($('bOn'))$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
 if($('bOnBack'))$('bOnBack').onclick=()=>{au.clk();show('start')};
@@ -775,6 +765,7 @@ if($('calcBtn')){
  $('calcBtn').onclick = () => {
   au.clk();
   const m = parseFloat($('calcMass').value) || 10;
+  /* FIX: rumus fisika sebenarnya, dilatasi = 1/sqrt(1 - Rs/r) */
   const rs=(2.953*m).toFixed(2);
   const f=k=>(1/Math.sqrt(1-1/k)).toFixed(1);
   $('calcRes').textContent=`Horizon (Rs) ≈ ${rs} km. Waktu melambat ${f(2)}x di 2×Rs, ${f(1.1)}x di 1,1×Rs, ${f(1.01)}x di 1,01×Rs, ${f(1.001)}x di 1,001×Rs (dari sudut pandang pengamat jauh).`;
@@ -832,6 +823,7 @@ if(chips){
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+/* FIX: tombol "Tanya Kosmo AI soal ini" sebelumnya tidak punya fungsi */
 if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
@@ -843,7 +835,7 @@ if($('aiK')&&aiModal&&modalKeyInput){
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADER & AUTO RESTORE OWNER ===== */
+/* ===== LOADER ===== */
 (function(){
  const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat soal astronomi…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
  let p=0,i=0;
@@ -854,18 +846,10 @@ if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return
   const ld=$('ld');
   if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
   if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
-  
-  // Pastikan token owner selalu aman diinisialisasi
-  if(!ls.g('isea_owner_token', '')) {
-      ls.s('isea_owner_token', 'owner_super_verified_kovthegreat');
-  }
-  if(!ls.g('isea_name', '')) {
-      ls.s('isea_name', 'KovTheGreat');
-  }
-
   checkNameLock();
   presence('Di menu');
   addLog('Sistem satelit online dan siap beroperasi.');
+  /* FIX: kotak fakta di menu sebelumnya kosong */
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
  const t=setInterval(()=>{
