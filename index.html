@@ -88,6 +88,8 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .lb li small{display:block;color:var(--mu);font-weight:600;font-size:.74rem;margin-top:3px}
 .lb li.me{border-color:#a855f7;box-shadow:0 0 20px rgba(168,85,247,.3)}
 .owner-badge{display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;padding:2px 7px;border-radius:6px;background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;font-weight:800;letter-spacing:.04em;box-shadow:0 0 10px rgba(168,85,247,.4);flex-shrink:0;margin-left:6px}
+.kick-btn{background:rgba(244,63,94,.2);border:1px solid #f43f5e;color:#f43f5e;padding:6px 10px;border-radius:10px;font-size:.72rem;font-weight:700;cursor:pointer;margin-left:auto;transition:background .2s}
+.kick-btn:hover{background:#f43f5e;color:#fff}
 .foot{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important;position:relative;z-index:10;padding:12px 18px calc(20px + env(safe-area-inset-bottom));text-align:center;font-size:.78rem;color:var(--mu)}
 .foot div{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(10,14,28,.75);border:1px solid rgba(255,255,255,.09)}
 .cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -223,12 +225,14 @@ html{scroll-behavior:smooth}
     <button id="bRk" class="sb" style="margin:0 0 10px">📋 Salin Rekap (kirim ke WA)</button>
     <button id="bBack" class="pb">← Kembali</button>
   </section>
+  
   <section id="sOn" class="card hidden">
-    <h1 style="font-size:1.7rem">🟢 Lagi Online</h1>
+    <h1 style="font-size:1.7rem">🟢 Monitor Live Member</h1>
     <p class="sub" id="onC" style="margin:6px 0 0"></p>
     <ul class="lb" id="onL"></ul>
     <button id="bOnBack" class="pb">← Kembali</button>
   </section>
+
   <section id="sExp" class="card hidden">
     <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos</h1>
     <p class="sub" style="margin:6px 0 0">Ketuk kartu untuk membuka detail objek paling ekstrem di alam semesta.</p>
@@ -314,7 +318,7 @@ Q('ns','Struktur eksotis di kerak dalam bintang neutron yang disebut "nuclear pa
 Q('bh','Di mana cahaya dapat mengorbit lubang hitam dalam lintasan tak stabil?',['Photon sphere (±1,5 kali jari-jari Schwarzschild)','Di dalam singularitas','Di jari-jari 10 kali horizon','Hanya di luar galaksi'],'Cincin foton menghasilkan tepi terang pada citra lubang hitam.'),
 Q('ns','Pulsar dijuluki "jam kosmik" karena...',['Denyutannya sangat teratur, setara jam atom','Mengeluarkan bunyi tik-tik','Berputar sesuai waktu Bumi','Hanya terlihat siang hari'],'Stabilitasnya dipakai untuk mendeteksi gelombang gravitasi dan navigasi pesawat luar angkasa.'),
 Q('bh','Titik berkepadatan tak hingga di pusat lubang hitam menurut relativitas umum disebut...',['Singularitas','Horizon','Ergosfer','Nebula'],'Di sini hukum fisika yang kita kenal diperkirakan runtuh; butuh teori gravitasi kuantum.'),
-Q('bh','Apa nama batas luar ergosfer pada lubang hitam berputar (Kerr)?',['Static limit (Batas statis)','Horizon peristiwa','Photon sphere','Cincin Planck'],'Di dalam ergosfer, ruang-waktu terseret oleh rotasi lubang hitam sehingga benda tidak bisa diam.'),
+Q('ns','Apa nama batas luar ergosfer pada lubang hitam berputar (Kerr)?',['Static limit (Batas statis)','Horizon peristiwa','Photon sphere','Cincin Planck'],'Di dalam ergosfer, ruang-waktu terseret oleh rotasi lubang hitam sehingga benda tidak bisa diam.'),
 Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?',['Sekitar 100 miliar derajat Celsius','1 juta derajat Celsius','5.000 derajat Celsius','0 derajat Celsius'],'Suhu yang sangat ekstrem ini mendingin seiring waktu melalui pancaran neutrino.')
 ];
 const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.'];
@@ -382,7 +386,7 @@ function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.t
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
 
-/* ===== SISTEM KUNCI OWNER PERMANEN SELAMANYA & COOLDOWN 15 HARI ===== */
+/* ===== SISTEM KUNCI OWNER PERMANEN & ANTI-DUPLIKASI ===== */
 const OWNER_SECRET_CODE = '/82+791';
 
 function isOwnerDevice() {
@@ -397,12 +401,11 @@ function initNameSystem() {
     if(!nameInput) return;
 
     if(isOwnerDevice()) {
-        // OWNER TERKUNCI PERMANEN SELAMANYA (TIDAK BISA DIUBAH/DIRESET LEBIH LANJUT OLEH USER BIASA)
         nameInput.value = 'KovTheGreat';
         nameInput.disabled = true;
         if(bSetName) bSetName.disabled = true;
         if(notice) notice.textContent = '👑 Status: KovTheGreat (Terkunci Permanen Selamanya)';
-        if(bReset) bReset.style.display = 'none'; // Tombol reset disembunyikan total demi keamanan owner!
+        if(bReset) bReset.style.display = 'none';
     } else {
         if(bReset) bReset.style.display = 'inline-block';
         
@@ -435,7 +438,6 @@ function initNameSystem() {
                 let val = nameInput.value.trim();
                 if(!val) return toast('Nama tidak boleh kosong!');
 
-                // JIKA KODE RAHASIA DIMASUKKAN: AKTIFKAN OWNER PERMANEN SELAMANYA
                 if(val === OWNER_SECRET_CODE) {
                     ls.s('is_true_owner', true);
                     ls.s('isea_username', 'KovTheGreat');
@@ -444,7 +446,6 @@ function initNameSystem() {
                     return;
                 }
 
-                // BLOKIR JIKA ADA YANG MENCOBA MENGETIK KOVTHEGREAT SECARA MENTAH
                 if(val.toLowerCase() === 'kovthegreat') {
                     toast('❌ Nama KovTheGreat dilindungi dan khusus Owner!');
                     nameInput.value = '';
@@ -504,7 +505,8 @@ function start(){
 }
 
 function render(){
- G.ans=false;const q=G.qs[G.i];vis(q.m);presence(`Main soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`);
+ G.ans=false;const q=G.qs[G.i];vis(q.m);
+ presence(`Mengerjakan Soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`);
  if($('qTag')){$('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';$('qTag').className='tag '+q.m;}
  if($('qSt'))$('qSt').textContent='🔥 '+G.st;
  if($('qSc'))$('qSc').textContent='⭐ '+G.score;
@@ -557,11 +559,13 @@ function answer(i){
   au.ok();vib(40);if(window.burst)window.burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
   if($('exT'))$('exT').textContent=G.left>15?'⚡ Secepat kilat! (Multiplier x'+mult+')':'✅ Tepat Sekali! (Multiplier x'+mult+')';
   if($('ex'))$('ex').style.borderLeftColor='var(--ok)';
+  presence(`Benar di Soal ${G.i+1} ⭐ (${G.score} pts)`);
  }else{
   if(i>=0)bs[i].classList.add('no');if(bs[ci])bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
   au.no();vib([60,40,60]);
   if($('exT'))$('exT').textContent=i<0?'⏰ Waktu Habis — Fakta Kosmik:':'❌ Kurang Tepat — Fakta Kosmik:';
   if($('ex'))$('ex').style.borderLeftColor='var(--no)';
+  presence(`Salah di Soal ${G.i+1} ❌ (Mikir ulang)`);
  }
  if($('qSt'))$('qSt').textContent='🔥 '+G.st;
  if($('qSc'))$('qSc').textContent='⭐ '+G.score;
@@ -577,7 +581,7 @@ if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results(
 /* ===== HASIL & LEADERBOARD ===== */
 function results(){
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
- G.live=false;show('res');presence('Selesai · '+G.score+' poin');
+ G.live=false;show('res');presence('Meninjau Hasil • '+G.score+' poin');
  if($('rRing'))$('rRing').textContent=pct+'%';
  if($('rC'))$('rC').textContent=`${G.ok}/${n}`;
  if($('rP'))$('rP').textContent=G.score;
@@ -710,7 +714,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}
 };
 
-/* ===== ONLINE & FIREBASE (ANTI-STUCK 100%) ===== */
+/* ===== ONLINE, REAL-TIME MONITOR & KICK ENGINE ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -724,11 +728,22 @@ const firebaseConfig = {
 
 const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
 let db=null,meRef=null,cur='Di menu',OL={};
+
 function presence(st){
  cur=st;if(!db||!meRef)return;
  let currentName = isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah');
  meRef.set({n: currentName, st: st, isOwner: isOwnerDevice(), t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
+
+function kickUser(targetId, targetName) {
+    if(!isOwnerDevice()) return toast('❌ Hanya Owner yang bisa menendang penjelajah!');
+    if(confirm(`⚠️ Yakin ingin menendang (kick) "${targetName}" keluar dari stasiun ISEA?`)) {
+        db.ref('online/' + targetId).remove().then(() => {
+            toast(`👢 Berhasil menendang ${targetName}!`);
+        });
+    }
+}
+
 function drawOn(){
  const a=Object.entries(OL).filter(([k,v])=>{
   if(v.n && v.n.trim().toLowerCase() === 'kovthegreat' && !v.isOwner) return false;
@@ -736,11 +751,13 @@ function drawOn(){
  }).sort((x,y)=>(x[1].t||0)-(y[1].t||0));
 
  const l=$('onL');if(!l)return;l.innerHTML='';
- if($('onC'))$('onC').textContent=a.length+' orang sedang membuka web';
+ if($('onC'))$('onC').textContent = isOwnerDevice() ? `👑 Panel Owner: ${a.length} penjelajah sedang online` : `${a.length} orang sedang membuka web`;
+
  a.forEach(([k,v])=>{
   const li=document.createElement('li');
   if(k===pid)li.className='me';
   li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
+  
   const nameBox = li.querySelector('b');
   const userName = v.n || 'Penjelajah';
   if(userName.toLowerCase() === 'kovthegreat' && v.isOwner) {
@@ -752,11 +769,24 @@ function drawOn(){
   } else {
       nameBox.textContent = userName;
   }
-  li.querySelector('small').textContent=v.st||'';
-  li.querySelector('em').textContent=k===pid?'kamu':'';
+  
+  li.querySelector('small').textContent = v.st || 'Aktif';
+  
+  // TAMBAHKAN TOMBOL KICK KHUSUS DI LAYAR OWNER (KECUALI KE DR SENDIRI)
+  if(isOwnerDevice() && k !== pid) {
+      const kickBtn = document.createElement('button');
+      kickBtn.className = 'kick-btn';
+      kickBtn.textContent = '👢 KICK';
+      kickBtn.onclick = () => kickUser(k, userName);
+      li.appendChild(kickBtn);
+  } else {
+      li.querySelector('em').textContent = k===pid ? 'kamu' : '';
+  }
+  
   l.appendChild(li);
  });
 }
+
 function initOnline(){
  try{
   if(typeof firebase!=='undefined'){
@@ -764,12 +794,33 @@ function initOnline(){
        firebase.initializeApp(firebaseConfig);
    }
    db=firebase.database();meRef=db.ref('online/'+pid);
-   db.ref('.info/connected').on('value',x=>{if(x.val()){meRef.onDisconnect().remove();presence(cur)}});
-   db.ref('online').on('value',x=>{OL=x.val()||{};if($('bOn'))$('bOn').textContent='🟢 '+Object.keys(OL).length;if($('sOn')&&!$('sOn').classList.contains('hidden'))drawOn()});
+   
+   db.ref('.info/connected').on('value',x=>{
+       if(x.val()){
+           meRef.onDisconnect().remove();
+           presence(cur);
+       }
+   });
+
+   // DETEKSI KETIKA DI-KICK OLEH OWNER DARI LUAR
+   meRef.on('value', snap => {
+       if(!snap.exists() && !isOwnerDevice() && cs !== 'start') {
+           toast('⚠️ Anda telah ditendang (kick) oleh Owner!');
+           show('start');
+       }
+   });
+
+   db.ref('online').on('value',x=>{
+       OL=x.val()||{};
+       if($('bOn')) $('bOn').textContent='🟢 '+Object.keys(OL).length;
+       if($('sOn')&&!$('sOn').classList.contains('hidden')) drawOn();
+   });
+
    if($('bOn'))$('bOn').classList.remove('hidden');
   }
  }catch(e){console.warn('Firebase init warning:',e)}
 }
+
 if($('bOn'))$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
 if($('bOnBack'))$('bOnBack').onclick=()=>{au.clk();show('start')};
 if($('bLb'))$('bLb').onclick=board;
@@ -810,7 +861,7 @@ const EX=[
 ['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Bersemayam di pusat hampir semua galaksi besar. Asal-usulnya masih diteliti, dan keberadaannya memengaruhi pertumbuhan galaksi.'],
 ['💫','Bintang Neutron',['Diameter ±20 km','Massa 1,4 – 2,2 M☉'],'Sisa inti bintang masif setelah supernova. Hampir seluruhnya tersusun dari neutron yang dimampatkan hingga kepadatan inti atom.'],
 ['⚡','Pulsar',['Rekor ±716 putaran/detik','Tersebar sebagai jam kosmik'],'Bintang neutron berputar yang memancarkan berkas radiasi atau sinar-X dari kutub magnetiknya. Denyutnya sangat teratur seperti mercusuar.'],
-['🧲','Magnetar',['Medan ±10¹⁴–10¹⁵ gauss','Termasuk magnet terkuat di alam semesta'],'Bintang neutron dengan medan magnet luar biasa kuat. Perubahan medannya memicu semburan sinar-X dan sinar gamma yang dahsyat.'],
+['🧲','Magnetar',['Medan kaca ±10¹⁴–10¹⁵ gauss','Termasuk magnet terkuat di alam semesta'],'Bintang neutron dengan medan magnet luar biasa kuat. Perubahan medannya memicu semburan sinar-X dan sinar gamma yang dahsyat.'],
 ['💥','Kilonova',['GW170817 (2017)','Sumber emas & platinum'],'Ledakan akibat tabrakan dua bintang neutron. Peristiwa ini memancarkan gelombang gravitasi dan menciptakan unsur-unsur berat.'],
 ['✨','Quasar',['Inti galaksi aktif','Bisa lebih terang dari seluruh galaksinya'],'Lubang hitam supermasif yang sedang menelan banyak materi. Piringan akresinya memancarkan energi sangat besar dan terlihat dari miliaran tahun cahaya.']
 ];
@@ -859,20 +910,20 @@ if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)retur
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
  $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
- $('modalCancel').onclick = () => modalKeyInput.value=''; // aman
+ $('modalCancel').onclick = () => modalKeyInput.value='';
  $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
 }
 
 if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADER AMAN & ANTI-STUCK MUTLAK (TIMEOUT 0.8 DETIK) ===== */
+/* ===== LOADER AMAN & ANTI-STUCK MUTLAK ===== */
 (function(){
  const ld=$('ld');
  function hideLoader(){
   if(ld){ld.classList.add('out');}
   if(scr.start){scr.start.classList.remove('enter');void scr.start.offsetWidth;scr.start.classList.add('enter');}
   initNameSystem();
-  presence('Di menu');
+  presence('Di menu utama');
   addLog('Sistem satelit online dan siap beroperasi.');
   if($('fact'))$('fact').innerHTML='💡 <b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
  }
