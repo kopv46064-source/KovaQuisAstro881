@@ -519,7 +519,7 @@ async function ask(q){
  b.textContent=a;$('chat').scrollTop=1e9}
 msg('Halo! Instrospeksi Kosmo AI aktif. Tanya apa saja soal kosmos.','b');
 ['Apa itu lubang hitam?','Kenapa pulsar berdenyut?','Beda magnetar dan pulsar?','Apa itu kilonova?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};$('chips').appendChild(b)});
-$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn'].addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
+$('aiGo').onclick=()=>ask($('aiIn').value);$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
 $('aiK').onclick=()=>{const k=prompt('Tempel API key Anthropic (disimpan hanya di perangkat ini). Kosongkan untuk menghapus:',ls.g('isea_key',''));if(k!==null){ls.s('isea_key',k.trim());toast(k.trim()?'Kunci AI tersimpan ✅':'Kunci dihapus')}};
 $('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');ask('Jelaskan lebih dalam dan sederhana: "'+q.q+'" (jawaban benar: '+q.o[0]+')')};
 
@@ -534,25 +534,31 @@ if (urlParams.has('owner')) {
 $('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;
  if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
 
-/* ===== LOADING SCREEN AMAN ===== */
+/* ===== LOADING SCREEN AMAN (ANTI-STUCK) ===== */
 (function(){
  const M=['Menyalakan teleskop…','Menyelaraskan orbit…','Memuat 30 soal kosmik…','Menyapa Kosmo AI…','Siap meluncur 🚀'];
  let p=0,i=0;
+ let done=false;
+ function hideLoader(){
+  if(done)return;
+  done=true;
+  const ld=$('ld');
+  if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
+  scr.start.classList.remove('enter');
+  void scr.start.offsetWidth;
+  scr.start.classList.add('enter');
+ }
  const t=setInterval(()=>{
-  p=Math.min(100,p+20);
+  p=Math.min(100,p+25);
   $('ldI').style.width=p+'%';
   $('ldM').textContent=M[Math.min(M.length-1,i++)];
   if(p>=100){
    clearInterval(t);
-   setTimeout(()=>{
-    const ld=$('ld');
-    if(ld){ld.classList.add('out');setTimeout(()=>ld.remove(),800);}
-    scr.start.classList.remove('enter');
-    void scr.start.offsetWidth;
-    scr.start.classList.add('enter');
-   },300);
+   setTimeout(hideLoader,200);
   }
- },150);
+ },120);
+ // Pengaman ekstra: Jika dalam 2 detik loading masih nyangkut, paksa buka webnya!
+ setTimeout(hideLoader, 2000);
  initOnline();
 })();
 </script>
