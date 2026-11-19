@@ -460,6 +460,11 @@ function isOwnerDevice() {
 }
 
 function initNameSystem() {
+    const gBtn = $('bGAuth');
+    if(isOwnerDevice() && gBtn){
+        gBtn.classList.add('hidden');
+    }
+
     const nameInput = $('name');
     const bSetName = $('bSetName');
     const notice = $('nameNotice');
@@ -567,7 +572,7 @@ function initGoogleOwnerAuth(){
   firebase.auth().onAuthStateChanged((user) => {
     GOOGLE_AUTH_USER = user || null;
     if(gBtn){
-      if(isGoogleOwnerVerified()){
+      if(isOwnerDevice()){
         gBtn.classList.add('hidden');
       }else if(user){
         gBtn.classList.remove('hidden');
