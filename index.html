@@ -33,7 +33,7 @@
 ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(125,211,252,.28),rgba(192,132,252,.32));border-radius:999px}
 ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(56,189,248,.55),rgba(192,132,252,.65))}
 
-button:focus-visible,input:focus-visible{outline:2px solid rgba(56,189,248,.8);outline-offset:3px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid rgba(56,189,248,.8);outline-offset:3px}
 
 html{scroll-behavior:smooth;background:#030408}
 
@@ -55,7 +55,7 @@ body{
   text-rendering:optimizeLegibility;
 }
 
-canvas{
+canvas.bg-cosmos{
   position:fixed;
   inset:0;
   width:100%;
@@ -756,10 +756,12 @@ label.l{
   transform:translate3d(-50%,0,0);
   z-index:40;
   display:flex;
-  gap:6px;
-  padding:7px;
+  gap:4px;
+  padding:6px;
+  max-width:calc(100vw - 16px);
+  overflow-x:auto;
   border-radius:999px;
-  background:rgba(10,15,30,.9);
+  background:rgba(10,15,30,.92);
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
   border:1px solid var(--bd);
@@ -772,13 +774,14 @@ label.l{
   border:0;
   background:transparent;
   color:var(--mu);
-  padding:10px 16px;
+  padding:9px 12px;
   border-radius:999px;
-  font:700 .78rem/1 inherit;
+  font:700 .75rem/1 inherit;
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:2px;
+  white-space:nowrap;
   cursor:pointer;
   transition:transform .28s var(--fl),color .22s var(--sp),background .24s var(--sp);
   will-change:transform;
@@ -914,6 +917,132 @@ label.l{
 }
 .ci input:focus{border-color:#38bdf8}
 .ci button{width:66px;padding:0}
+
+/* ===== GAME & STELLARIUM SKY CHART ===== */
+.game-hud{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+.game-hud div{
+  background:rgba(15,23,42,.78);
+  border:1px solid rgba(125,211,252,.2);
+  border-radius:16px;
+  padding:11px 8px;
+  text-align:center;
+}
+.game-hud b{display:block;font:700 1.05rem 'Space Grotesk',sans-serif;color:#7dd3fc}
+.game-hud span{font-size:.68rem;color:var(--mu)}
+
+.game-stage-box{
+  position:relative;
+  width:100%;
+  height:360px;
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.28);
+  background:radial-gradient(circle at 50% 25%,rgba(56,189,248,.14),rgba(5,8,18,.96) 72%);
+  touch-action:none;
+  user-select:none;
+}
+#spaceGameCanvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.game-overlay-msg{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:20px;
+  text-align:center;
+  background:rgba(3,5,12,.72);
+  backdrop-filter:blur(4px);
+}
+.game-overlay-msg.hidden{display:none!important}
+.game-controls-row{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.game-ctl-btn{
+  flex:1;
+  padding:14px 12px;
+  border-radius:16px;
+  border:1px solid rgba(125,211,252,.28);
+  background:rgba(15,23,42,.85);
+  color:#f8fafc;
+  font:700 .92rem/1 'Space Grotesk',sans-serif;
+  cursor:pointer;
+  user-select:none;
+}
+.game-ctl-btn:active{background:rgba(56,189,248,.28);border-color:#38bdf8;transform:scale(.97)}
+
+.sky-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  margin-bottom:12px;
+}
+.sky-select,.sky-input{
+  padding:9px 12px;
+  border-radius:14px;
+  border:1px solid rgba(125,211,252,.24);
+  background:rgba(12,18,34,.85);
+  color:#f8fafc;
+  font:600 .8rem/1.2 inherit;
+  outline:none;
+}
+.sky-pill-btn{
+  padding:9px 13px;
+  border-radius:999px;
+  border:1px solid rgba(125,211,252,.25);
+  background:rgba(15,23,42,.82);
+  color:#cbd5e1;
+  font:700 .76rem/1 inherit;
+  cursor:pointer;
+  transition:border-color .2s,background .2s,color .2s;
+}
+.sky-pill-btn.on{
+  border-color:#38bdf8;
+  background:rgba(56,189,248,.24);
+  color:#fff;
+}
+.sky-canvas-wrap{
+  position:relative;
+  width:100%;
+  height:390px;
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.3);
+  background:#02040a;
+  touch-action:none;
+  user-select:none;
+}
+#skyChartCanvas{
+  width:100%;
+  height:100%;
+  display:block;
+  cursor:grab;
+}
+#skyChartCanvas:active{cursor:grabbing}
+.sky-readout{
+  margin-top:12px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:rgba(15,23,42,.78);
+  border:1px solid rgba(125,211,252,.22);
+  font-size:.85rem;
+  line-height:1.6;
+  color:#e2e8f0;
+}
+.sky-readout b{color:#7dd3fc}
 
 /* ===== MODAL ===== */
 .modal-overlay{
@@ -1222,8 +1351,9 @@ label.l{
   .mode-slider .gb{padding:6px 8px;font-size:.73rem}
   .gb{padding:7px 11px;font-size:.73rem}
   .shell{padding-top:102px}
-  .sum,.hero{gap:7px}
-  .sum div,.hero div{padding:11px 4px;border-radius:14px}
+  .sum,.hero,.game-hud{gap:7px}
+  .sum div,.hero div,.game-hud div{padding:11px 4px;border-radius:14px}
+  #nav button{padding:8px 9px;font-size:.7rem}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.08ms!important;scroll-behavior:auto!important}
@@ -1242,7 +1372,7 @@ label.l{
 </div>
 <script>setTimeout(function(){var l=document.getElementById('ld');if(l)l.classList.add('out')},4500)</script>
 
-<canvas id="cv"></canvas>
+<canvas id="cv" class="bg-cosmos"></canvas>
 <header class="top">
   <div class="grp">
     <div id="modeSlider" class="mode-slider" title="Klik atau geser kiri/kanan buat ganti latar">
@@ -1267,8 +1397,8 @@ label.l{
   <section id="sStart" class="card enter">
     <div class="badge">ISEA Kuis Kosmos</div>
     <h1>Misteri Astronomi & Kosmos</h1>
-    <p class="sub">Kuis astronomi, objek hipotesis (gravastar), timer, bantuan, multiplier level, kalkulator gravitasi, data tata surya, dan papan peringkat.</p>
-    <div class="hero"><div><b>40+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>Jelajah</b><span>Data</span></div></div>
+    <p class="sub">Kuis astronomi, objek hipotesis (gravastar), peta langit ala Stellarium, mini-game luar angkasa, timer, bantuan, multiplier level, kalkulator gravitasi, dan papan peringkat.</p>
+    <div class="hero"><div><b>70+</b><span>Soal</span></div><div><b>Langit</b><span>Stellarium</span></div><div><b>Game</b><span>Kosmos</span></div><div><b>AI</b><span>Kosmo</span></div></div>
     
     <label class="l" for="name">Nama Penjelajah</label>
     <div id="memberNameBanner" class="member-name-banner"><b id="memberNameText"></b></div>
@@ -1445,6 +1575,62 @@ label.l{
     </div>
   </section>
 
+  <section id="sSky" class="card hidden">
+    <h1 style="font-size:1.7rem">Peta Langit Kosmos (Ala Stellarium)</h1>
+    <p class="sub" style="margin:6px 0 12px">Geser/tarik langit untuk mengarah, atur waktu & lintang pengamat, tampilkan garis rasi bintang, dan klik objek untuk melihat detail astronomi.</p>
+
+    <div class="sky-toolbar">
+      <select id="skyLocPreset" class="sky-select" title="Preset Lokasi">
+        <option value="-6.2,106.8">Jakarta (-6.2° LU/LS)</option>
+        <option value="-7.25,112.75">Surabaya (-7.25°)</option>
+        <option value="0.0,109.3">Khatulistiwa / Pontianak (0.0°)</option>
+        <option value="35.68,139.69">Tokyo (+35.68°)</option>
+        <option value="51.5,-0.12">Greenwich (+51.5°)</option>
+      </select>
+      <input id="skyLat" class="sky-input" type="number" step="0.5" min="-90" max="90" value="-6.2" style="width:88px" title="Lintang (deg)"/>
+      <button id="skyBtnConst" class="sky-pill-btn on" type="button">Rasi Bintang</button>
+      <button id="skyBtnGrid" class="sky-pill-btn on" type="button">Grid</button>
+      <button id="skyBtnStepBack" class="sky-pill-btn" type="button">-3 Jam</button>
+      <button id="skyBtnNow" class="sky-pill-btn on" type="button">Waktu Real-Time</button>
+      <button id="skyBtnStepFwd" class="sky-pill-btn" type="button">+3 Jam</button>
+    </div>
+
+    <div class="sky-canvas-wrap">
+      <canvas id="skyChartCanvas"></canvas>
+    </div>
+
+    <div class="sky-readout" id="skyReadout">
+      <b>Info Objek:</b> Sentuh atau klik bintang, rasi, planet, Matahari, atau Bulan pada peta langit untuk melihat koordinat & data observasinya.
+    </div>
+  </section>
+
+  <section id="sGame" class="card hidden">
+    <h1 style="font-size:1.7rem">Game Kosmos: Orbital Dodger</h1>
+    <p class="sub" style="margin:6px 0 12px">Kemudikan wahana ISEA menembus sabuk asteroid & medan gravitasi padat. Kumpulkan <b>Star Core</b> dan hindari tabrakan!</p>
+
+    <div class="game-hud">
+      <div><b id="gScore">0</b><span>Skor</span></div>
+      <div><b id="gBest">0</b><span>Rekor</span></div>
+      <div><b id="gHull">100%</b><span>Hull</span></div>
+      <div><b id="gWave">Lv 1</b><span>Kecepatan</span></div>
+    </div>
+
+    <div class="game-stage-box" id="gameStageBox">
+      <canvas id="spaceGameCanvas"></canvas>
+      <div class="game-overlay-msg" id="gameOverlay">
+        <div class="badge" id="gBadge">Misi Wahana ISEA</div>
+        <h2 style="font:700 1.4rem/1.2 'Space Grotesk',sans-serif" id="gTitle">Siap Meluncur ke Orbit?</h2>
+        <p style="font-size:.86rem;color:var(--mu);max-width:340px;line-height:1.55" id="gDesc">Geser jari/mouse di area game atau pakai tombol kiri/kanan. Star Core biru/emas menambah skor.</p>
+        <button id="gStartBtn" class="pb" style="max-width:220px;padding:14px 20px">Mulai Misi</button>
+      </div>
+    </div>
+
+    <div class="game-controls-row">
+      <button type="button" class="game-ctl-btn" id="gLeftBtn">◀ Kiri</button>
+      <button type="button" class="game-ctl-btn" id="gRightBtn">Kanan ▶</button>
+    </div>
+  </section>
+
   <section id="sAI" class="card hidden">
     <div class="aih"><h1 style="font-size:1.7rem">Kosmo AI</h1><button id="aiK" class="gb">API Key</button></div>
     <p class="sub" style="margin:6px 0 0">Tanya soal lubang hitam, bintang neutron, gravastar, planet, dan astronomi.</p>
@@ -1457,6 +1643,8 @@ label.l{
 <nav id="nav">
   <button data-t="quiz" class="on">Kuis</button>
   <button data-t="exp">Jelajah</button>
+  <button data-t="sky">Langit</button>
+  <button data-t="game">Game</button>
   <button data-t="ai">AI</button>
   <button data-t="lb">Rank</button>
 </nav>
@@ -1545,7 +1733,7 @@ label.l{
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BANK SOAL ===== */
+/* ===== BANK SOAL ASTRONOMI (70+ SOAL) ===== */
 const Q=(m,q,o,e)=>({id:q.slice(0,28),m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -1586,9 +1774,46 @@ Q('ns','Apa nama unsur terberat yang berhasil dideteksi dalam sisa tabrakan kilo
 Q('gr','Apa kepanjangan dan gagasan utama dari Gravastar dalam astrofisika teoretis?',['Gravitational Vacuum Star: interior energi vakum tanpa singularitas pusat','Gravitational Star: bintang gas padat dengan inti besi','Gravity Variable Star: bintang yang massanya berubah-ubah','Gravitational Wave Star: pulsar pemancar gelombang radio'],'Gravastar diusulkan sebagai alternatif lubang hitam tanpa singularitas pusat dan tanpa event horizon mutlak.'),
 Q('gr','Apa isi bagian dalam (interior) gravastar menurut model Mazur–Mottola?',['Kondensat Bose–Einstein atau ruang bertekanan negatif (energi vakum)','Inti besi cair superpanas','Awan debu antarbintang dingin','Lapisan gas hidrogen dan helium'],'Bagian intinya berupa vakum bertekanan negatif yang menahan keruntuhan gravitasi sehingga tidak membentuk singularitas.'),
 Q('gr','Bagaimana batas luar gravastar digambarkan dibanding event horizon lubang hitam?',['Kulit tipis materi sangat padat (berketebalan orde panjang Planck) pengganti horizon','Permukaan batuan berpori seperti bulan','Lapisan awan gas setebal jutaan kilometer','Cincin es tipis yang berputar'],'Kulit tipis berenergi tinggi memisahkan interior energi vakum dari ruang luar.'),
-Q('gr','Mengapa astronom meneliti gravastar sebagai objek hipotesis?',['Untuk menguji apakah objek superpadat bisa menghindari singularitas & paradoks informasi','Karena gravastar sudah difoto langsung sejak 1950','Untuk menggantikan posisi Matahari di tata surya','Karena gravastar hanya ada di dalam tata surya'],'Gravastar menjadi salah satu model alternatif lubang hitam yang diuji lewat data gelombang gravitasi dan pencitraan bayangan.')
+Q('gr','Mengapa astronom meneliti gravastar sebagai objek hipotesis?',['Untuk menguji apakah objek superpadat bisa menghindari singularitas & paradoks informasi','Karena gravastar sudah difoto langsung sejak 1950','Untuk menggantikan posisi Matahari di tata surya','Karena gravastar hanya ada di dalam tata surya'],'Gravastar menjadi salah satu model alternatif lubang hitam yang diuji lewat data gelombang gravitasi dan pencitraan bayangan.'),
+
+/* --- TAMBAHAN SOAL ASTRONOMI (40-75) --- */
+Q('ns','Planet mana di tata surya yang memiliki rotasi retrograde (berputar berlawanan arah dengan sebagian besar planet lain)?',['Venus dan Uranus','Mars dan Jupiter','Merkurius dan Saturnus','Neptunus dan Bumi'],'Venus berputar mundur sangat lambat, sedangkan Uranus memiliki kemiringan sumbu sekitar 98 derajat sehingga tampak berguling.'),
+Q('bh','Apa arti 1 Tahun Cahaya (Light-Year)?',['Jarak yang ditempuh cahaya dalam ruang hampa selama 1 tahun','Waktu yang dibutuhkan Bumi mengorbit Matahari','Kecepatan cahaya di dalam atmosfer Bumi','Umur rata-rata bintang raksasa merah'],'Satu tahun cahaya setara sekitar 9,46 triliun kilometer.'),
+Q('ns','Teleskop luar angkasa James Webb (JWST) terutama mengamati alam semesta pada panjang gelombang...',['Inframerah (Infrared)','Sinar Gamma','Gelombang Radio Panjang','Sinar-X Keras'],'Cermin berlapis emas JWST dan pendinginannya memungkinkan ia menembus awan debu dan melihat galaksi awal ber-redshift tinggi.'),
+Q('bh','Apa yang dimaksud dengan Redshift kosmologis pada cahaya galaksi jauh?',['Peregangan panjang gelombang cahaya ke arah merah akibat perluasan ruang','Panas ekstrem permukaan bintang','Efek bayangan gerhana Matahari','Cahaya yang terperangkap di nebula'],'Semakin jauh galaksi, semakin teregang panjang gelombang cahayanya seiring ekspansi alam semesta.'),
+Q('ns','Batas massa maksimum katai putih yang ditopang oleh tekanan degenerasi elektron disebut...',['Batas Chandrasekhar (±1,44 massa Matahari)','Batas Hubble','Jari-jari Hill','Batas Roche'],'Jika massa inti melampaui batas Chandrasekhar, ia runtuh lebih lanjut menjadi bintang neutron atau lubang hitam.'),
+Q('bh','Apa nama proses fusi nuklir utama yang mengubah hidrogen menjadi helium di inti bintang deret utama seperti Matahari?',['Rantai Proton-Proton (dan siklus CNO pada bintang lebih masif)','Peluruhan beta ganda','Fisi uranium-235','Reaksi termonuklir lithium'],'Di inti Matahari bersuhu ±15 juta K, proton bergabung melalui rantai proton-proton dan melepaskan energi.'),
+Q('ns','Metode apa yang paling banyak menemukan exoplanet dengan mengukur penurunan cahaya bintang saat planet melintas di depannya?',['Metode Transit','Metode Parallax Radar','Metode Mikrolensa Radio','Metode Spektroskopi Sinar Kosmik'],'Saat exoplanet lewat di depan bintang induknya, kecerahan bintang turun sedikit secara berkala.'),
+Q('bh','Apa yang dimaksud dengan Zona Laik Huni (Habitable Zone) di sekitar bintang?',['Rentang jarak orbit tempat air cair bisa bertahan di permukaan planet berbatu','Wilayah di dalam sabuk asteroid luar','Jarak terdekat komet saat perihelion','Daerah korona bintang dengan suhu jutaan derajat'],'Zona laik huni bergantung pada luminositas bintang induk serta komposisi atmosfer planet.'),
+Q('ns','Benda langit apakah yang memiliki ekor gas dan debu yang selalu mengarah menjauhi Matahari?',['Komet','Asteroid trojan','Satelit ireguler','Katai cokelat'],'Tekanan radiasi dan angin matahari mendorong gas serta debu terionisasi menjauhi Matahari.'),
+Q('bh','Apa nama galaksi spiral besar terdekat dengan Bima Sakti?',['Galaksi Andromeda (M31)','Galaksi Sombrero','Galaksi Pusaran (M51)','Awan Magellan Besar'],'Andromeda berjarak sekitar 2,5 juta tahun cahaya dan bergerak saling mendekati Bima Sakti.'),
+Q('ns','Satuan astronomi (AU / Astronomical Unit) didefinisikan sebagai jarak rata-rata antara...',['Bumi dan Matahari (±149,6 juta km)','Bulan dan Bumi','Matahari dan Neptunus','Bumi dan Proxima Centauri'],'1 AU memudahkan pengukuran jarak di dalam tata surya.'),
+Q('bh','Apa yang dimaksud dengan Materi Gelap (Dark Matter)?',['Materi tak bercahaya yang terdeteksi lewat efek gravitasinya pada rotasi galaksi & lensing','Lubang hitam kecil di pusat setiap planet','Awan gas karbon monoksida dingin','Bayangan gerhana total'],'Kurva rotasi galaksi dan pembelokan gravitasi menunjukkan adanya massa tambahan yang tidak memancarkan cahaya.'),
+Q('ns','Energi misterius yang mempercepat laju perluasan alam semesta disebut...',['Energi Gelap (Dark Energy)','Gaya Nuklir Kuat','Angin Bintang','Radiasi Latar Mikro'],'Pengamatan supernova jauh menunjukkan ekspansi alam semesta mengalami percepatan.'),
+Q('bh','Apa nama wahana antariksa buatan manusia terjauh yang kini berada di ruang antarbintang (interstellar space)?',['Voyager 1','Cassini','Juno','New Horizons'],'Voyager 1 diluncurkan pada 1977 dan melewati heliopause pada 2012.'),
+Q('ns','Mengapa langit siang di Bumi berwarna biru?',['Hamburan Rayleigh cahaya Matahari oleh molekul gas atmosfer','Pantulan cahaya samudra ke langit','Emisi gas ozon pada siang hari','Pembiasan cahaya Bulan'],'Panjang gelombang biru yang lebih pendek lebih kuat dihamburkan ke segala arah oleh molekul udara.'),
+Q('bh','Apa nama gugus bintang terbuka terkenal di rasi Taurus yang sering disebut "Tujuh Saudari"?',['Pleiades (M45)','Omega Centauri','Hercules Cluster (M13)','Hyades'],'Pleiades mudah diamati dengan mata telanjang dan terdiri dari bintang-bintang muda panas biru-putih.'),
+Q('ns','Apa perbedaan utama katai cokelat (Brown Dwarf) dengan planet raksasa gas?',['Katai cokelat cukup masif untuk memfusi deuterium (atau lithium), namun gagal memfusi hidrogen biasa','Katai cokelat terbuat dari besi padat','Katai cokelat tidak mengorbit apa pun','Katai cokelat lebih kecil dari Bulan'],'Massanya berada di antara planet gas terbesar (±13 massa Jupiter) dan bintang bermassa terendah (±0,08 massa Matahari).'),
+Q('bh','Apa nama wilayah di tata surya luar yang dihuni Pluto dan banyak objek es setelah orbit Neptunus?',['Sabuk Kuiper (Kuiper Belt)','Sabuk Asteroid Utama','Awan Ionosfer','Lapisan Fotosfer'],'Sabuk Kuiper membentang sekitar 30 hingga 50 AU dari Matahari.'),
+Q('ns','Apa nama gunung berapi terbesar yang diketahui di tata surya dan berada di planet Mars?',['Olympus Mons','Mauna Kea','Mons Huygens','Maxwell Montes'],'Tinggi Olympus Mons sekitar 21–22 km di atas datum rata-rata Mars, jauh melampaui Gunung Everest.'),
+Q('bh','Apa nama bintik badai antisiklon raksasa abadi di atmosfer planet Jupiter?',['Great Red Spot','Great Dark Spot','Polar Hexagon','Aurora Oval'],'Great Red Spot adalah badai bertekanan tinggi yang lebih lebar dari diameter Bumi.'),
+Q('ns','Cincin Saturnus sebagian besar tersusun dari...',['Partikel es air (dengan campuran debu dan batuan)','Cairan metana panas','Logam nikel padat','Gas helium terionisasi'],'Sebagian besar material cincin Saturnus berupa bongkahan dan butiran es air.'),
+Q('bh','Apa nama bulan terbesar milik planet Saturnus yang memiliki atmosfer tebal dan danau metana cair?',['Titan','Europa','Io','Callisto'],'Titan bahkan lebih besar dari planet Merkurius dan memiliki siklus cairan metana/etana.'),
+Q('ns','Bulan milik Jupiter manakah yang paling aktif secara vulkanik akibat pemanasan pasang surut (tidal heating)?',['Io','Ganymede','Europa','Enceladus'],'Tarikan gravitasi Jupiter serta resonansi orbit dengan Europa dan Ganymede memicu ratusan gunung berapi di Io.'),
+Q('bh','Bulan milik Jupiter manakah yang menjadi kandidat kuat memiliki samudra air cair di bawah kerak esnya?',['Europa','Phobos','Deimos','Triton'],'Pengamatan magnetik dan geologi menunjukkan samudra asin tersembunyi di bawah permukaan es Europa.'),
+Q('ns','Apa nama radiasi peninggalan alam semesta purba sekitar 380.000 tahun setelah Big Bang?',['Cosmic Microwave Background (CMB)','Radiasi Sinar Kosmik Primer','Angin Suriah','Pulsar Background'],'CMB terdeteksi sebagai radiasi gelombang mikro yang hampir seragam di seluruh langit.'),
+Q('bh','Hukum Hubble menunjukkan hubungan antara jarak galaksi jauh dan...',['Kecepatan menjauhnya (semakin jauh, semakin cepat menjauh)','Suhu inti bintangnya','Jumlah satelit alaminya','Massa lubang hitamnya'],'Semakin jauh galaksi, semakin besar kecepatan resesinya akibat perluasan alam semesta.'),
+Q('ns','Apa yang dimaksud dengan Paralaks Bintang (Stellar Parallax)?',['Pergeseran semu posisi bintang dekat terhadap latar bintang jauh saat Bumi mengorbit Matahari','Perubahan warna bintang karena suhunya','Gerhana bintang ganda','Ledakan lapisan luar bintang'],'Paralaks adalah metode pengukuran jarak langsung paling fundamental dalam astronomi.'),
+Q('bh','Bintang paling terang di langit malam Bumi (selain Matahari) adalah...',['Sirius','Betelgeuse','Polaris','Vega'],'Sirius berada di rasi Canis Major dan tampak sangat terang karena luminositas serta jaraknya yang dekat (±8,6 tahun cahaya).'),
+Q('ns','Apa nama bintang super raksasa merah di bahu rasi Orion yang mengalami variasi kecerahan?',['Betelgeuse','Rigel','Altair','Aldebaran'],'Betelgeuse adalah bintang super raksasa merah yang jauh lebih besar daripada Matahari.'),
+Q('bh','Apa nama rasi bintang di langit selatan yang dipakai sebagai penunjuk arah selatan dan memuat bintang Acrux serta Mimosa?',['Crux (Salib Selatan)','Cassiopeia','Draco','Perseus'],'Empat bintang utama Crux membentuk pola salib yang mudah dikenali di belahan langit selatan.'),
+Q('gr','Dalam model gravastar, mengapa bagian interiornya tidak runtuh menjadi singularitas?',['Tekanan negatif ruang vakum/energi gelap internal melawan keruntuhan gravitasi','Memiliki inti besi superpadat yang memantulkan gravitasi','Berputar melebihi kecepatan cahaya','Dikelilingi cincin magnet raksasa'],'Tekanan negatif menghasilkan tolakan gravitasi efektif pada persamaan relativitas umum.'),
+Q('gr','Bagaimana cara ilmuwan berpotensi membedakan lubang hitam klasik dari gravastar dalam pengamatan astrofisika?',['Melalui echo gelombang gravitasi, profil bayangan horizon, atau jejak permukaan','Dengan melihat warnanya lewat teleskop optik biasa','Dengan mengukur jaraknya dari Bulan','Dengan menghitung jumlah planet di sekitarnya'],'Ketiadaan horizon mutlak atau adanya kulit permukaan dapat memunculkan echo atau perbedaan spektrum/bayangan.'),
+Q('ns','Apa nama fenomena aurora di kutub Bumi (Aurora Borealis / Australis)?',['Interaksi partikel bermuatan angin matahari dengan medan magnet & atmosfer atas Bumi','Pantulan cahaya Bulan pada awan es kutub','Ledakan meteoroid di stratosfer','Pembiasan cahaya senja di horizon'],'Elektron dan proton berenergi tinggi menumbuk atom oksigen dan nitrogen di atmosfer atas.'),
+Q('bh','Apa yang dimaksud dengan Titik Lagrange (seperti L2 tempat teleskop JWST mengorbit)?',['Lokasi keseimbangan gravitasi dua benda masif (Matahari & Bumi) dan gaya sentrifugal','Titik pusat gravitasi galaksi','Batas terluar tata surya','Pusat ledakan supernova'],'Di sekitar L2, wahana antariksa dapat mempertahankan posisi relatif terhadap Bumi dan Matahari dengan bahan bakar minimal.'),
+Q('ns','Apa nama fenomena gerhana Matahari total ketika Bulan berada di titik terjauh dari Bumi sehingga tampak lebih kecil dari piringan Matahari?',['Gerhana Matahari Cincin (Annular)','Gerhana Bulan Penumbra','Gerhana Matahari Hibrida','Oposisi Planet'],'Pada gerhana cincin, tepi luar Matahari tetap terlihat membentuk cincin cahaya di sekeliling Bulan.')
 ];
-const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.','Gravastar adalah objek hipotesis yang mengganti singularitas pusat dengan interior energi vakum.'];
+const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.','Gravastar adalah objek hipotesis yang mengganti singularitas pusat dengan interior energi vakum.','Teleskop JWST mengorbit di dekat titik Lagrange L2 Matahari–Bumi sekitar 1,5 juta km dari Bumi.'];
 
 /* ===== UTIL & AUDIO OBJEK ===== */
 const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -2028,13 +2253,13 @@ function drainLocalPrankQueue(){
   }
 }
 
-/* ===== STATE & KUNCI KELUAR KUIS UNTUK MEMBER (OWNER Punya Tombol Keluar) ===== */
+/* ===== STATE & KUNCI KELUAR KUIS UNTUK MEMBER (OWNER PUNYA TOMBOL KELUAR) ===== */
 let G={}, cfg={mode:'all',src:'all',diff:'normal',n:10};
-const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
+const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),sky:$('sSky'),game:$('sGame'),ai:$('sAI')};
 const wrap=$('stageWrap');
 let cs='start';
-const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
-const SWIPE_TABS=['quiz','exp','ai','lb'];
+const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',sky:'sky',game:'game',ai:'ai',lb:'lb'};
+const SWIPE_TABS=['quiz','exp','sky','game','ai','lb'];
 
 let memberTimeRate = 1.0;
 let lastTimerFrame = 0;
@@ -2086,6 +2311,8 @@ function openTab(t, dir){
  if(t==='quiz')show(G.live?'quiz':'start', dir);
  else if(t==='lb')board(dir);
  else show(t, dir);
+ if(t==='sky'&&typeof drawSkyChart==='function')setTimeout(drawSkyChart,30);
+ if(t==='game'&&typeof resizeSpaceGame==='function')setTimeout(resizeSpaceGame,30);
 }
 
 function show(k, dir){
@@ -2125,7 +2352,7 @@ function show(k, dir){
   if(e.touches.length!==1)return;
   if(e.target&&e.target.closest('#modeSlider'))return;
   const tag=e.target&&e.target.tagName;
-  if(tag==='INPUT'||tag==='TEXTAREA'||e.target.closest('.chips')||e.target.closest('.chat')||e.target.closest('.modal-overlay.active'))return;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||e.target.closest('.chips')||e.target.closest('.chat')||e.target.closest('.game-stage-box')||e.target.closest('.sky-canvas-wrap')||e.target.closest('.modal-overlay.active'))return;
   if(cs==='quiz'||cs==='on')return;
   sx=e.touches[0].clientX;
   sy=e.touches[0].clientY;
@@ -3566,129 +3793,708 @@ if(exg){
  exg.appendChild(frag);
 }
 
-/* ===== KOSMO AI ===== */
-const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
-function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
- CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
- if(q.toLowerCase().includes('gravastar')) {
-     return 'Gravastar (Gravitational Vacuum Star) adalah objek hipotesis yang diusulkan sebagai alternatif lubang hitam tanpa singularitas pusat, dengan bagian dalam energi vakum bertekanan negatif.';
+/* ===== PETA LANGIT KOSMOS (ALA STELLARIUM) ===== */
+(function initSkyChart(){
+ const scv=$('skyChartCanvas');
+ if(!scv)return;
+ const sctx=scv.getContext('2d');
+ if(!sctx)return;
+
+ let showConst=true, showGrid=true, realTimeMode=true;
+ let timeOffsetHours=0;
+ let viewAz=180; // 0=Utara, 90=Timur, 180=Selatan, 270=Barat
+ let viewAlt=38;
+ let dragging=false, lastX=0, lastY=0, moved=false;
+
+ // Katalog bintang terang (RA dalam jam 0..24, Dec dalam derajat -90..+90, mag, warna)
+ const STARS=[
+  {id:'sirius',name:'Sirius (α CMa)',ra:6.752,dec:-16.716,mag:-1.46,col:'#dbeafe',type:'Bintang Deret Utama A1V',dist:'8,6 th cahaya',note:'Bintang paling terang di langit malam.'},
+  {id:'canopus',name:'Canopus (α Car)',ra:6.399,dec:-52.696,mag:-0.74,col:'#fef9c3',type:'Super Raksasa F0II',dist:'310 th cahaya',note:'Bintang terang kedua di langit malam (belahan selatan).'},
+  {id:'rigel',name:'Rigel (β Ori)',ra:5.242,dec:-8.202,mag:0.13,col:'#bae6fd',type:'Super Raksasa Biru B8Ia',dist:'860 th cahaya',note:'Kaki kiri rasi Orion, sangat luminus.'},
+  {id:'betelgeuse',name:'Betelgeuse (α Ori)',ra:5.919,dec:7.407,mag:0.50,col:'#fdba74',type:'Super Raksasa Merah M1-M2',dist:'~550 th cahaya',note:'Bahu kiri atas rasi Orion, kandidat supernova.'},
+  {id:'aldebaran',name:'Aldebaran (α Tau)',ra:4.599,dec:16.509,mag:0.85,col:'#fed7aa',type:'Raksasa Jingga K5III',dist:'65 th cahaya',note:'Mata banteng rasi Taurus.'},
+  {id:'spica',name:'Spica (α Vir)',ra:13.420,dec:-11.161,mag:0.97,col:'#bfdbfe',type:'Bintang Biner B1III',dist:'250 th cahaya',note:'Bintang paling terang di rasi Virgo.'},
+  {id:'antares',name:'Antares (α Sco)',ra:16.490,dec:-26.432,mag:1.09,col:'#fca5a5',type:'Super Raksasa Merah M1.5Iab',dist:'~550 th cahaya',note:'Jantung rasi Scorpius, warna kemerahan mirip Mars.'},
+  {id:'polaris',name:'Polaris (α UMi)',ra:2.530,dec:89.264,mag:1.98,col:'#fef08a',type:'Super Raksasa Kuning F7Ib',dist:'433 th cahaya',note:'Dekat kutub langit utara.'},
+  {id:'achernar',name:'Achernar (α Eri)',ra:1.629,dec:-57.237,mag:0.46,col:'#bae6fd',type:'Bintang B6Vpe',dist:'139 th cahaya',note:'Ujung selatan rasi Eridanus.'},
+  {id:'acrux',name:'Acrux (α Cru)',ra:12.443,dec:-63.099,mag:0.77,col:'#dbeafe',type:'Sistem Bintang B0.5IV',dist:'321 th cahaya',note:'Bintang paling terang di rasi Crux (Salib Selatan).'},
+  {id:'mimosa',name:'Mimosa (β Cru)',ra:12.795,dec:-59.689,mag:1.25,col:'#bae6fd',type:'Raksasa Biru B0.5III',dist:'280 th cahaya',note:'Bintang timur rasi Crux.'},
+  {id:'gacrux',name:'Gacrux (γ Cru)',ra:12.519,dec:-57.113,mag:1.63,col:'#fdba74',type:'Raksasa Merah M3.5III',dist:'88 th cahaya',note:'Puncak rasi Crux.'},
+  {id:'vega',name:'Vega (α Lyr)',ra:18.616,dec:38.784,mag:0.03,col:'#e0f2fe',type:'Bintang A0V',dist:'25 th cahaya',note:'Bagian Segitiga Musim Panas.'},
+  {id:'altair',name:'Altair (α Aql)',ra:19.846,dec:8.868,mag:0.77,col:'#f8fafc',type:'Bintang A7V',dist:'16,7 th cahaya',note:'Bintang terang berotasi cepat di rasi Aquila.'},
+  {id:'deneb',name:'Deneb (α Cyg)',ra:20.690,dec:45.280,mag:1.25,col:'#e0f2fe',type:'Super Raksasa Putih A2Ia',dist:'~2.600 th cahaya',note:'Ekor rasi Cygnus.'},
+  {id:'bellatrix',name:'Bellatrix (γ Ori)',ra:5.418,dec:6.350,mag:1.64,col:'#bae6fd',type:'Bintang B2III',dist:'250 th cahaya',note:'Bahu kanan atas rasi Orion.'},
+  {id:'alnilam',name:'Alnilam (ε Ori)',ra:5.604,dec:-1.202,mag:1.69,col:'#dbeafe',type:'Super Raksasa Biru B0Ia',dist:'~2.000 th cahaya',note:'Bintang tengah Sabuk Orion.'},
+  {id:'alnitak',name:'Alnitak (ζ Ori)',ra:5.679,dec:-1.943,mag:1.77,col:'#bae6fd',type:'Sistem Bintang O9.5Ib',dist:'~1.260 th cahaya',note:'Bintang timur Sabuk Orion.'},
+  {id:'mintaka',name:'Mintaka (δ Ori)',ra:5.533,dec:-0.299,mag:2.23,col:'#dbeafe',type:'Sistem Bintang O9.5II',dist:'~1.200 th cahaya',note:'Bintang barat Sabuk Orion.'},
+  {id:'saiph',name:'Saiph (κ Ori)',ra:5.796,dec:-9.670,mag:2.09,col:'#bae6fd',type:'Super Raksasa Biru B0.5Ia',dist:'650 th cahaya',note:'Kaki kanan rasi Orion.'}
+ ];
+
+ const CONSTELLATIONS=[
+  {name:'Orion',pairs:[['betelgeuse','bellatrix'],['bellatrix','mintaka'],['mintaka','alnilam'],['alnilam','alnitak'],['alnitak','saiph'],['saiph','rigel'],['rigel','mintaka'],['betelgeuse','alnitak']]},
+  {name:'Crux (Salib Selatan)',pairs:[['acrux','gacrux'],['mimosa','gacrux']]},
+  {name:'Segitiga Musim Panas',pairs:[['vega','altair'],['altair','deneb'],['deneb','vega']]}
+ ];
+
+ function getSimDate(){
+  return new Date(Date.now() + timeOffsetHours * 3600000);
  }
- if(q.toLowerCase().includes('kov') || q.toLowerCase().includes('owner') || q.toLowerCase().includes('pembuat')) {
-     return 'Web ini dibuat oleh KovTheGreat untuk ISEA Kuis Kosmos.';
+
+ function getLstHours(d, lonDeg){
+  // Perkiraan Local Sidereal Time (jam 0..24)
+  const jd = d.getTime() / 86400000 + 2440587.5;
+  const t = (jd - 2451545.0) / 36525.0;
+  let gmst = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * t * t;
+  gmst = ((gmst + lonDeg) % 360 + 360) % 360;
+  return gmst / 15.0;
  }
- return b||'Tanya saja topik astronomi seperti event horizon, gravastar, pulsar, magnetar, atau planet.';
-}
-function msg(t,w){const chat=$('chat');if(!chat)return;const d=document.createElement('div');d.className='m '+w;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
-(function initChatTouchScroll(){
- const chat=$('chat');
- if(!chat)return;
- let startY=0,startScrollTop=0,dragging=false;
- chat.addEventListener('touchstart',e=>{
-  if(e.touches.length!==1)return;
-  startY=e.touches[0].clientY;
-  startScrollTop=chat.scrollTop;
-  dragging=true;
- },{passive:true});
- chat.addEventListener('touchmove',e=>{
-  if(!dragging||!e.touches.length)return;
-  const dy=e.touches[0].clientY-startY;
-  const maxScroll=Math.max(0,chat.scrollHeight-chat.clientHeight);
-  if(maxScroll>0){
-   chat.scrollTop=Math.max(0,Math.min(maxScroll,startScrollTop-dy));
+
+ function eqToAltAz(raHours, decDeg, latDeg, lstHours){
+  const haRad = ((lstHours - raHours) * 15) * Math.PI / 180;
+  const decRad = decDeg * Math.PI / 180;
+  const latRad = latDeg * Math.PI / 180;
+  const sinAlt = Math.sin(decRad)*Math.sin(latRad) + Math.cos(decRad)*Math.cos(latRad)*Math.cos(haRad);
+  const alt = Math.asin(Math.max(-1, Math.min(1, sinAlt))) * 180 / Math.PI;
+  const cosAz = (Math.sin(decRad) - Math.sin(alt*Math.PI/180)*Math.sin(latRad)) / Math.max(1e-6, Math.cos(alt*Math.PI/180)*Math.cos(latRad));
+  let az = Math.acos(Math.max(-1, Math.min(1, cosAz))) * 180 / Math.PI;
+  if(Math.sin(haRad) > 0) az = 360 - az;
+  return { alt, az };
+ }
+
+ function getSolarSystemBodies(d, latDeg, lstHours){
+  const daysSinceJ2000 = (d.getTime() / 86400000 + 2440587.5) - 2451545.0;
+  // Posisi Matahari ekliptika sederhana
+  const meanLonSun = ((280.46 + 0.9856474 * daysSinceJ2000) % 360 + 360) % 360;
+  const gSun = ((357.528 + 0.9856003 * daysSinceJ2000) % 360 + 360) % 360 * Math.PI / 180;
+  const eclLonSun = (meanLonSun + 1.915 * Math.sin(gSun) + 0.020 * Math.sin(2*gSun)) * Math.PI / 180;
+  const obl = 23.439 * Math.PI / 180;
+  const sunRa = ((Math.atan2(Math.cos(obl)*Math.sin(eclLonSun), Math.cos(eclLonSun)) * 180 / Math.PI) + 360) % 360 / 15;
+  const sunDec = Math.asin(Math.sin(obl)*Math.sin(eclLonSun)) * 180 / Math.PI;
+
+  // Bulan (perkiraan ~13.176 deg/hari)
+  const moonLon = ((218.316 + 13.176396 * daysSinceJ2000) % 360 + 360) % 360 * Math.PI / 180;
+  const moonLat = 5.14 * Math.sin((93.27 + 13.229 * daysSinceJ2000) * Math.PI / 180) * Math.PI / 180;
+  const xM = Math.cos(moonLat)*Math.cos(moonLon), yM = Math.cos(moonLat)*Math.sin(moonLon), zM = Math.sin(moonLat);
+  const xEq = xM, yEq = yM*Math.cos(obl) - zM*Math.sin(obl), zEq = yM*Math.sin(obl) + zM*Math.cos(obl);
+  const moonRa = ((Math.atan2(yEq, xEq) * 180 / Math.PI) + 360) % 360 / 15;
+  const moonDec = Math.asin(Math.max(-1, Math.min(1, zEq))) * 180 / Math.PI;
+
+  const list = [
+   {id:'sun',name:'Matahari',ra:sunRa,dec:sunDec,mag:-26.7,col:'#facc15',r:9,type:'Bintang Pusat Tata Surya',dist:'~1 AU',note:'Posisi ekliptika sesuai waktu terpilih.'},
+   {id:'moon',name:'Bulan',ra:moonRa,dec:moonDec,mag:-11.5,col:'#e2e8f0',r:7,type:'Satelit Alami Bumi',dist:'~384.400 km',note:'Estimasi posisi orbit Bulan.'}
+  ];
+
+  const planetApprox = [
+   {id:'jupiter',name:'Jupiter',rate:0.0831,base:34,dec:14,col:'#fdba74',mag:-2.4,note:'Planet raksasa gas; sering tampak terang di langit malam.'},
+   {id:'saturn',name:'Saturnus',rate:0.0334,base:310,dec:-10,col:'#fde68a',mag:0.6,note:'Planet bercincin; amati dengan teleskop kecil.'},
+   {id:'mars',name:'Mars',rate:0.5240,base:120,dec:12,col:'#fb7185',mag:0.4,note:'Planet merah dengan warna jingga-kemerahan.'}
+  ];
+  planetApprox.forEach(p=>{
+   const lonDeg = ((p.base + p.rate * daysSinceJ2000) % 360 + 360) % 360;
+   const lonRad = lonDeg * Math.PI / 180;
+   const raH = ((Math.atan2(Math.cos(obl)*Math.sin(lonRad), Math.cos(lonRad)) * 180 / Math.PI) + 360) % 360 / 15;
+   const decD = Math.asin(Math.sin(obl)*Math.sin(lonRad)) * 180 / Math.PI;
+   list.push({id:p.id,name:p.name,ra:raH,dec:decD,mag:p.mag,col:p.col,r:5.5,type:'Planet Tata Surya',dist:'Tata Surya',note:p.note});
+  });
+
+  return list.map(b=>({...b, ...eqToAltAz(b.ra, b.dec, latDeg, lstHours)}));
+ }
+
+ let projectedItems = [];
+
+ function projectToScreen(alt, az, w, h){
+  // Proyeksi stereografik / azimuthal sekitar pusat (viewAz, viewAlt)
+  const fovH = 110; // derajat lebar pandang horizontal
+  const fovV = 78;
+  let dAz = ((az - viewAz + 540) % 360) - 180;
+  const dAlt = alt - viewAlt;
+  const x = (w * 0.5) + (dAz / (fovH * 0.5)) * (w * 0.46);
+  const y = (h * 0.5) - (dAlt / (fovV * 0.5)) * (h * 0.46);
+  const visible = Math.abs(dAz) < fovH * 0.65 && Math.abs(dAlt) < fovV * 0.72;
+  return { x, y, visible };
+ }
+
+ function drawSkyChart(){
+  if(!$('sSky') || $('sSky').classList.contains('hidden')) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = scv.getBoundingClientRect();
+  const w = Math.max(240, Math.floor(rect.width));
+  const h = Math.max(240, Math.floor(rect.height));
+  if(scv.width !== Math.floor(w*dpr) || scv.height !== Math.floor(h*dpr)){
+   scv.width = Math.floor(w*dpr);
+   scv.height = Math.floor(h*dpr);
   }
- },{passive:true});
- const stopDrag=()=>{dragging=false};
- chat.addEventListener('touchend',stopDrag,{passive:true});
- chat.addEventListener('touchcancel',stopDrag,{passive:true});
+  sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const latDeg = Math.max(-90, Math.min(90, parseFloat($('skyLat') && $('skyLat').value) || 0));
+  const presetVal = ($('skyLocPreset') && $('skyLocPreset').value) || '0,106.8';
+  const lonDeg = parseFloat((presetVal.split(',')[1]) || 106.8);
+  const simDate = getSimDate();
+  const lst = getLstHours(simDate, lonDeg);
+
+  // Latar langit
+  const skyGrad = sctx.createLinearGradient(0, 0, 0, h);
+  skyGrad.addColorStop(0, '#020511');
+  skyGrad.addColorStop(0.75, '#071126');
+  skyGrad.addColorStop(1, '#111827');
+  sctx.fillStyle = skyGrad;
+  sctx.fillRect(0, 0, w, h);
+
+  // Grid Azimuth & Altitude
+  if(showGrid){
+   sctx.strokeStyle = 'rgba(125,211,252,0.12)';
+   sctx.lineWidth = 1;
+   for(let a = 0; a <= 90; a += 15){
+    const p1 = projectToScreen(a, viewAz - 55, w, h);
+    const p2 = projectToScreen(a, viewAz + 55, w, h);
+    sctx.beginPath(); sctx.moveTo(p1.x, p1.y); sctx.lineTo(p2.x, p2.y); sctx.stroke();
+   }
+   for(let z = 0; z < 360; z += 30){
+    const p1 = projectToScreen(0, z, w, h);
+    const p2 = projectToScreen(75, z, w, h);
+    sctx.beginPath(); sctx.moveTo(p1.x, p1.y); sctx.lineTo(p2.x, p2.y); sctx.stroke();
+   }
+  }
+
+  // Garis horizon
+  const hLeft = projectToScreen(0, viewAz - 55, w, h);
+  const hRight = projectToScreen(0, viewAz + 55, w, h);
+  sctx.strokeStyle = 'rgba(56,189,248,0.45)';
+  sctx.lineWidth = 1.5;
+  sctx.beginPath(); sctx.moveTo(hLeft.x, hLeft.y); sctx.lineTo(hRight.x, hRight.y); sctx.stroke();
+
+  // Label arah mata angin di horizon
+  [['U',0],['TL',45],['T',90],['TG',135],['S',180],['BD',225],['B',270],['BL',315]].forEach(([lbl,azDeg])=>{
+   const pt = projectToScreen(2, azDeg, w, h);
+   if(pt.visible){
+    sctx.fillStyle = '#7dd3fc';
+    sctx.font = '700 11px "Space Grotesk", sans-serif';
+    sctx.fillText(lbl, pt.x - 6, Math.min(h - 10, pt.y));
+   }
+  });
+
+  projectedItems = [];
+  const starPosMap = {};
+
+  STARS.forEach(st=>{
+   const aa = eqToAltAz(st.ra, st.dec, latDeg, lst);
+   const pr = projectToScreen(aa.alt, aa.az, w, h);
+   starPosMap[st.id] = { ...aa, ...pr, data: st };
+   if(pr.visible && aa.alt >= -4){
+    const r = Math.max(1.6, 4.4 - st.mag * 0.55);
+    sctx.fillStyle = aa.alt < 0 ? 'rgba(148,163,184,0.25)' : st.col;
+    sctx.beginPath(); sctx.arc(pr.x, pr.y, r, 0, Math.PI*2); sctx.fill();
+    if(st.mag < 1.3 && aa.alt >= 0){
+     sctx.fillStyle = 'rgba(226,232,240,0.82)';
+     sctx.font = '600 10px "Plus Jakarta Sans", sans-serif';
+     sctx.fillText(st.name.split(' ')[0], pr.x + r + 4, pr.y + 3);
+    }
+    projectedItems.push({
+     x: pr.x, y: pr.y, hitR: Math.max(12, r + 9),
+     title: st.name, sub: `${st.type} · Mag ${st.mag} · Alt ${aa.alt.toFixed(1)}° · Az ${aa.az.toFixed(0)}° · Jarak ${st.dist}. ${st.note}`
+    });
+   }
+  });
+
+  // Garis rasi bintang
+  if(showConst){
+   sctx.strokeStyle = 'rgba(125,211,252,0.34)';
+   sctx.lineWidth = 1.2;
+   CONSTELLATIONS.forEach(c=>{
+    c.pairs.forEach(([aId,bId])=>{
+     const a = starPosMap[aId], b = starPosMap[bId];
+     if(a && b && a.visible && b.visible && a.alt >= -2 && b.alt >= -2){
+      sctx.beginPath(); sctx.moveTo(a.x, a.y); sctx.lineTo(b.x, b.y); sctx.stroke();
+     }
+    });
+   });
+  }
+
+  // Matahari, Bulan, Planet
+  const bodies = getSolarSystemBodies(simDate, latDeg, lst);
+  bodies.forEach(bd=>{
+   const pr = projectToScreen(bd.alt, bd.az, w, h);
+   if(pr.visible && bd.alt >= -4){
+    sctx.save();
+    sctx.fillStyle = bd.col;
+    sctx.beginPath(); sctx.arc(pr.x, pr.y, bd.r, 0, Math.PI*2); sctx.fill();
+    sctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    sctx.lineWidth = 1.2;
+    sctx.beginPath(); sctx.arc(pr.x, pr.y, bd.r + 3, 0, Math.PI*2); sctx.stroke();
+    sctx.fillStyle = '#fef08a';
+    sctx.font = '700 11px "Space Grotesk", sans-serif';
+    sctx.fillText(bd.name, pr.x + bd.r + 6, pr.y + 4);
+    sctx.restore();
+
+    projectedItems.push({
+     x: pr.x, y: pr.y, hitR: Math.max(14, bd.r + 10),
+     title: bd.name, sub: `${bd.type} · Mag ${bd.mag} · Alt ${bd.alt.toFixed(1)}° · Az ${bd.az.toFixed(0)}° (${bd.alt>=0?'Di atas horizon':'Di bawah horizon'}). ${bd.note}`
+    });
+   }
+  });
+
+  // HUD kecil di pojok kiri atas
+  sctx.fillStyle = 'rgba(226,232,240,0.85)';
+  sctx.font = '700 11px "Space Grotesk", sans-serif';
+  const timeStr = simDate.toLocaleString('id-ID', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  sctx.fillText(`${timeStr} · Lintang ${latDeg.toFixed(1)}° · Az ${Math.round(viewAz)}° Alt ${Math.round(viewAlt)}°`, 12, 20);
+ }
+
+ scv.addEventListener('pointerdown', e=>{
+  dragging=true; moved=false; lastX=e.clientX; lastY=e.clientY;
+ });
+ window.addEventListener('pointermove', e=>{
+  if(!dragging)return;
+  const dx=e.clientX-lastX, dy=e.clientY-lastY;
+  if(Math.abs(dx)>3||Math.abs(dy)>3) moved=true;
+  lastX=e.clientX; lastY=e.clientY;
+  viewAz=((viewAz - dx*0.28) % 360 + 360) % 360;
+  viewAlt=Math.max(-10, Math.min(85, viewAlt + dy*0.22));
+  drawSkyChart();
+ });
+ window.addEventListener('pointerup', e=>{
+  if(!dragging)return;
+  dragging=false;
+  if(!moved){
+   const rect=scv.getBoundingClientRect();
+   const px=e.clientX-rect.left, py=e.clientY-rect.top;
+   let best=null, bestD=999;
+   projectedItems.forEach(it=>{
+    const dist=Math.hypot(it.x-px, it.y-py);
+    if(dist<=it.hitR && dist<bestD){best=it; bestD=dist;}
+   });
+   if(best && $('skyReadout')){
+    au.clk();
+    $('skyReadout').innerHTML = `<b>${best.title}:</b> ${best.sub}`;
+   }
+  }
+ });
+
+ if($('skyLocPreset')) $('skyLocPreset').onchange=()=>{
+  const parts=$('skyLocPreset').value.split(',');
+  if($('skyLat')) $('skyLat').value=parts[0];
+  drawSkyChart();
+ };
+ if($('skyLat')) $('skyLat').oninput=drawSkyChart;
+ if($('skyBtnConst')) $('skyBtnConst').onclick=()=>{
+  showConst=!showConst; $('skyBtnConst').classList.toggle('on',showConst); drawSkyChart();
+ };
+ if($('skyBtnGrid')) $('skyBtnGrid').onclick=()=>{
+  showGrid=!showGrid; $('skyBtnGrid').classList.toggle('on',showGrid); drawSkyChart();
+ };
+ if($('skyBtnStepBack')) $('skyBtnStepBack').onclick=()=>{
+  realTimeMode=false; if($('skyBtnNow'))$('skyBtnNow').classList.remove('on');
+  timeOffsetHours-=3; drawSkyChart();
+ };
+ if($('skyBtnStepFwd')) $('skyBtnStepFwd').onclick=()=>{
+  realTimeMode=false; if($('skyBtnNow'))$('skyBtnNow').classList.remove('on');
+  timeOffsetHours+=3; drawSkyChart();
+ };
+ if($('skyBtnNow')) $('skyBtnNow').onclick=()=>{
+  realTimeMode=true; timeOffsetHours=0; $('skyBtnNow').classList.add('on'); drawSkyChart();
+ };
+ setInterval(()=>{
+  if(realTimeMode && $('sSky') && !$('sSky').classList.contains('hidden')) drawSkyChart();
+ }, 15000);
 })();
-let hist=[];
-async function ask(q){
- q=q.trim();if(!q)return;if($('aiIn'))$('aiIn').value='';msg(q,'u');const b=msg('...','b');
- const key=ls.g('isea_key','');let a;
- const systemPrompt = 'Kamu adalah asisten di platform ISEA Kuis Kosmos buatan KovTheGreat. Jawab ringkas, jelas, dan akurat secara ilmiah dalam bahasa Indonesia.';
 
- if(key){try{hist.push({role:'user',content:q});
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:systemPrompt,messages:hist.slice(-10)})});
-  const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
-  a=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:a})}
-  catch(e){hist.pop();a='Koneksi AI gagal ('+e.message+').\n\nJawaban lokal: '+offline(q)}}
- else a=offline(q)+'\n\n(Mode offline: isi API Key Anthropic di menu API Key untuk mode online.)';
- if(b)b.textContent=a;
+/* ===== MINI-GAME LUAR ANGKASA: ORBITAL DODGER ===== */
+let resizeSpaceGame = null;
+(function initSpaceGame(){
+ const gcv=$('spaceGameCanvas');
+ if(!gcv)return;
+ const gctx=gcv.getContext('2d');
+ if(!gctx)return;
+
+ let gw=320, gh=360, running=false, rafId=null, lastT=0;
+ let score=0, hull=100, speedLv=1, elapsed=0;
+ let bestScore=Number(ls.g('isea_game_best',0))||0;
+ if($('gBest')) $('gBest').textContent=bestScore;
+
+ const ship={x:160, y:305, r:15, vx:0};
+ let moveLeft=false, moveRight=false, pointerTargetX=null;
+ let hazards=[], cores=[], particles=[];
+ let spawnTimer=0, coreTimer=0;
+
+ resizeSpaceGame=()=>{
+  const rect=gcv.getBoundingClientRect();
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  gw=Math.max(240,Math.floor(rect.width));
+  gh=Math.max(240,Math.floor(rect.height));
+  gcv.width=Math.floor(gw*dpr);
+  gcv.height=Math.floor(gh*dpr);
+  gctx.setTransform(dpr,0,0,dpr,0,0);
+  ship.y=gh-46;
+  ship.x=Math.max(24,Math.min(gw-24,ship.x));
+ };
+ resizeSpaceGame();
+ addEventListener('resize',resizeSpaceGame,{passive:true});
+
+ function updateHud(){
+  if($('gScore')) $('gScore').textContent=Math.floor(score);
+  if($('gBest')) $('gBest').textContent=bestScore;
+  if($('gHull')) $('gHull').textContent=Math.max(0,Math.round(hull))+'%';
+  if($('gWave')) $('gWave').textContent='Lv '+speedLv;
+ }
+
+ function burstGame(x,y,col){
+  for(let i=0;i<14;i++){
+   const a=Math.random()*Math.PI*2, sp=40+Math.random()*130;
+   particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1,col});
+  }
+ }
+
+ function endGame(){
+  running=false;
+  if(rafId) cancelAnimationFrame(rafId);
+  const finalSc=Math.floor(score);
+  if(finalSc>bestScore){
+   bestScore=finalSc;
+   ls.s('isea_game_best',bestScore);
+  }
+  updateHud();
+  addLog(`Selesai Game Kosmos dengan skor ${finalSc}`);
+  if($('gameOverlay')){
+   $('gameOverlay').classList.remove('hidden');
+   if($('gBadge')) $('gBadge').textContent='Misi Selesai';
+   if($('gTitle')) $('gTitle').textContent=`Skor Kamu: ${finalSc}`;
+   if($('gDesc')) $('gDesc').textContent=`Rekor terbaik: ${bestScore} · Tercapai Level ${speedLv}.`;
+   if($('gStartBtn')) $('gStartBtn').textContent='Main Lagi';
+  }
+ }
+
+ function startGame(){
+  resizeSpaceGame();
+  au.clk();
+  score=0; hull=100; speedLv=1; elapsed=0;
+  hazards=[]; cores=[]; particles=[];
+  spawnTimer=0.4; coreTimer=0.8;
+  ship.x=gw*0.5; pointerTargetX=null;
+  running=true;
+  if($('gameOverlay')) $('gameOverlay').classList.add('hidden');
+  updateHud();
+  lastT=performance.now();
+  rafId=requestAnimationFrame(stepGame);
+ }
+
+ function stepGame(now){
+  if(!running)return;
+  const dt=Math.min(0.05,(now-lastT)/1000);
+  lastT=now;
+  elapsed+=dt;
+  speedLv=1+Math.floor(elapsed/10);
+  score+=dt*14*speedLv;
+
+  const baseSpeed=130+speedLv*28;
+  spawnTimer-=dt;
+  if(spawnTimer<=0){
+   spawnTimer=Math.max(0.26, 0.82 - speedLv*0.055);
+   const r=11+Math.random()*12;
+   hazards.push({
+    x:r+12+Math.random()*(gw-2*(r+12)),
+    y:-r-10,
+    r,
+    vy:baseSpeed*(0.85+Math.random()*0.45),
+    vx:(Math.random()-0.5)*55,
+    rot:Math.random()*6.28,
+    vr:(Math.random()-0.5)*4
+   });
+  }
+
+  coreTimer-=dt;
+  if(coreTimer<=0){
+   coreTimer=1.15;
+   cores.push({
+    x:24+Math.random()*(gw-48),
+    y:-16,
+    r:9,
+    vy:baseSpeed*0.82,
+    pulse:Math.random()*6.28
+   });
+  }
+
+  if(pointerTargetX!==null){
+   const diff=pointerTargetX-ship.x;
+   ship.x+=diff*Math.min(1,dt*14);
+  }else{
+   let dir=0;
+   if(moveLeft)dir-=1;
+   if(moveRight)dir+=1;
+   ship.x+=dir*310*dt;
+  }
+  ship.x=Math.max(22,Math.min(gw-22,ship.x));
+
+  for(let i=hazards.length-1;i>=0;i--){
+   const h=hazards[i];
+   h.x+=h.vx*dt; h.y+=h.vy*dt; h.rot+=h.vr*dt;
+   if(h.x<h.r+6){h.x=h.r+6;h.vx=Math.abs(h.vx)}
+   if(h.x>gw-h.r-6){h.x=gw-h.r-6;h.vx=-Math.abs(h.vx)}
+   const d=Math.hypot(h.x-ship.x,h.y-ship.y);
+   if(d<h.r+ship.r-2){
+    hull-=24;
+    au.no(); vib(45);
+    burstGame(h.x,h.y,'#f43f5e');
+    hazards.splice(i,1);
+    if(hull<=0){endGame();return;}
+    continue;
+   }
+   if(h.y>gh+40)hazards.splice(i,1);
+  }
+
+  for(let i=cores.length-1;i>=0;i--){
+   const c=cores[i];
+   c.y+=c.vy*dt; c.pulse+=dt*6;
+   const d=Math.hypot(c.x-ship.x,c.y-ship.y);
+   if(d<c.r+ship.r+6){
+    score+=75*speedLv;
+    hull=Math.min(100,hull+4);
+    au.t(740,'sine',0.12,.18);
+    burstGame(c.x,c.y,'#38bdf8');
+    cores.splice(i,1);
+    continue;
+   }
+   if(c.y>gh+30)cores.splice(i,1);
+  }
+
+  for(let i=particles.length-1;i>=0;i--){
+   const p=particles[i];
+   p.x+=p.vx*dt; p.y+=p.vy*dt; p.l-=dt*2.4;
+   if(p.l<=0)particles.splice(i,1);
+  }
+
+  // Gambar scene
+  gctx.clearRect(0,0,gw,gh);
+  gctx.fillStyle='rgba(226,232,240,0.45)';
+  for(let s=0;s<28;s++){
+   const sx=((s*73+elapsed*12)%gw);
+   const sy=((s*137+elapsed*(90+speedLv*22))%gh);
+   gctx.fillRect(sx,sy,1.5,1.5);
+  }
+
+  cores.forEach(c=>{
+   const pr=c.r+Math.sin(c.pulse)*2;
+   gctx.fillStyle='#38bdf8';
+   gctx.beginPath(); gctx.arc(c.x,c.y,pr,0,Math.PI*2); gctx.fill();
+   gctx.strokeStyle='#bae6fd'; gctx.lineWidth=1.5;
+   gctx.beginPath(); gctx.arc(c.x,c.y,pr+3,0,Math.PI*2); gctx.stroke();
+  });
+
+  hazards.forEach(h=>{
+   gctx.save();
+   gctx.translate(h.x,h.y); gctx.rotate(h.rot);
+   gctx.fillStyle='#334155'; gctx.strokeStyle='#fb923c'; gctx.lineWidth=1.8;
+   gctx.beginPath();
+   for(let k=0;k<7;k++){
+    const ang=(k/7)*Math.PI*2;
+    const rad=h.r*(0.8+((k*3)%3)*0.12);
+    if(k===0)gctx.moveTo(Math.cos(ang)*rad,Math.sin(ang)*rad);
+    else gctx.lineTo(Math.cos(ang)*rad,Math.sin(ang)*rad);
+   }
+   gctx.closePath(); gctx.fill(); gctx.stroke();
+   gctx.restore();
+  });
+
+  // Wahana ISEA
+  gctx.save();
+  gctx.translate(ship.x,ship.y);
+  // Api pendorong
+  gctx.fillStyle='#ff8a3d';
+  gctx.beginPath(); gctx.moveTo(-6,14); gctx.lineTo(0,24+Math.random()*7); gctx.lineTo(6,14); gctx.closePath(); gctx.fill();
+  // Badan wahana
+  gctx.fillStyle='#f8fafc'; gctx.strokeStyle='#38bdf8'; gctx.lineWidth=2;
+  gctx.beginPath(); gctx.moveTo(0,-18); gctx.lineTo(14,13); gctx.lineTo(0,8); gctx.lineTo(-14,13); gctx.closePath();
+  gctx.fill(); gctx.stroke();
+  gctx.restore();
+
+  particles.forEach(p=>{
+   gctx.globalAlpha=Math.max(0,p.l);
+   gctx.fillStyle=p.col;
+   gctx.beginPath(); gctx.arc(p.x,p.y,3,0,Math.PI*2); gctx.fill();
+  });
+  gctx.globalAlpha=1;
+
+  updateHud();
+  rafId=requestAnimationFrame(stepGame);
+ }
+
+ if($('gStartBtn')) $('gStartBtn').onclick=startGame;
+
+ const stageBox=$('gameStageBox');
+ if(stageBox){
+  stageBox.addEventListener('pointerdown',e=>{
+   if(!running)return;
+   const r=stageBox.getBoundingClientRect();
+   pointerTargetX=e.clientX-r.left;
+  });
+  stageBox.addEventListener('pointermove',e=>{
+   if(!running||pointerTargetX===null)return;
+   const r=stageBox.getBoundingClientRect();
+   pointerTargetX=e.clientX-r.left;
+  });
+  window.addEventListener('pointerup',()=>{pointerTargetX=null;});
+ }
+
+ const bindHold=(id,setter)=>{
+  const el=$(id);
+  if(!el)return;
+  el.addEventListener('pointerdown',e=>{e.preventDefault();setter(true);pointerTargetX=null;});
+  el.addEventListener('pointerup',()=>setter(false));
+  el.addEventListener('pointerleave',()=>setter(false));
+  el.addEventListener('pointercancel',()=>setter(false));
+ };
+ bindHold('gLeftBtn',v=>moveLeft=v);
+ bindHold('gRightBtn',v=>moveRight=v);
+ window.addEventListener('keydown',e=>{
+  if(cs!=='game'||!running)return;
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){moveLeft=true;pointerTargetX=null;}
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){moveRight=true;pointerTargetX=null;}
+ });
+ window.addEventListener('keyup',e=>{
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')moveLeft=false;
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')moveRight=false;
+ });
+})();
+
+/* ===== AI CHATBOT KOSMO ===== */
+const KB=[
+ ['gravastar',['gravastar','mazur','mottola','vakum','energi vakum','tanpa singularitas','kulit tipis'],'Gravastar (Gravitational Vacuum Star) adalah objek hipotesis yang diusulkan sebagai alternatif lubang hitam tanpa singularitas pusat dan tanpa event horizon mutlak: bagian dalamnya berupa ruang energi vakum bertekanan negatif yang dibatasi kulit tipis materi sangat padat.'],
+ ['horizon',['horizon','event horizon','batas','masuk','jatuh','cahaya'],'Event Horizon adalah batas di sekitar lubang hitam tempat kecepatan lepas melebihi kecepatan cahaya. Bagi pengamat jauh, benda yang mendekatinya tampak melambat karena dilatasi waktu gravitasi.'],
+ ['spaghetti',['spaghetti','spaget','tarik','pasang surut','tidal'],'Efek pasang surut (spaghettification) terjadi karena gravitasi lubang hitam menurun tajam terhadap jarak: bagian yang lebih dekat ditarik jauh lebih kuat daripada bagian yang lebih jauh.'],
+ ['neutron',['neutron','bintang neutron','padat','sendok','kerapatan'],'Bintang neutron terbentuk dari keruntuhan inti bintang masif saat supernova. Massanya sekitar 1,4–2,2 massa Matahari namun dimampatkan ke radius sekitar 10–14 km (diameter ±20 km).'],
+ ['pulsar',['pulsar','denyut','mercusuar','radio','glitch'],'Pulsar adalah bintang neutron yang berputar sangat cepat dan memancarkan berkas radiasi dari kutub magnetiknya, sehingga tampak berdenyut teratur seperti mercusuar kosmik.'],
+ ['magnetar',['magnetar','magnet','medan magnet'],'Magnetar adalah jenis bintang neutron dengan medan magnet sangat kuat (sekitar 10¹⁴–10¹⁵ gauss) yang dapat memicu suar sinar-X dan gamma berenergi tinggi.'],
+ ['kilonova',['kilonova','tabrakan','emas','platinum','gelombang gravitasi','ligo'],'Penggabungan dua bintang neutron memicu kilonova yang memancarkan gelombang gravitasi dan mensintesis unsur-unsur berat seperti emas dan platinum.'],
+ ['hawking',['hawking','menguap','radiasi','kecil'],'Radiasi Hawking adalah radiasi teoretis akibat efek kuantum di dekat event horizon. Lubang hitam bermassa bintang sangat dingin dan menguap dalam skala waktu yang jauh lebih lama dari usia alam semesta.'],
+ ['supermasif',['supermasif','sgr','sagittarius','m87','galaksi'],'Lubang hitam supermasif bermassa jutaan hingga miliaran massa Matahari berada di pusat galaksi, seperti Sagittarius A* (±4 juta M☉) di Bima Sakti dan M87* (±6,5 miliar M☉).'],
+ ['tata surya',['planet','merkurius','venus','bumi','mars','jupiter','saturnus','uranus','neptunus','tata surya'],'Tata surya memiliki 8 planet utama: Merkurius, Venus, Bumi, Mars (planet terestrial) serta Jupiter, Saturnus, Uranus, dan Neptunus (planet raksasa gas & es).']
+];
+let key=ls.g('isea_ak','');
+function addM(t,who){
+ const c=$('chat');if(!c)return;
+ const d=document.createElement('div');d.className='m '+who;d.textContent=t;c.appendChild(d);
+ c.scrollTop=c.scrollHeight;
+}
+function reply(q){
+ const l=q.toLowerCase();
+ for(const[k,ws,ans]of KB){if(l.includes(k)||ws.some(w=>l.includes(w)))return ans}
+ return 'Aku Kosmo. Coba tanya soal event horizon, dilatasi waktu, spaghettification, bintang neutron, pulsar, magnetar, kilonova, gravastar, atau tata surya.';
+}
+async function sendAI(text){
+ const q=(text??$('aiIn').value).trim();if(!q)return;
+ if(!text)$('aiIn').value='';addM(q,'u');au.clk();
+ if(!key){setTimeout(()=>addM(reply(q),'b'),220);return}
+ addM('...','b');const hold=$('chat').lastChild;
+ try{
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:'Kamu Kosmo, asisten astronomi ISEA buatan KovTheGreat. Jawab ringkas, jelas, dan akurat dalam bahasa Indonesia.',messages:[{role:'user',content:q}]})});
+  const d=await r.json();hold.textContent=d.content?.[0]?.text||reply(q);
+ }catch(e){hold.textContent=reply(q)}
+ $('chat').scrollTop=$('chat').scrollHeight;
+}
+if($('aiGo'))$('aiGo').onclick=()=>sendAI();
+if($('aiIn'))$('aiIn').addEventListener('keydown',e=>{if(e.key==='Enter')sendAI()});
+
+const aiModal = $('aiModal');
+const modalKeyInput = $('modalKeyInput');
+const modalCancel = $('modalCancel');
+const modalSave = $('modalSave');
+
+if($('aiK'))$('aiK').onclick=()=>{
+ au.clk();
+ if(modalKeyInput) modalKeyInput.value = key || '';
+ if(aiModal) {
+  aiModal.classList.add('active');
+  setTimeout(()=>modalKeyInput && modalKeyInput.focus(), 50);
+ }
+};
+
+if(modalCancel) modalCancel.onclick = () => {
+ au.clk();
+ if(aiModal) aiModal.classList.remove('active');
+};
+
+if(modalSave) modalSave.onclick = () => {
+ if(!modalKeyInput) return;
+ key = modalKeyInput.value.trim();
+ ls.s('isea_ak', key);
+ if(aiModal) aiModal.classList.remove('active');
+ toast(key ? 'API Key tersimpan.' : 'API Key dihapus.');
+ au.ok();
+};
+
+if(aiModal) aiModal.addEventListener('click', e => {
+ if(e.target === aiModal) aiModal.classList.remove('active');
+});
+
+if($('exAI'))$('exAI').onclick=()=>{const q=$('qTx').textContent;show('ai');addM('Jelaskan singkat:\n"'+q+'"','u');setTimeout(()=>sendAI(q),220)};
+['Apa itu event horizon?','Apa bedanya bintang neutron & pulsar?','Apa itu gravastar?','Kenapa emas lahir dari kilonova?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>sendAI(t);if($('chips'))$('chips').appendChild(b)});
+
+/* ===== NAVIGASI BAWAH & INISIALISASI ===== */
+if($('nav'))$('nav').onclick=e=>{
+ const b=e.target.closest('button[data-t]');
+ if(!b)return;
+ if(isMemberLockedInQuiz()){
+  toast('Selesaikan kuis dulu sebelum pindah menu.');
+  return;
+ }
+ au.clk();vib(14);
+ const curTab=NAVMAP[cs]||'quiz';
+ const nextIdx=SWIPE_TABS.indexOf(b.dataset.t);
+ const curIdx=SWIPE_TABS.indexOf(curTab);
+ const dir=(nextIdx!==-1&&curIdx!==-1&&nextIdx<curIdx)?'right':'left';
+ openTab(b.dataset.t, dir);
+};
+
+if($('fact'))$('fact').innerHTML='<b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
+addM('Halo, aku Kosmo. Tanya apa saja tentang lubang hitam, bintang neutron, gravastar, dan astronomi.','b');
+
+const savedRate = Number(ls.g('isea_member_time_rate', 1.0));
+if(savedRate && savedRate !== 1.0 && !isOwnerDevice()){
+ memberTimeRate = Math.max(0.2, Math.min(4.0, savedRate));
 }
 
-const chips = $('chips');
-if(chips){
- const frag=document.createDocumentFragment();
- ['Apa itu Gravastar?','Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana kondisi planet Mars?','Fakta kosmos','Perbedaan Pulsar dan Magnetar?','Apa itu Spaghettification?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};frag.appendChild(b)});
- chips.appendChild(frag);
+initNameSystem();
+initGoogleOwnerAuth();
+initOnline();
+
+const savedQuiz = ls.g('isea_active_quiz', null);
+if(savedQuiz && savedQuiz.live && Array.isArray(savedQuiz.qs) && savedQuiz.qs.length > 0 && !isOwnerDevice()) {
+    G = savedQuiz;
+    if(!isOwnerDevice()){
+        const savedUser = ls.g('isea_username', '');
+        if(savedUser && savedUser.toLowerCase() !== 'kovthegreat') G.name = savedUser;
+    }
+    show('quiz');
+    render();
+    toast('Melanjutkan sesi kuis yang belum selesai.');
 }
-if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
-if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
-if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan: '+q.q+' ('+q.o[0]+')')};
 
-const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
-if($('aiK')&&aiModal&&modalKeyInput){
- $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
- $('modalCancel').onclick = () => {modalKeyInput.value='';aiModal.classList.remove('active');};
- $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Tersimpan.');};
-}
-
-if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();vib(12);openTab(b.dataset.t)};
-
-/* ===== SAFETY LOADER BOOT ===== */
-let isBooted = false;
-
-function launchApp(){
- if(isBooted) return;
- isBooted = true;
- 
- const ld = $('ld');
- if(ld){
-  const w=Math.max(0,2200-performance.now());
-  setTimeout(()=>{
-   ld.classList.add('out');
-   au.onLoaderComplete();
-   drainLocalPrankQueue();
-  },w);
+window.addEventListener('DOMContentLoaded',()=>{
+ const l=$('ld');
+ const finishLoader=()=>{
+  if(l&&!l.classList.contains('out')){
+   l.classList.add('out');
+   setTimeout(()=>{if(l)l.remove()},550);
+  }
+  au.onLoaderComplete();
+ };
+ if(l){
+  setTimeout(finishLoader, 2450);
  }else{
   au.onLoaderComplete();
-  drainLocalPrankQueue();
  }
- 
- if(scr.start){
-     scr.start.classList.remove('enter');
-     void scr.start.offsetWidth;
-     scr.start.classList.add('enter');
+});
+window.addEventListener('load',()=>{
+ const l=$('ld');
+ if(l&&!l.classList.contains('out')){
+  setTimeout(()=>{
+   l.classList.add('out');
+   setTimeout(()=>{if(l)l.remove()},550);
+   au.onLoaderComplete();
+  }, 1800);
+ }else{
+  au.onLoaderComplete();
  }
- 
- initNameSystem();
-
- if(!isOwnerDevice()) {
-     memberTimeRate = Number(ls.g('isea_member_time_rate', 1.0)) || 1.0;
-     const savedQuiz = ls.g('isea_active_quiz', null);
-     if(savedQuiz && savedQuiz.live && savedQuiz.i < savedQuiz.qs.length) {
-         G = savedQuiz;
-         show('quiz');
-         render();
-         toast('Melanjutkan sesi kuis sebelumnya.');
-         addLog(`Lanjut kuis ${G.name} di soal ${G.i+1}`);
-     } else {
-         presence('Di menu utama','','');
-     }
- } else {
-     presence('Di menu utama','','');
- }
- syncQuizLockUI();
-
- addLog('Sesi dimulai.');
- if($('fact')) $('fact').innerHTML = '<b>Fakta:</b> ' + FACTS[Math.random() * FACTS.length | 0];
- 
- try{ initOnline(); }catch(e){ console.warn(e); }
- try{ initGoogleOwnerAuth(); }catch(e){ console.warn(e); }
-}
-
-window.addEventListener('load', launchApp);
-setTimeout(launchApp, 700);
+});
 </script>
 </body>
 </html>
