@@ -35,7 +35,7 @@
 
 button:focus-visible,input:focus-visible{outline:2px solid rgba(56,189,248,.8);outline-offset:3px}
 
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;background:#030408}
 
 body{
   background:
@@ -223,83 +223,44 @@ canvas{
   font-weight:600;
 }
 
-/* ===== KARTU & TRANSISI TAB MULUS ===== */
+#stageWrap{
+  position:relative;
+  width:100%;
+  background:transparent;
+  border-radius:32px;
+}
+
+/* ===== KARTU & TRANSISI TAB BERSIH (TANPA TUMPUKAN BUG) ===== */
 .card{
   position:relative;
   width:100%;
-  background:linear-gradient(165deg,rgba(16,23,44,.92) 0%,rgba(9,13,26,.92) 100%);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  background:linear-gradient(165deg,rgba(16,23,44,.92) 0%,rgba(9,13,26,.94) 100%);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   border:1px solid var(--bd);
   border-radius:32px;
   padding:38px 34px;
   box-shadow:
     0 24px 64px rgba(0,0,0,.72),
-    inset 0 1px 0 rgba(255,255,255,.12);
-  transition:border-color .3s var(--sp),box-shadow .4s var(--sp);
+    inset 0 1px 0 rgba(255,255,255,.08);
+  transition:border-color .28s var(--sp),box-shadow .35s var(--sp);
 }
 .card:hover{
   border-color:rgba(148,163,184,.26);
-  box-shadow:0 28px 72px rgba(0,0,0,.76),inset 0 1px 0 rgba(255,255,255,.14);
+  box-shadow:0 28px 72px rgba(0,0,0,.76),inset 0 1px 0 rgba(255,255,255,.1);
 }
 
 .hidden{display:none!important}
 
-.card.is-transitioning{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
+.enter,.enter.from-left,.enter.morph-in{
+  animation:tabCleanIn .24s var(--sp) both;
   will-change:transform,opacity;
   backface-visibility:hidden;
 }
 
-/* Geser tab standar: mulus, lembut, tanpa sentakan */
-.enter{animation:tabInRight .48s var(--sp) both;will-change:transform,opacity;backface-visibility:hidden}
-.leave{
-  z-index:2;
-  animation:tabOutLeft .48s var(--sp) both;
-  pointer-events:none!important;
-}
-
-.enter.from-left{animation:tabInLeft .48s var(--sp) both}
-.leave.to-right{
-  z-index:2;
-  animation:tabOutRight .48s var(--sp) both;
-  pointer-events:none!important;
-}
-
-/* Khusus mode Online (sOn): ubah halus di tempat (morph fade + scale), tanpa geser */
-.enter.morph-in{animation:morphInPlace .42s var(--sp) both;will-change:transform,opacity;backface-visibility:hidden}
-.leave.morph-out{
-  z-index:2;
-  animation:morphOutPlace .36s var(--soft) both;
-  pointer-events:none!important;
-}
-
-@keyframes tabOutLeft{
-  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
-  100%{transform:translate3d(-38px,0,0) scale(.985);opacity:0}
-}
-@keyframes tabInRight{
-  0%{transform:translate3d(38px,0,0) scale(.985);opacity:0}
+@keyframes tabCleanIn{
+  0%{transform:translate3d(0,6px,0) scale(.994);opacity:0}
   100%{transform:translate3d(0,0,0) scale(1);opacity:1}
-}
-@keyframes tabOutRight{
-  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
-  100%{transform:translate3d(38px,0,0) scale(.985);opacity:0}
-}
-@keyframes tabInLeft{
-  0%{transform:translate3d(-38px,0,0) scale(.985);opacity:0}
-  100%{transform:translate3d(0,0,0) scale(1);opacity:1}
-}
-@keyframes morphInPlace{
-  0%{transform:translate3d(0,6px,0) scale(.972);opacity:0}
-  100%{transform:translate3d(0,0,0) scale(1);opacity:1}
-}
-@keyframes morphOutPlace{
-  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
-  100%{transform:translate3d(0,-4px,0) scale(.975);opacity:0}
 }
 
 @keyframes ce{
@@ -1677,7 +1638,7 @@ if(cv && cx){
  })(performance.now());
 }
 
-/* ===== STATE & TRANSISI GANTI TAB MULUS ===== */
+/* ===== STATE & TRANSISI GANTI TAB BERSIH ===== */
 let G={}, cfg={mode:'all',src:'all',diff:'normal',n:10};
 const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
 const wrap=$('stageWrap');
@@ -1691,61 +1652,26 @@ function openTab(t, dir){
  else show(t, dir);
 }
 
-let navSeq=0, leaveTimer=null;
 function show(k, dir){
  if(k===cs)return;
  const c=scr[cs],n=scr[k];if(!n)return;
- const prevTab=NAVMAP[cs]||'quiz';
  const nextTab=NAVMAP[k]||'quiz';
- const pi=SWIPE_TABS.indexOf(prevTab);
- const ni=SWIPE_TABS.indexOf(nextTab);
- const moveRight = dir==='right' || (dir!=='left' && pi!==-1 && ni!==-1 && ni<pi);
- const isMorph = (cs==='on' || k==='on');
 
  cs=k;
- const seq=++navSeq;
- clearTimeout(leaveTimer);
  if($('nav'))$('nav').classList.toggle('off',k==='quiz');
  if($('nav'))[...$('nav').children].forEach(b=>b.classList.toggle('on',b.dataset.t===nextTab));
 
  Object.values(scr).forEach(e=>{
-  if(e && e!==c && e!==n){
+  if(e && e!==n){
    e.classList.add('hidden');
    e.classList.remove('enter','leave','from-left','to-right','morph-in','morph-out','is-transitioning');
   }
  });
 
- if(c&&c!==n&&!c.classList.contains('hidden')){
-  if(wrap){wrap.style.minHeight=c.offsetHeight+'px';wrap.style.overflow='hidden';}
-  c.classList.remove('enter','from-left','morph-in');
-  if(isMorph){
-   c.classList.add('morph-out');
-  }else if(moveRight){
-   c.classList.add('to-right');
-  }
-  c.classList.add('is-transitioning','leave');
-
-  n.classList.remove('hidden','leave','from-left','to-right','morph-in','morph-out','is-transitioning');
-  if(isMorph){
-   n.classList.add('morph-in');
-  }else if(moveRight){
-   n.classList.add('from-left');
-  }
-  void n.offsetWidth;
-  n.classList.add('enter');
-
-  const dur = isMorph ? 420 : 480;
-  leaveTimer=setTimeout(()=>{
-   if(seq!==navSeq)return;
-   c.classList.add('hidden');
-   c.classList.remove('leave','to-right','morph-out','is-transitioning');
-   n.classList.remove('enter','from-left','morph-in');
-   if(wrap){wrap.style.minHeight='';wrap.style.overflow='';}
-  },dur);
- }else{
-  n.classList.remove('hidden','leave','from-left','to-right','morph-in','morph-out','is-transitioning');
-  if(wrap){wrap.style.minHeight='';wrap.style.overflow='';}
- }
+ if(wrap){wrap.style.height='';wrap.style.overflow='';}
+ n.classList.remove('hidden','leave','from-left','to-right','morph-in','morph-out','is-transitioning','enter');
+ void n.offsetWidth;
+ n.classList.add('enter');
 }
 
 /* ===== FITUR GESER (SWIPE) ANTAR TAB ===== */
@@ -1965,13 +1891,6 @@ function initNameSystem() {
                 if(val.toLowerCase() === 'kovthegreat') {
                     toast('Nama ini khusus owner.');
                     nameInput.value = '';
-                    return;
-                }
-
-                let lb = ls.g('isea_lb', []);
-                let exists = lb.some(x => x.n.toLowerCase() === val.toLowerCase());
-                if(exists) {
-                    toast('Nama sudah dipakai.');
                     return;
                 }
 
@@ -2204,7 +2123,66 @@ if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('
 if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik')};
 if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
-/* ===== HASIL & LEADERBOARD ===== */
+/* ===== HASIL & LEADERBOARD (1 NAMA UNIK PER MEMBER) ===== */
+function normPlayerKey(n){
+ return String(n||'').trim().toLowerCase();
+}
+
+function mergePlayerEntry(prev, incoming, mode='best'){
+ if(!prev) return incoming;
+ if(mode==='new'){
+  return {
+   ...prev,
+   ...incoming,
+   s: incoming.s ?? prev.s,
+   ok: incoming.ok ?? prev.ok,
+   t: incoming.t ?? prev.t,
+   p: incoming.p ?? prev.p,
+   diff: incoming.diff || prev.diff,
+   d: incoming.d || prev.d || Date.now(),
+   isOwner: Boolean(prev.isOwner || incoming.isOwner)
+  };
+ }
+ // Mode terbaik / global: simpan skor tertinggi member, update detail jika skor baru >= skor lama
+ if((incoming.s || 0) >= (prev.s || 0)){
+  return {
+   ...prev,
+   ...incoming,
+   d: incoming.d || prev.d || Date.now(),
+   isOwner: Boolean(prev.isOwner || incoming.isOwner)
+  };
+ }
+ return {
+  ...incoming,
+  ...prev,
+  s: prev.s,
+  ok: prev.ok,
+  t: prev.t,
+  p: prev.p,
+  diff: prev.diff || incoming.diff,
+  d: prev.d || incoming.d || Date.now(),
+  isOwner: Boolean(prev.isOwner || incoming.isOwner)
+ };
+}
+
+function dedupePlayers(rawList, mode='best'){
+ const map=new Map();
+ (rawList||[]).forEach(item=>{
+  if(!item || !item.n) return;
+  const trimmed=String(item.n).trim();
+  const key=normPlayerKey(trimmed);
+  if(!key) return;
+  if(key==='kovthegreat' && !item.isOwner) return;
+  const entry={...item, n: trimmed};
+  if(!map.has(key)){
+   map.set(key, entry);
+  }else{
+   map.set(key, mergePlayerEntry(map.get(key), entry, mode));
+  }
+ });
+ return [...map.values()];
+}
+
 function results(){
  clearActiveQuizState();
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
@@ -2231,13 +2209,26 @@ function results(){
   rv.appendChild(frag);
  }
  
- const b=ls.g('isea_lb',[]);G.rid=Date.now();
+ G.rid=Date.now();
  const currentName = G.name;
- b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice()});
- ls.s('isea_lb', b.slice(-300));
+ const newRecord = {n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice()};
+
+ const existingLocal = ls.g('isea_lb',[]);
+ const updatedLocal = dedupePlayers([...existingLocal, newRecord], 'best');
+ ls.s('isea_lb', updatedLocal.slice(-300));
  ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('Rekor baru: '+G.score)):toast('Selesai! Skor: '+G.score);
  
- if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice()});
+ if(db){
+  const pKey = normPlayerKey(currentName);
+  if(pKey && !(pKey==='kovthegreat' && !isOwnerDevice())){
+   const userScoreRef = db.ref('scores_by_user/' + encodeURIComponent(pKey));
+   userScoreRef.once('value').then(sn=>{
+    const prevRemote = sn.val();
+    const mergedRemote = mergePlayerEntry(prevRemote, newRecord, 'best');
+    return userScoreRef.set(mergedRemote);
+   }).catch(()=>{});
+  }
+ }
  addLog(`Selesai kuis dengan skor ${G.score}`);
 }
 
@@ -2245,11 +2236,7 @@ let lbS='best';
 function paint(rawList){
  const l=$('lbL');if(!l)return;l.innerHTML='';
  
- const cleanList = (rawList || []).filter(x => {
-     if(!x.n) return false;
-     if(x.n.trim().toLowerCase() === 'kovthegreat' && !x.isOwner) return false;
-     return true;
- });
+ const cleanList = dedupePlayers(rawList || [], lbS);
  cleanList.sort((x,y)=>lbS==='new'?(y.d||0)-(x.d||0):(y.s||0)-(x.s||0));
 
  const ownerEntry = {
@@ -2317,15 +2304,26 @@ function board(dir){
       }
   }, 1200);
 
-  db.ref('scores').orderByChild('s').limitToLast(50).once('value').then(sn=>{
+  Promise.all([
+    db.ref('scores_by_user').once('value').catch(()=>null),
+    db.ref('scores').limitToLast(80).once('value').catch(()=>null)
+  ]).then(([byUserSn, legacySn])=>{
       if(loaded) return;
       loaded = true;
       clearTimeout(timeoutId);
-      const a=[];sn.forEach(c=>{
+      const a=[];
+      if(byUserSn){
+        byUserSn.forEach(c=>{
           const val = c.val();
-          if(val.n && val.n.trim().toLowerCase() === 'kovthegreat' && !val.isOwner) return;
-          a.push(val);
-      });
+          if(val && val.n) a.push(val);
+        });
+      }
+      if(legacySn){
+        legacySn.forEach(c=>{
+          const val = c.val();
+          if(val && val.n) a.push(val);
+        });
+      }
       paint(a);
   }).catch(()=>{
       if(loaded) return;
@@ -2339,7 +2337,7 @@ function board(dir){
 }
 if($('segL'))$('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;board()}};
 if($('bRk'))$('bRk').onclick=async()=>{
- const b=ls.g('isea_lb',[]).sort((x,y)=>y.s-x.s);
+ const b=dedupePlayers(ls.g('isea_lb',[]),'best').sort((x,y)=>y.s-x.s);
  if(!b.length)return toast('Belum ada data.');
  const t='Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} pts)`).join('\n');
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin.')}catch(e){toast('Gagal menyalin.')}
