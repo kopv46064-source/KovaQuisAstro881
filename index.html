@@ -3010,7 +3010,7 @@ if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('
 if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.left+=10;G.max+=10;toast('+10 detik')};
 if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
-/* ===== HASIL, ARSIP JAWABAN OWNER & RANK 3 BESAR (RESET OTOMATIS 30 HARI) ===== */
+/* ===== HASIL, ARSIP JAWABAN OWNER & RANK 3 BESAR (HIGH SCORE TERKUNCI & RESET 30 HARI) ===== */
 const RANK_RESET_VER = 'rank_reset_v3_2026_11_20';
 let activeBoardRef = null;
 let activeBoardCb = null;
@@ -3053,56 +3053,59 @@ function resolveMemberOriginalName(item){
 function mergePlayerEntry(prev, incoming, mode='best'){
  const a = resolveMemberOriginalName(prev);
  const b = resolveMemberOriginalName(incoming);
- if(!a) return { ...b, s: Number(b.s) || 0, d: Number(b.d) || Date.now() };
- const prevScore = Number(a.s ?? 0);
- const incScore = Number(b.s ?? 0);
- const prevDate = Number(a.d ?? 0);
- const incDate = Number(b.d ?? 0);
-
- if(mode==='new'){
-  const isNewer = incDate >= prevDate;
-  const newer = isNewer ? b : a;
-  const topScore = Math.max(prevScore, incScore);
-  return {
-   ...a,
-   ...b,
-   n: b.n || a.n,
-   origName: b.origName || a.origName || b.n || a.n,
-   s: isNewer ? incScore : prevScore,
-   bestScore: topScore,
-   ok: isNewer ? (b.ok ?? a.ok ?? 0) : (a.ok ?? b.ok ?? 0),
-   t: isNewer ? (b.t ?? a.t ?? 0) : (a.t ?? b.t ?? 0),
-   p: isNewer ? (b.p ?? a.p ?? 0) : (a.p ?? b.p ?? 0),
-   diff: isNewer ? (b.diff || a.diff || 'normal') : (a.diff || b.diff || 'normal'),
-   d: Math.max(prevDate, incDate) || Date.now(),
-   isOwner: Boolean(a.isOwner || b.isOwner || newer.isOwner)
-  };
+ if(!a){
+  const s0 = Number(b.s) || 0;
+  return { ...b, s: s0, bestScore: s0, d: Number(b.d) || Date.now() };
  }
 
- if(incScore >= prevScore){
+ const prevScore = Math.max(Number(a.s ?? 0), Number(a.bestScore ?? 0));
+ const incScore = Math.max(Number(b.s ?? 0), Number(b.bestScore ?? 0));
+ const prevOk = Number(a.ok ?? 0);
+ const incOk = Number(b.ok ?? 0);
+ const prevDate = Number(a.d ?? 0);
+ const incDate = Number(b.d ?? 0);
+ const latestDate = Math.max(prevDate, incDate) || Date.now();
+
+ const incomingIsBetter =
+  (incScore > prevScore) ||
+  (incScore === prevScore && incOk > prevOk) ||
+  (incScore === prevScore && incOk === prevOk && incDate >= prevDate);
+
+ const bestSource = incomingIsBetter ? b : a;
+ const bestScore = Math.max(prevScore, incScore);
+ const bestOk = incomingIsBetter ? incOk : Math.max(prevOk, incOk);
+
+ if(mode === 'new'){
   return {
    ...a,
-   ...b,
-   n: b.n || a.n,
-   origName: b.origName || a.origName || b.n || a.n,
-   s: incScore,
-   bestScore: incScore,
-   ok: b.ok ?? a.ok ?? 0,
-   t: b.t ?? a.t ?? 0,
-   p: b.p ?? a.p ?? 0,
-   diff: b.diff || a.diff || 'normal',
-   d: incDate || prevDate || Date.now(),
+   ...bestSource,
+   n: b.n || bestSource.n || a.n,
+   origName: b.origName || bestSource.origName || a.origName || b.n || a.n,
+   s: bestScore,
+   bestScore: bestScore,
+   ok: bestOk,
+   t: bestSource.t ?? a.t ?? b.t ?? 0,
+   p: bestSource.p ?? a.p ?? b.p ?? 0,
+   diff: bestSource.diff || a.diff || b.diff || 'normal',
+   d: latestDate,
+   lastPlayedAt: latestDate,
    isOwner: Boolean(a.isOwner || b.isOwner)
   };
  }
 
  return {
   ...a,
-  n: a.n || b.n,
-  origName: a.origName || b.origName || a.n || b.n,
-  s: prevScore,
-  bestScore: prevScore,
-  d: Math.max(prevDate, incDate) || Date.now(),
+  ...bestSource,
+  n: bestSource.n || a.n,
+  origName: bestSource.origName || a.origName || bestSource.n || a.n,
+  s: bestScore,
+  bestScore: bestScore,
+  ok: bestOk,
+  t: bestSource.t ?? a.t ?? 0,
+  p: bestSource.p ?? a.p ?? 0,
+  diff: bestSource.diff || a.diff || 'normal',
+  d: incomingIsBetter ? (incDate || latestDate) : (prevDate || latestDate),
+  lastPlayedAt: latestDate,
   isOwner: Boolean(a.isOwner || b.isOwner)
  };
 }
@@ -3115,7 +3118,9 @@ function dedupePlayers(rawList, mode='best'){
   const trimmed=String(item.n).trim();
   const key=normPlayerKey(trimmed);
   if(!key) return;
-  const entry={...item, n: trimmed, origName: item.origName || trimmed, s: Number(item.s ?? 0), d: Number(item.d ?? 0)};
+  const sVal = Math.max(Number(item.s ?? 0), Number(item.bestScore ?? 0));
+  const dVal = Number(item.d ?? item.lastPlayedAt ?? 0);
+  const entry={...item, n: trimmed, origName: item.origName || trimmed, s: sVal, bestScore: sVal, d: dVal};
   if(!map.has(key)){
    map.set(key, entry);
   }else{
@@ -3160,7 +3165,7 @@ function updateCycleInfoText(){
  const cycleStart = Number(ls.g('isea_cycle_start', 0)) || Date.now();
  const elapsed = Math.max(0, Date.now() - cycleStart);
  const daysLeft = Math.max(1, Math.ceil((RANK_CYCLE_MS - elapsed) / (1000 * 60 * 60 * 24)));
- el.textContent = `Hanya menampilkan 3 besar (Juara 1, 2, 3) · Reset otomatis dalam ${daysLeft} hari.`;
+ el.textContent = `Hanya menampilkan 3 besar (Juara 1, 2, 3) · High score dipertahankan · Reset otomatis dalam ${daysLeft} hari.`;
 }
 
 function runRankResetOnce(){
@@ -3228,7 +3233,8 @@ function results(){
   rv.appendChild(frag);
  }
 
- G.rid=Date.now();
+ const playedAt=Date.now();
+ G.rid=playedAt;
  const origMemberName = ls.g('isea_original_username', '') || ls.g('isea_username', 'Penjelajah');
  const currentName = isOwnerDevice() ? 'KovTheGreat' : (G.name || origMemberName);
  const newScore = Number(G.score)||0;
@@ -3236,11 +3242,13 @@ function results(){
   n: currentName,
   origName: currentName,
   s: newScore,
+  bestScore: newScore,
   p: pct,
   ok: G.ok,
   t: n,
   diff: G.diff,
-  d: G.rid,
+  d: playedAt,
+  lastPlayedAt: playedAt,
   isOwner: isOwnerDevice()
  };
 
@@ -3250,7 +3258,7 @@ function results(){
  const pKey = normPlayerKey(currentName);
  const safeKey = safeFirebaseKey(currentName);
  const prevLocal = existingLocal.find(x => x && normPlayerKey(x.origName || x.n) === pKey);
- const prevBestScore = Math.max(Number(ls.g('isea_best',0))||0, Number(prevLocal?.s)||0);
+ const prevBestScore = Math.max(Number(ls.g('isea_best',0))||0, Number(prevLocal?.s)||0, Number(prevLocal?.bestScore)||0);
 
  const updatedLocal = dedupePlayers([...existingLocal, newRecord], 'best');
  ls.s('isea_lb', updatedLocal.slice(-300));
@@ -3258,9 +3266,11 @@ function results(){
 
  if(newScore > prevBestScore){
   ls.s('isea_best', newScore);
-  toast(`Skor naik ke ${newScore} pts! Rank 3 Besar diperbarui.`);
+  toast(`High score baru: ${newScore} pts (${G.ok}/${n})! Rank diperbarui.`);
  }else{
-  toast(`Skor ${newScore} pts tercatat (Rekor terbaik: ${prevBestScore} pts).`);
+  const keptBest = updatedLocal.find(x => normPlayerKey(x.origName || x.n) === pKey);
+  const keptOk = keptBest && keptBest.ok != null ? `${keptBest.ok}/${keptBest.t}` : `${prevBestScore} pts`;
+  toast(`Selesai (${G.ok}/${n}, ${newScore} pts). Rank tetap menjaga rekor terbaik: ${keptOk} (${prevBestScore} pts).`);
  }
 
  if(db && safeKey){
@@ -3273,7 +3283,7 @@ function results(){
 
   db.ref('scores').push(newRecord).catch(()=>{});
  }
- addLog(`Selesai kuis dengan skor ${newRecord.s}`);
+ addLog(`Selesai kuis (${G.ok}/${n}, ${newRecord.s} pts)`);
 }
 
 function renderOwnerArchiveSection(){
@@ -3343,7 +3353,7 @@ function paint(rawList){
 
  memberEntries.sort((x,y)=>{
   if(lbS==='new'){
-   return (Number(y.d)||0) - (Number(x.d)||0);
+   return (Number(y.lastPlayedAt || y.d)||0) - (Number(x.lastPlayedAt || x.d)||0);
   }
   const sDiff = (Number(y.s)||0) - (Number(x.s)||0);
   if(sDiff !== 0) return sDiff;
@@ -3374,8 +3384,8 @@ function paint(rawList){
   const nameBox = li.querySelector('b');
   nameBox.textContent = x.n;
 
-  const dateStr = new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  li.querySelector('small').textContent=`Juara ${rankNumber} · `+(x.ok!=null?x.ok+'/'+x.t+' benar':(x.p||0)+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+dateStr;
+  const dateStr = new Date(x.lastPlayedAt || x.d || Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  li.querySelector('small').textContent=`Juara ${rankNumber} (High Score) · `+(x.ok!=null?x.ok+'/'+x.t+' benar':(x.p||0)+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+dateStr;
   frag.appendChild(li);
  });
 
@@ -3451,7 +3461,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
   .sort((x,y)=>y.s-x.s)
   .slice(0,3);
  if(!b.length)return toast('Belum ada juara di 3 besar.');
- const t='3 Besar Rank Kuis ISEA\n👑 KovTheGreat — OWNER\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.s} pts`).join('\n');
+ const t='3 Besar Rank Kuis ISEA\n👑 KovTheGreat — OWNER\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.s} pts (${x.ok??0}/${x.t??10})`).join('\n');
  try{await navigator.clipboard.writeText(t);toast('Rekap 3 besar disalin.')}catch(e){toast('Gagal menyalin.')}
 };
 
@@ -4304,10 +4314,15 @@ if(exg){
    }
   });
 
-  sctx.fillStyle = 'rgba(226,232,240,0.88)';
-  sctx.font = '600 11px "Space Grotesk", sans-serif';
-  const timeLabel = obsDate.toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-  sctx.fillText(`Az ${Math.round(viewAz)}° · Alt ${Math.round(viewAlt)}° · LST ${lst.toFixed(1)}h · ${timeLabel}`, 12, 20);
+  sctx.fillStyle = 'rgba(15,23,42,0.78)';
+  drawRoundedRect(sctx, 10, 10, Math.min(w - 20, 265), 42, 10);
+  sctx.fill();
+  sctx.font = '700 11px "Space Grotesk", sans-serif';
+  sctx.fillStyle = '#7dd3fc';
+  sctx.fillText(`Az: ${Math.round(((viewAz%360)+360)%360)}° · Alt: ${Math.round(viewAlt)}° · LST: ${lst.toFixed(1)}h`, 18, 26);
+  sctx.font = '600 10px "Plus Jakarta Sans", sans-serif';
+  sctx.fillStyle = '#cbd5e1';
+  sctx.fillText(`Waktu: ${obsDate.toLocaleTimeString('id-ID')} (${realTimeMode && timeOffsetHours===0 ? 'Real-Time' : (timeOffsetHours>=0?'+':'')+timeOffsetHours+'j'})`, 18, 42);
  };
 
  scv.addEventListener('pointerdown', e => {
@@ -4323,607 +4338,520 @@ if(exg){
   if(Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
   lastX = e.clientX;
   lastY = e.clientY;
-  viewAz = (((viewAz - dx * 0.25) % 360) + 360) % 360;
-  viewAlt = Math.max(-5, Math.min(85, viewAlt + dy * 0.22));
-  window.drawSkyChart();
+  viewAz = (((viewAz - dx * 0.35) % 360) + 360) % 360;
+  viewAlt = Math.max(-5, Math.min(85, viewAlt + dy * 0.28));
+  drawSkyChart();
  });
  window.addEventListener('pointerup', e => {
   if(!dragging) return;
   dragging = false;
-  if(moved) return;
-  const rect = scv.getBoundingClientRect();
-  const px = e.clientX - rect.left;
-  const py = e.clientY - rect.top;
-  let picked = null;
-  let bestD = 24;
-  lastProjected.forEach(item => {
-   const d = Math.hypot(item.x - px, item.y - py);
-   if(d < bestD){
-    bestD = d;
-    picked = item;
+  if(!moved){
+   const rect = scv.getBoundingClientRect();
+   const px = e.clientX - rect.left;
+   const py = e.clientY - rect.top;
+   let best = null, bestD = 22;
+   lastProjected.forEach(obj => {
+    const d = Math.hypot(obj.x - px, obj.y - py);
+    if(d < bestD){ bestD = d; best = obj; }
+   });
+   if(best && $('skyReadout')){
+    au.clk();
+    $('skyReadout').innerHTML = `<b>${best.name}</b> — ${best.type} · Jarak: <b>${best.dist}</b> · Alt: <b>${best.alt.toFixed(1)}°</b>, Az: <b>${best.az.toFixed(1)}°</b>. ${best.note}`;
    }
-  });
-  if(picked && $('skyReadout')){
-   au.clk();
-   const magTxt = picked.mag != null ? ` · Mag ${picked.mag}` : '';
-   $('skyReadout').innerHTML = `<b>${picked.name}</b> (${picked.type}${magTxt})<br>Posisi: Azimuth <b>${Math.round(picked.az)}°</b>, Ketinggian <b>${Math.round(picked.alt)}°</b> · Jarak: <b>${picked.dist}</b><br>${picked.note}`;
   }
  });
 
  const pickerBackdrop=$('cosmicPickerBackdrop');
  const pickerSheet=$('cosmicPickerSheet');
- let activeSelect=null;
-
- function openCosmicPicker(selectEl){
-  if(!selectEl||!pickerBackdrop||!pickerSheet)return;
-  activeSelect=selectEl;
+ const locSelect=$('skyLocPreset');
+ function openCosmicPicker(){
+  if(!pickerBackdrop||!pickerSheet||!locSelect)return;
+  au.clk();
   pickerSheet.innerHTML='';
-  [...selectEl.options].forEach(opt=>{
+  Array.from(locSelect.options).forEach(opt=>{
    const row=document.createElement('div');
-   row.className='cosmic-option'+(opt.value===selectEl.value?' active':'');
+   row.className='cosmic-option'+(opt.value===locSelect.value?' active':'');
    row.innerHTML=`<span>${opt.textContent}</span><span class="cosmic-radio"></span>`;
-   row.addEventListener('click',()=>{
+   row.onclick=()=>{
     au.clk();
-    selectEl.value=opt.value;
-    selectEl.dispatchEvent(new Event('change',{bubbles:true}));
-    closeCosmicPicker();
-   });
+    locSelect.value=opt.value;
+    if($('skyLat'))$('skyLat').value=opt.value.split(',')[0];
+    pickerBackdrop.classList.remove('active');
+    drawSkyChart();
+    toast('Lokasi observasi: '+opt.textContent);
+   };
    pickerSheet.appendChild(row);
   });
   pickerBackdrop.classList.add('active');
  }
-
- function closeCosmicPicker(){
-  if(pickerBackdrop)pickerBackdrop.classList.remove('active');
-  activeSelect=null;
+ if(locSelect){
+  locSelect.addEventListener('mousedown',e=>{e.preventDefault();openCosmicPicker()});
+  locSelect.addEventListener('touchstart',e=>{e.preventDefault();openCosmicPicker()},{passive:false});
+  locSelect.addEventListener('click',e=>{e.preventDefault();openCosmicPicker()});
+  locSelect.addEventListener('keydown',e=>{
+   if(e.key==='Enter'||e.key===' '||e.key==='ArrowDown'){e.preventDefault();openCosmicPicker()}
+  });
  }
-
  if(pickerBackdrop){
-  pickerBackdrop.addEventListener('click',e=>{
-   if(e.target===pickerBackdrop)closeCosmicPicker();
-  });
+  pickerBackdrop.addEventListener('click',e=>{if(e.target===pickerBackdrop)pickerBackdrop.classList.remove('active')});
  }
-
- const locSel=$('skyLocPreset');
- if(locSel){
-  locSel.addEventListener('mousedown',e=>{
-   e.preventDefault();
-   au.clk();
-   openCosmicPicker(locSel);
-  });
-  locSel.addEventListener('keydown',e=>{
-   if(e.key===' '||e.key==='Enter'||e.key==='ArrowDown'){
-    e.preventDefault();
-    au.clk();
-    openCosmicPicker(locSel);
-   }
-  });
-  locSel.onchange=()=>{
-   const latVal=locSel.value.split(',')[0];
-   if($('skyLat'))$('skyLat').value=latVal;
-   window.drawSkyChart();
-  };
- }
- if($('skyLat'))$('skyLat').oninput=()=>window.drawSkyChart();
- if($('skyBtnConst'))$('skyBtnConst').onclick=()=>{
-  au.clk();showConst=!showConst;$('skyBtnConst').classList.toggle('on',showConst);window.drawSkyChart();
- };
- if($('skyBtnGrid'))$('skyBtnGrid').onclick=()=>{
-  au.clk();showGrid=!showGrid;$('skyBtnGrid').classList.toggle('on',showGrid);window.drawSkyChart();
- };
- if($('skyBtnStepBack'))$('skyBtnStepBack').onclick=()=>{
-  au.clk();realTimeMode=false;timeOffsetHours-=3;if($('skyBtnNow'))$('skyBtnNow').classList.remove('on');window.drawSkyChart();
- };
- if($('skyBtnStepFwd'))$('skyBtnStepFwd').onclick=()=>{
-  au.clk();realTimeMode=false;timeOffsetHours+=3;if($('skyBtnNow'))$('skyBtnNow').classList.remove('on');window.drawSkyChart();
- };
- if($('skyBtnNow'))$('skyBtnNow').onclick=()=>{
-  au.clk();realTimeMode=true;timeOffsetHours=0;$('skyBtnNow').classList.add('on');window.drawSkyChart();
- };
+ if($('skyLat'))$('skyLat').onchange=()=>{drawSkyChart()};
+ if($('skyBtnConst'))$('skyBtnConst').onclick=function(){au.clk();showConst=!showConst;this.classList.toggle('on',showConst);drawSkyChart()};
+ if($('skyBtnGrid'))$('skyBtnGrid').onclick=function(){au.clk();showGrid=!showGrid;this.classList.toggle('on',showGrid);drawSkyChart()};
+ if($('skyBtnStepBack'))$('skyBtnStepBack').onclick=()=>{au.clk();realTimeMode=false;timeOffsetHours-=3;if($('skyBtnNow'))$('skyBtnNow').classList.remove('on');drawSkyChart()};
+ if($('skyBtnStepFwd'))$('skyBtnStepFwd').onclick=()=>{au.clk();realTimeMode=false;timeOffsetHours+=3;if($('skyBtnNow'))$('skyBtnNow').classList.remove('on');drawSkyChart()};
+ if($('skyBtnNow'))$('skyBtnNow').onclick=function(){au.clk();realTimeMode=true;timeOffsetHours=0;this.classList.add('on');drawSkyChart()};
 
  setInterval(()=>{
-  if(realTimeMode && cs==='sky') window.drawSkyChart();
+  if(realTimeMode && cs==='sky') drawSkyChart();
  }, 15000);
 })();
 
-/* ===== GAME KOSMOS: ORBITAL DODGER (AUTO-FIRE + HADIAH SENJATA DARI STAR CORE) ===== */
+/* ===== MINI-GAME KOSMOS: ORBITAL DODGER (AUTO-FIRE + STAR CORE WEAPON DROP) ===== */
 (function initSpaceGame(){
  const gcv=$('spaceGameCanvas');
- const stageBox=$('gameStageBox');
- const overlay=$('gameOverlay');
- const startBtn=$('gStartBtn');
- if(!gcv||!stageBox||!startBtn)return;
+ if(!gcv)return;
  const gctx=gcv.getContext('2d');
  if(!gctx)return;
 
+ let gw=320, gh=340;
+ let running=false, rafId=null, lastTime=0;
+ let score=0, hull=100, bestScore=ls.g('isea_game_best',0)||0;
+ let moveLeft=false, moveRight=false, pointerTargetX=null;
+ let fireCooldown=0, weaponType='pulse', weaponTimer=0;
+ let spawnTimer=0, starCoreTimer=0;
+
+ const player={x:160,y:285,w:34,h:40,speed:290,invuln:0};
+ let bullets=[], meteors=[], starCores=[], particles=[];
+ const bgStars=Array.from({length:45},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.6+.5,v:22+Math.random()*45}));
+
  const WEAPONS={
-  pulse:{name:'Pulse Laser (Auto)',desc:'Tembakan laser presisi beruntun otomatis',color:'#38bdf8',cooldown:220},
-  twin:{name:'Twin Plasma (Hadiah)',desc:'Meriam ganda plasma + tembakan lebih cepat!',color:'#c084fc',cooldown:175},
-  nova:{name:'Nova Cannon (Hadiah)',desc:'3-arah laser energi tinggi + tembakan cepat!',color:'#fb923c',cooldown:155}
+  pulse:{name:'Pulse Laser (Auto)',interval:0.24,color:'#38bdf8',info:'Auto-Fire Aktif · Tembakan presisi beruntun'},
+  twin:{name:'Twin Plasma',interval:0.21,color:'#c084fc',info:'Hadiah Star Core! Dua meriam plasma sejajar'},
+  nova:{name:'Nova Spread',interval:0.26,color:'#fbbf24',info:'Hadiah Star Core! Tembakan menyebar 3 arah'}
  };
 
- let gw=320, gh=340;
- let running=false, rafId=null, lastFrame=0;
- let score=0, best=ls.g('isea_game_best',0)||0;
- let hull=100, speedLv=1;
- let shipX=160, shipY=292;
- let moveLeft=false, moveRight=false;
- let obstacles=[], bullets=[], starCores=[], particles=[];
- let spawnTimer=0, coreTimer=0, fireTimer=0;
- let currentWeapon='pulse';
- let weaponTimeLeft=0;
- let stars=Array.from({length:55},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.6+0.6,v:Math.random()*0.6+0.35}));
-
- if($('gBest'))$('gBest').textContent=best;
-
- function setWeapon(wKey, durationSec){
-  currentWeapon=wKey;
-  weaponTimeLeft=durationSec;
-  updateWeaponUI();
+ function updateGameHud(){
+  if($('gScore'))$('gScore').textContent=score;
+  if($('gBest'))$('gBest').textContent=bestScore;
+  if($('gHull'))$('gHull').textContent=Math.max(0,Math.round(hull))+'%';
+  const lv=1+Math.floor(score/350);
+  if($('gWave'))$('gWave').textContent='Lv '+lv;
+  const wSpec=WEAPONS[weaponType]||WEAPONS.pulse;
+  if($('gWeaponBadge'))$('gWeaponBadge').textContent=weaponTimer>0?`${wSpec.name} (${weaponTimer.toFixed(1)}s)`:wSpec.name;
+  if($('gWeaponInfo'))$('gWeaponInfo').textContent=weaponTimer>0?`${wSpec.info} · Aktif ${weaponTimer.toFixed(1)} detik`:'Auto-Fire Aktif · Ambil Star Core untuk hadiah senjata!';
  }
-
- function updateWeaponUI(){
-  const wInfo=WEAPONS[currentWeapon]||WEAPONS.pulse;
-  if($('gWeaponBadge')){
-   $('gWeaponBadge').textContent=currentWeapon==='pulse'?wInfo.name:`${wInfo.name} (${Math.ceil(weaponTimeLeft)}s)`;
-  }
-  if($('gWeaponInfo')){
-   $('gWeaponInfo').textContent=currentWeapon==='pulse'
-    ?'Auto-Fire Aktif · Ambil Star Core untuk hadiah senjata'
-    :`Hadiah Aktif: ${wInfo.desc}`;
-  }
- }
+ updateGameHud();
 
  window.resizeSpaceGame=function(){
+  const box=$('gameStageBox');
+  if(!box)return;
+  gw=box.clientWidth||320;
+  gh=box.clientHeight||340;
   const dpr=Math.min(window.devicePixelRatio||1,2);
-  gw=Math.max(240,stageBox.clientWidth||320);
-  gh=Math.max(280,stageBox.clientHeight||340);
-  gcv.width=Math.floor(gw*dpr);
-  gcv.height=Math.floor(gh*dpr);
+  gcv.width=Math.max(1,Math.floor(gw*dpr));
+  gcv.height=Math.max(1,Math.floor(gh*dpr));
   gctx.setTransform(dpr,0,0,dpr,0,0);
-  shipY=gh-46;
-  shipX=Math.max(24,Math.min(gw-24,shipX||gw*0.5));
-  if(!running)drawGameScene(0);
+  player.y=Math.max(60,gh-48);
+  player.x=Math.max(player.w*.6,Math.min(gw-player.w*.6,player.x||gw*.5));
+  renderGameFrame();
  };
 
- function updateHud(){
-  if($('gScore'))$('gScore').textContent=Math.floor(score);
-  if($('gBest'))$('gBest').textContent=Math.max(best,Math.floor(score));
-  if($('gHull'))$('gHull').textContent=Math.max(0,Math.round(hull))+'%';
-  if($('gWave'))$('gWave').textContent='Lv '+speedLv;
-  updateWeaponUI();
- }
-
- function spawnBullets(){
-  const wDef=WEAPONS[currentWeapon]||WEAPONS.pulse;
-  au.t(currentWeapon==='nova'?760:(currentWeapon==='twin'?660:560),'triangle',0.06,0.08);
-  if(currentWeapon==='twin'){
-   bullets.push({x:shipX-10,y:shipY-18,vx:0,vy:-460,col:wDef.color,dmg:1});
-   bullets.push({x:shipX+10,y:shipY-18,vx:0,vy:-460,col:wDef.color,dmg:1});
-  }else if(currentWeapon==='nova'){
-   bullets.push({x:shipX,y:shipY-20,vx:0,vy:-480,col:wDef.color,dmg:1.5});
-   bullets.push({x:shipX-8,y:shipY-16,vx:-95,vy:-465,col:'#38bdf8',dmg:1});
-   bullets.push({x:shipX+8,y:shipY-16,vx:95,vy:-465,col:'#c084fc',dmg:1});
-  }else{
-   bullets.push({x:shipX,y:shipY-18,vx:0,vy:-440,col:wDef.color,dmg:1});
-  }
- }
-
- function spawnBurst(x,y,col,count){
-  for(let i=0;i<count;i++){
+ function spawnBurst(x,y,col,n=8){
+  for(let i=0;i<n;i++){
    const a=Math.random()*Math.PI*2;
-   const sp=40+Math.random()*130;
-   particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:0.45+Math.random()*0.25,col});
+   const sp=45+Math.random()*120;
+   particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:0.45+Math.random()*0.25,maxLife:0.7,col});
   }
  }
 
- function startGame(){
-  au.clk();
-  score=0;
-  hull=100;
-  speedLv=1;
-  shipX=gw*0.5;
-  shipY=gh-46;
-  obstacles=[];
-  bullets=[];
-  starCores=[];
-  particles=[];
-  spawnTimer=0.35;
-  coreTimer=2.2;
-  fireTimer=0.05;
-  setWeapon('pulse',0);
+ function fireAutoWeapons(){
+  const spec=WEAPONS[weaponType]||WEAPONS.pulse;
+  if(weaponType==='twin'){
+   bullets.push({x:player.x-9,y:player.y-18,vx:0,vy:-460,col:spec.color,r:3.2});
+   bullets.push({x:player.x+9,y:player.y-18,vx:0,vy:-460,col:spec.color,r:3.2});
+  }else if(weaponType==='nova'){
+   [-0.24,0,0.24].forEach(ang=>{
+    bullets.push({x:player.x,y:player.y-20,vx:Math.sin(ang)*440,vy:-Math.cos(ang)*440,col:spec.color,r:3.4});
+   });
+  }else{
+   bullets.push({x:player.x,y:player.y-20,vx:0,vy:-450,col:spec.color,r:3.2});
+  }
+ }
+
+ function grantStarCoreReward(){
+  const pool=['twin','nova'];
+  const picked=pool[Math.floor(Math.random()*pool.length)];
+  weaponType=picked;
+  weaponTimer=9.0;
+  fireCooldown=0;
+  hull=Math.min(100,hull+10);
+  score+=50;
+  au.ok();
+  vib(25);
+  spawnBurst(player.x,player.y-14,'#fbbf24',14);
+  toast(`Star Core! Senjata ${WEAPONS[picked].name} aktif 9 detik.`);
+  updateGameHud();
+ }
+
+ function startMission(){
+  window.resizeSpaceGame();
+  score=0;hull=100;fireCooldown=0;weaponType='pulse';weaponTimer=0;
+  spawnTimer=0.35;starCoreTimer=4.2;pointerTargetX=null;
+  bullets=[];meteors=[];starCores=[];particles=[];
+  player.x=gw*0.5;player.y=gh-48;player.invuln=0.6;
   running=true;
-  overlay.classList.add('hidden');
-  updateHud();
-  addLog('Memulai Game Kosmos: Orbital Dodger');
-  lastFrame=performance.now();
+  if($('gameOverlay'))$('gameOverlay').classList.add('hidden');
+  updateGameHud();
+  au.clk();
+  lastTime=performance.now();
   if(rafId)cancelAnimationFrame(rafId);
   rafId=requestAnimationFrame(gameLoop);
  }
 
- function endGame(){
+ function endMission(){
   running=false;
   if(rafId)cancelAnimationFrame(rafId);
-  const finalScore=Math.floor(score);
-  if(finalScore>best){
-   best=finalScore;
-   ls.s('isea_game_best',best);
+  if(score>bestScore){
+   bestScore=score;
+   ls.s('isea_game_best',bestScore);
   }
-  updateHud();
+  updateGameHud();
   au.no();
   if($('gBadge'))$('gBadge').textContent='Misi Selesai';
-  if($('gTitle'))$('gTitle').textContent='Skor: '+finalScore;
-  if($('gDesc'))$('gDesc').textContent='Rekor terbaik kamu: '+best+' pts. Ambil Star Core lagi untuk hadiah senjata!';
-  if(startBtn)$('gStartBtn').textContent='Main Lagi';
-  overlay.classList.remove('hidden');
-  addLog('Game selesai dengan skor '+finalScore);
+  if($('gTitle'))$('gTitle').textContent=`Skor Akhir: ${score}`;
+  if($('gDesc'))$('gDesc').textContent=`Rekor terbaik kamu ${bestScore} pts. Siap meluncur lagi?`;
+  if($('gStartBtn'))$('gStartBtn').textContent='Main Lagi';
+  if($('gameOverlay'))$('gameOverlay').classList.remove('hidden');
  }
 
- function gameLoop(now){
-  if(!running)return;
-  const dt=Math.min(0.05,(now-lastFrame)/1000);
-  lastFrame=now;
-
-  if(currentWeapon!=='pulse'){
-   weaponTimeLeft-=dt;
-   if(weaponTimeLeft<=0){
-    setWeapon('pulse',0);
-   }
-  }
-
-  speedLv=1+Math.floor(score/350);
-  const baseSpeed=135+speedLv*24;
-  score+=dt*38*(1+speedLv*0.12);
-
-  const shipSpeed=310;
-  if(moveLeft)shipX-=shipSpeed*dt;
-  if(moveRight)shipX+=shipSpeed*dt;
-  shipX=Math.max(22,Math.min(gw-22,shipX));
-
-  const wDef=WEAPONS[currentWeapon]||WEAPONS.pulse;
-  fireTimer-=dt;
-  if(fireTimer<=0){
-   fireTimer=wDef.cooldown/1000;
-   spawnBullets();
-  }
-
-  spawnTimer-=dt;
-  if(spawnTimer<=0){
-   spawnTimer=Math.max(0.34,0.86-speedLv*0.05);
-   const r=13+Math.random()*11;
-   const hp=r>20?2:1;
-   obstacles.push({
-    x:r+12+Math.random()*(gw-2*(r+12)),
-    y:-r-10,
-    r,
-    hp,
-    vy:baseSpeed*(0.85+Math.random()*0.38),
-    rot:Math.random()*6.28,
-    vr:(Math.random()-0.5)*3.2
-   });
-  }
-
-  coreTimer-=dt;
-  if(coreTimer<=0){
-   coreTimer=4.5+Math.random()*2.5;
-   starCores.push({
-    x:26+Math.random()*(gw-52),
-    y:-18,
-    r:11,
-    vy:baseSpeed*0.72,
-    phase:Math.random()*6.28
-   });
-  }
-
-  for(let i=bullets.length-1;i>=0;i--){
-   const b=bullets[i];
-   b.x+=b.vx*dt;
-   b.y+=b.vy*dt;
-   if(b.y<-20||b.x<-20||b.x>gw+20){bullets.splice(i,1)}
-  }
-
-  for(let i=obstacles.length-1;i>=0;i--){
-   const o=obstacles[i];
-   o.y+=o.vy*dt;
-   o.rot+=o.vr*dt;
-
-   let destroyedByBullet=false;
-   for(let j=bullets.length-1;j>=0;j--){
-    const b=bullets[j];
-    if(Math.hypot(b.x-o.x,b.y-o.y)<o.r+6){
-     bullets.splice(j,1);
-     o.hp-=b.dmg;
-     spawnBurst(b.x,b.y,b.col,4);
-     if(o.hp<=0){
-      score+=35;
-      spawnBurst(o.x,o.y,'#fdba74',12);
-      au.t(320,'sine',0.08,0.12);
-      obstacles.splice(i,1);
-      destroyedByBullet=true;
-      break;
-     }
-    }
-   }
-   if(destroyedByBullet)continue;
-
-   if(Math.hypot(o.x-shipX,o.y-shipY)<o.r+14){
-    hull-=26;
-    spawnBurst(o.x,o.y,'#f43f5e',14);
-    obstacles.splice(i,1);
-    au.no();
-    vib(55);
-    if(hull<=0){
-     hull=0;
-     updateHud();
-     drawGameScene(now/1000);
-     endGame();
-     return;
-    }
-    continue;
-   }
-   if(o.y>gh+o.r+20)obstacles.splice(i,1);
-  }
-
-  for(let i=starCores.length-1;i>=0;i--){
-   const c=starCores[i];
-   c.y+=c.vy*dt;
-   c.phase+=dt*5;
-   if(Math.hypot(c.x-shipX,c.y-shipY)<c.r+18){
-    score+=75;
-    hull=Math.min(100,hull+10);
-    const prizeRoll=Math.random();
-    if(prizeRoll<0.5){
-     setWeapon('twin',10);
-     toast('Hadiah Star Core: Twin Plasma (10 detik)!');
-    }else{
-     setWeapon('nova',9);
-     toast('Hadiah Star Core: Nova Cannon (9 detik)!');
-    }
-    spawnBurst(c.x,c.y,'#fde047',16);
-    starCores.splice(i,1);
-    au.ok();
-    vib(35);
-    continue;
-   }
-   if(c.y>gh+24)starCores.splice(i,1);
-  }
-
-  for(let i=particles.length-1;i>=0;i--){
-   const p=particles[i];
-   p.x+=p.vx*dt;
-   p.y+=p.vy*dt;
-   p.life-=dt;
-   if(p.life<=0)particles.splice(i,1);
-  }
-
-  updateHud();
-  drawGameScene(now/1000);
-  rafId=requestAnimationFrame(gameLoop);
- }
-
- function drawGameScene(tSec){
+ function renderGameFrame(){
   gctx.clearRect(0,0,gw,gh);
-
-  stars.forEach(s=>{
-   const sy=((s.y*gh)+(running?tSec*s.v*95:tSec*s.v*18))%gh;
-   gctx.fillStyle='rgba(226,232,240,0.72)';
+  gctx.fillStyle='#e2e8f0';
+  bgStars.forEach(s=>{
+   gctx.globalAlpha=0.55;
    gctx.beginPath();
-   gctx.arc(s.x*gw,sy,s.r,0,Math.PI*2);
-   gctx.fill();
-  });
-
-  bullets.forEach(b=>{
-   gctx.fillStyle=b.col;
-   gctx.shadowColor=b.col;
-   gctx.shadowBlur=8;
-   drawRoundedRect(gctx,b.x-2.2,b.y-9,4.4,14,2);
-   gctx.fill();
-   gctx.shadowBlur=0;
-  });
-
-  starCores.forEach(c=>{
-   const pulse=1+Math.sin(c.phase)*0.16;
-   gctx.save();
-   gctx.translate(c.x,c.y);
-   gctx.scale(pulse,pulse);
-   const glow=gctx.createRadialGradient(0,0,2,0,0,c.r*2.1);
-   glow.addColorStop(0,'rgba(254,240,138,0.95)');
-   glow.addColorStop(0.5,'rgba(192,132,252,0.55)');
-   glow.addColorStop(1,'rgba(192,132,252,0)');
-   gctx.fillStyle=glow;
-   gctx.beginPath();
-   gctx.arc(0,0,c.r*2.1,0,Math.PI*2);
-   gctx.fill();
-
-   gctx.fillStyle='#fef08a';
-   gctx.beginPath();
-   gctx.arc(0,0,c.r*0.68,0,Math.PI*2);
-   gctx.fill();
-   gctx.restore();
-  });
-
-  obstacles.forEach(o=>{
-   gctx.save();
-   gctx.translate(o.x,o.y);
-   gctx.rotate(o.rot);
-   gctx.fillStyle='#475569';
-   gctx.strokeStyle='#94a3b8';
-   gctx.lineWidth=2;
-   gctx.beginPath();
-   gctx.arc(0,0,o.r,0,Math.PI*2);
-   gctx.fill();
-   gctx.stroke();
-   gctx.fillStyle='#1e293b';
-   gctx.beginPath();
-   gctx.arc(-o.r*0.28,-o.r*0.2,o.r*0.24,0,Math.PI*2);
-   gctx.arc(o.r*0.3,o.r*0.25,o.r*0.18,0,Math.PI*2);
-   gctx.fill();
-   gctx.restore();
-  });
-
-  particles.forEach(p=>{
-   gctx.globalAlpha=Math.max(0,Math.min(1,p.life*1.6));
-   gctx.fillStyle=p.col;
-   gctx.beginPath();
-   gctx.arc(p.x,p.y,3,0,Math.PI*2);
+   gctx.arc(s.x*gw,s.y*gh,s.r,0,Math.PI*2);
    gctx.fill();
   });
   gctx.globalAlpha=1;
 
-  const wDef=WEAPONS[currentWeapon]||WEAPONS.pulse;
+  starCores.forEach(scItem=>{
+   gctx.save();
+   gctx.translate(scItem.x,scItem.y);
+   const glow=gctx.createRadialGradient(0,0,2,0,0,scItem.r*2.2);
+   glow.addColorStop(0,'rgba(253,224,71,0.9)');
+   glow.addColorStop(1,'rgba(253,224,71,0)');
+   gctx.fillStyle=glow;
+   gctx.beginPath();gctx.arc(0,0,scItem.r*2.2,0,Math.PI*2);gctx.fill();
+
+   gctx.fillStyle='#fde047';
+   gctx.beginPath();
+   for(let i=0;i<10;i++){
+    const rad=i%2===0?scItem.r:scItem.r*0.45;
+    const ang=i*Math.PI/5 - Math.PI/2;
+    if(i===0)gctx.moveTo(Math.cos(ang)*rad,Math.sin(ang)*rad);
+    else gctx.lineTo(Math.cos(ang)*rad,Math.sin(ang)*rad);
+   }
+   gctx.closePath();gctx.fill();
+   gctx.restore();
+  });
+
+  meteors.forEach(m=>{
+   gctx.save();
+   gctx.translate(m.x,m.y);
+   gctx.rotate(m.rot);
+   gctx.fillStyle='#64748b';
+   gctx.strokeStyle='#cbd5e1';
+   gctx.lineWidth=1.4;
+   gctx.beginPath();
+   gctx.arc(0,0,m.r,0,Math.PI*2);
+   gctx.fill();gctx.stroke();
+   gctx.restore();
+  });
+
+  bullets.forEach(b=>{
+   gctx.fillStyle=b.col||'#38bdf8';
+   gctx.beginPath();
+   gctx.arc(b.x,b.y,b.r||3.2,0,Math.PI*2);
+   gctx.fill();
+  });
+
+  particles.forEach(p=>{
+   gctx.globalAlpha=Math.max(0,p.life/p.maxLife);
+   gctx.fillStyle=p.col;
+   gctx.beginPath();gctx.arc(p.x,p.y,3,0,Math.PI*2);gctx.fill();
+  });
+  gctx.globalAlpha=1;
+
   gctx.save();
-  gctx.translate(shipX,shipY);
-  gctx.fillStyle=wDef.color;
+  gctx.translate(player.x,player.y);
+  if(player.invuln>0 && Math.floor(player.invuln*16)%2===0)gctx.globalAlpha=0.45;
+  gctx.fillStyle='#38bdf8';
   gctx.beginPath();
   gctx.moveTo(0,-20);
-  gctx.lineTo(16,14);
-  gctx.lineTo(0,8);
-  gctx.lineTo(-16,14);
+  gctx.lineTo(15,15);
+  gctx.lineTo(0,9);
+  gctx.lineTo(-15,15);
   gctx.closePath();
   gctx.fill();
-
   gctx.fillStyle='#f8fafc';
-  gctx.beginPath();
-  gctx.arc(0,-2,5,0,Math.PI*2);
-  gctx.fill();
+  gctx.beginPath();gctx.arc(0,-2,4.5,0,Math.PI*2);gctx.fill();
   gctx.restore();
  }
 
- stageBox.addEventListener('pointermove',e=>{
+ function gameLoop(now){
   if(!running)return;
-  const rect=stageBox.getBoundingClientRect();
-  shipX=Math.max(22,Math.min(gw-22,e.clientX-rect.left));
- });
- stageBox.addEventListener('pointerdown',e=>{
-  if(!running)return;
-  const rect=stageBox.getBoundingClientRect();
-  shipX=Math.max(22,Math.min(gw-22,e.clientX-rect.left));
- });
+  const dt=Math.min(0.05,(now-lastTime)/1000);
+  lastTime=now;
 
- const leftBtn=$('gLeftBtn'),rightBtn=$('gRightBtn');
- if(leftBtn){
-  leftBtn.onpointerdown=()=>{moveLeft=true};
-  leftBtn.onpointerup=leftBtn.onpointerleave=leftBtn.onpointercancel=()=>{moveLeft=false};
- }
- if(rightBtn){
-  rightBtn.onpointerdown=()=>{moveRight=true};
-  rightBtn.onpointerup=rightBtn.onpointerleave=rightBtn.onpointercancel=()=>{moveRight=false};
+  const lv=1+Math.floor(score/350);
+  const speedScale=1+(lv-1)*0.14;
+
+  bgStars.forEach(s=>{
+   s.y+=(s.v*speedScale*dt)/Math.max(1,gh);
+   if(s.y>1){s.y=0;s.x=Math.random()}
+  });
+
+  if(pointerTargetX!==null){
+   const diff=pointerTargetX-player.x;
+   player.x+=Math.sign(diff)*Math.min(Math.abs(diff),player.speed*1.35*dt);
+  }else if(moveLeft && !moveRight){
+   player.x-=player.speed*dt;
+  }else if(moveRight && !moveLeft){
+   player.x+=player.speed*dt;
+  }
+  player.x=Math.max(18,Math.min(gw-18,player.x));
+  if(player.invuln>0)player.invuln=Math.max(0,player.invuln-dt);
+
+  if(weaponTimer>0){
+   weaponTimer=Math.max(0,weaponTimer-dt);
+   if(weaponTimer===0){weaponType='pulse';updateGameHud()}
+  }
+
+  fireCooldown-=dt;
+  if(fireCooldown<=0){
+   fireAutoWeapons();
+   fireCooldown=(WEAPONS[weaponType]||WEAPONS.pulse).interval;
+  }
+
+  spawnTimer-=dt;
+  if(spawnTimer<=0){
+   const r=11+Math.random()*11;
+   meteors.push({
+    x:r+Math.random()*Math.max(20,gw-r*2),
+    y:-r-10,
+    r,
+    hp:r>17?2:1,
+    vy:(115+Math.random()*95)*speedScale,
+    rot:Math.random()*6.28,
+    vrot:(Math.random()-.5)*4
+   });
+   spawnTimer=Math.max(0.28,0.72/speedScale);
+  }
+
+  starCoreTimer-=dt;
+  if(starCoreTimer<=0){
+   starCores.push({
+    x:22+Math.random()*Math.max(24,gw-44),
+    y:-16,
+    r:11,
+    vy:105*speedScale
+   });
+   starCoreTimer=6.5+Math.random()*3.0;
+  }
+
+  for(let i=bullets.length-1;i>=0;i--){
+   const b=bullets[i];
+   b.x+=b.vx*dt;b.y+=b.vy*dt;
+   if(b.y<-15||b.x<-15||b.x>gw+15){bullets.splice(i,1);continue}
+   let hit=false;
+   for(let j=meteors.length-1;j>=0;j--){
+    const m=meteors[j];
+    if(Math.hypot(b.x-m.x,b.y-m.y)<m.r+(b.r||3)){
+     bullets.splice(i,1);
+     m.hp-=1;
+     hit=true;
+     if(m.hp<=0){
+      spawnBurst(m.x,m.y,'#fb923c',8);
+      meteors.splice(j,1);
+      score+=15;
+      if(score>bestScore){bestScore=score;ls.s('isea_game_best',bestScore)}
+      updateGameHud();
+     }
+     break;
+    }
+   }
+   if(hit)continue;
+  }
+
+  for(let i=starCores.length-1;i>=0;i--){
+   const scItem=starCores[i];
+   scItem.y+=scItem.vy*dt;
+   if(Math.hypot(scItem.x-player.x,scItem.y-player.y)<scItem.r+18){
+    starCores.splice(i,1);
+    grantStarCoreReward();
+    continue;
+   }
+   if(scItem.y>gh+24)starCores.splice(i,1);
+  }
+
+  for(let i=meteors.length-1;i>=0;i--){
+   const m=meteors[i];
+   m.y+=m.vy*dt;m.rot+=m.vrot*dt;
+   if(player.invuln<=0 && Math.hypot(m.x-player.x,m.y-player.y)<m.r+14){
+    meteors.splice(i,1);
+    hull-=25;
+    player.invuln=1.0;
+    spawnBurst(player.x,player.y,'#f43f5e',12);
+    vib([50,30,50]);
+    updateGameHud();
+    if(hull<=0){endMission();return}
+    continue;
+   }
+   if(m.y>gh+30){
+    meteors.splice(i,1);
+    score+=5;
+    if(score>bestScore){bestScore=score;ls.s('isea_game_best',bestScore)}
+    updateGameHud();
+   }
+  }
+
+  for(let i=particles.length-1;i>=0;i--){
+   const p=particles[i];
+   p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;
+   if(p.life<=0)particles.splice(i,1);
+  }
+
+  renderGameFrame();
+  rafId=requestAnimationFrame(gameLoop);
  }
 
- addEventListener('keydown',e=>{
-  if(cs!=='game'||!running)return;
-  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')moveLeft=true;
-  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')moveRight=true;
+ if($('gStartBtn'))$('gStartBtn').onclick=startMission;
+ const setPtrX=e=>{
+  const rect=gcv.getBoundingClientRect();
+  pointerTargetX=e.clientX-rect.left;
+ };
+ gcv.addEventListener('pointerdown',e=>{if(!running)return;setPtrX(e)});
+ gcv.addEventListener('pointermove',e=>{if(!running)return;if(e.buttons>0||e.pointerType==='touch')setPtrX(e)});
+ gcv.addEventListener('pointerup',()=>{pointerTargetX=null});
+ gcv.addEventListener('pointercancel',()=>{pointerTargetX=null});
+
+ const lb=$('gLeftBtn'),rb=$('gRightBtn');
+ if(lb){
+  lb.addEventListener('pointerdown',()=>{pointerTargetX=null;moveLeft=true});
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>lb.addEventListener(ev,()=>moveLeft=false));
+ }
+ if(rb){
+  rb.addEventListener('pointerdown',()=>{pointerTargetX=null;moveRight=true});
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>rb.addEventListener(ev,()=>moveRight=false));
+ }
+ window.addEventListener('keydown',e=>{
+  if(cs!=='game')return;
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){pointerTargetX=null;moveLeft=true}
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){pointerTargetX=null;moveRight=true}
  });
- addEventListener('keyup',e=>{
+ window.addEventListener('keyup',e=>{
   if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')moveLeft=false;
   if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')moveRight=false;
  });
-
- startBtn.onclick=startGame;
- window.resizeSpaceGame();
 })();
 
 /* ===== AI KOSMO ===== */
-const AI_FAQ=[
- ['Apa itu Event Horizon?','Event Horizon adalah batas di sekitar lubang hitam di mana kecepatan lepas melampaui kecepatan cahaya. Setelah melewati batas ini, cahaya maupun materi tidak dapat keluar menuju pengamat jauh.'],
- ['Bagaimana Bintang Neutron terbentuk?','Bintang neutron terbentuk ketika inti bintang masif (sekitar 8–20+ massa Matahari) kehabisan bahan bakar fusi dan runtuh oleh gravitasinya sendiri dalam peristiwa supernova, memadatkan massa sekitar 1,4–2 massa Matahari ke dalam bola berdiameter ±20 km.'],
- ['Apa itu Gravastar?','Gravastar (Gravitational Vacuum Star) adalah objek hipotesis alternatif lubang hitam yang diusulkan oleh Mazur dan Mottola. Alih-alih singularitas pusat dan horizon peristiwa klasik, gravastar memiliki kulit tipis materi padat dan bagian dalam berupa ruang bertekanan negatif (energi vakum).'],
- ['Apa bedanya Pulsar dan Magnetar?','Pulsar adalah bintang neutron berotasi cepat dengan berkas radiasi terarah yang tampak berdenyut teratur. Magnetar adalah bintang neutron dengan medan magnet jauh lebih ekstrem (sekitar 10¹⁴–10¹⁵ gauss) yang dapat memicu letusan sinar-X dan gamma.'],
- ['Bagaimana cahaya membelok di sekitar Black Hole?','Gravitasi lubang hitam melengkungkan ruang-waktu di sekitarnya (gravitational lensing). Foton dari piringan akresi atau latar belakang dibelokkan sehingga membentuk cincin cahaya dan bayangan gelap di bagian tengah.']
-];
-const CHIPS=['Apa itu Event Horizon?','Bagaimana Bintang Neutron terbentuk?','Apa itu Gravastar?','Apa bedanya Pulsar dan Magnetar?','Bagaimana cahaya membelok di sekitar Black Hole?'];
-let aiH=ls.g('isea_ai',[]),aiK=ls.g('isea_aik','');
+let key=ls.g('isea_key','');
+const CHIPS=['Apa itu event horizon?','Apa itu gravastar?','Bagaimana pulsar bekerja?','Apa beda magnetar dan kilonova?','Jelaskan spaghettification'];
+const cc=$('chips');if(cc)CHIPS.forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>{au.clk();sendAI(t)};cc.appendChild(b)});
 
-function renderChat(){
- const c=$('chat');if(!c)return;c.innerHTML='';
- if(!aiH.length)addM('b','Halo, aku Kosmo. Tanyakan hal apa pun tentang lubang hitam, bintang neutron, gravastar, planet, atau astronomi.',0);
- else aiH.forEach(m=>addM(m.r,m.t,0));
- c.scrollTop=c.scrollHeight;
+function addM(t,who){const c=$('chat');if(!c)return;const d=document.createElement('div');d.className='m '+who;d.textContent=t;c.appendChild(d);c.scrollTop=c.scrollHeight;return d}
+
+function kb(q){
+ q=q.toLowerCase();
+ if(q.includes('gravastar'))return 'Gravastar (Gravitational Vacuum Star) adalah objek hipotesis alternatif lubang hitam tanpa singularitas pusat dan tanpa event horizon mutlak: bagian dalamnya berupa energi vakum bertekanan negatif yang dibungkus kulit tipis materi sangat padat.';
+ if(q.includes('horizon')||q.includes('event'))return 'Event Horizon adalah batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya. Cahaya maupun materi yang melintasinya tidak dapat kembali ke ruang luar.';
+ if(q.includes('pulsar'))return 'Pulsar adalah bintang neutron berputar sangat cepat dengan berkas radiasi kuat dari kutub magnetiknya. Saat berkas menyapu garis pandang Bumi, kita mengamatinya sebagai denyutan teratur.';
+ if(q.includes('magnetar'))return 'Magnetar adalah bintang neutron bermedan magnet ekstrem (sekitar 10¹⁴–10¹⁵ gauss) yang dapat memicu letusan sinar-X dan sinar gamma berenergi tinggi.';
+ if(q.includes('kilonova'))return 'Kilonova terjadi saat dua bintang neutron (atau bintang neutron dan lubang hitam) bergabung, memancarkan gelombang gravitasi dan mensintesis unsur berat seperti emas dan platinum.';
+ if(q.includes('spaghet'))return 'Spaghettification adalah peregangan ekstrem akibat gradien gaya pasang surut yang sangat curam di dekat objek bermassa besar dan kompak.';
+ if(q.includes('hawking'))return 'Radiasi Hawking adalah radiasi termal teoretis akibat efek kuantum di dekat event horizon yang membuat lubang hitam perlahan kehilangan massa seiring waktu.';
+ if(q.includes('sgr')||q.includes('sagittarius'))return 'Sagittarius A* adalah lubang hitam supermasif di pusat galaksi Bima Sakti dengan massa sekitar 4 juta kali massa Matahari.';
+ return 'Di kosmos, gravitasi ekstrem melengkungkan ruang-waktu. Coba tanyakan topik spesifik seperti event horizon, gravastar, pulsar, magnetar, kilonova, atau radiasi Hawking.';
 }
-function addM(r,t,sv=1){
- const c=$('chat');if(!c)return;const d=document.createElement('div');d.className='m '+r;d.textContent=t;c.appendChild(d);
- c.scrollTop=c.scrollHeight;
- if(sv){aiH.push({r,t});ls.s('isea_ai',aiH.slice(-40))}
-}
-function localAI(q){
- const s=q.toLowerCase();
- for(const[k,v]of AI_FAQ){const w=k.toLowerCase().split(/\W+/).filter(x=>x.length>3);if(w.some(x=>s.includes(x)))return v}
- if(s.includes('gravastar')||s.includes('vakum')||s.includes('mazur'))return AI_FAQ[2][1];
- if(s.includes('pulsar')||s.includes('magnetar'))return AI_FAQ[3][1];
- if(s.includes('neutron')||s.includes('supernova'))return AI_FAQ[1][1];
- if(s.includes('horizon')||s.includes('lubang hitam')||s.includes('black hole'))return AI_FAQ[0][1];
- return 'Topik yang menarik. Dalam astronomi, objek ekstrem seperti lubang hitam, bintang neutron, dan model hipotesis seperti gravastar menguji batas fisika gravitasi dan kuantum.';
-}
-async function askAI(q){
- q=q.trim();if(!q)return;au.clk();addM('u',q);if($('aiIn'))$('aiIn').value='';
- if(!aiK){setTimeout(()=>addM('b',localAI(q)),220);return}
- addM('b','...',0);const p=$('chat').lastChild;
+
+async function sendAI(pre){
+ const inp=$('aiIn'),t=(pre||inp.value).trim();if(!t)return;if(!pre)inp.value='';
+ addM(t,'u');const b=addM('Memproses...','b');
+ if(!key){setTimeout(()=>{b.textContent=kb(t)},350);return}
  try{
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':aiK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:450,system:'Jawab dalam bahasa Indonesia yang jelas, ringkas, dan akurat seputar astronomi serta astrofisika.',messages:[...aiH.slice(-8).map(m=>({role:m.r==='u'?'user':'assistant',content:m.t})),{role:'user',content:q}]})});
-  const d=await r.json();const t=d.content&&d.content[0]&&d.content[0].text?d.content[0].text:(d.error?d.error.message:localAI(q));
-  p.textContent=t;aiH.push({r:'b',t});ls.s('isea_ai',aiH.slice(-40));
- }catch(e){p.textContent=localAI(q);aiH.push({r:'b',t:p.textContent});ls.s('isea_ai',aiH.slice(-40))}
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:350,system:'Kamu adalah Kosmo, asisten astronomi ISEA yang ramah dan jelas. Jawab ringkas dalam bahasa Indonesia.',messages:[{role:'user',content:t}]})});
+  const d=await r.json();b.textContent=d.content&&d.content[0]?d.content[0].text:kb(t);
+ }catch(e){b.textContent=kb(t)}
 }
-if($('aiGo'))$('aiGo').onclick=()=>askAI($('aiIn').value);
-if($('aiIn'))$('aiIn').addEventListener('keydown',e=>{if(e.key==='Enter')askAI($('aiIn').value)});
+
 if($('aiK'))$('aiK').onclick=()=>{
  au.clk();
- if($('modalKeyInput'))$('modalKeyInput').value=aiK||'';
- if($('aiModal'))$('aiModal').classList.add('active');
- setTimeout(()=>$('modalKeyInput').focus(),50);
+ const modal=$('aiModal'),inp=$('modalKeyInput'),saveBtn=$('modalSave'),cancelBtn=$('modalCancel');
+ if(!modal||!inp)return;
+ inp.value=key||'';modal.classList.add('active');setTimeout(()=>inp.focus(),50);
+ const close=()=>{modal.classList.remove('active')};
+ cancelBtn.onclick=()=>{au.clk();close()};
+ modal.onclick=e=>{if(e.target===modal)close()};
+ saveBtn.onclick=()=>{au.clk();key=inp.value.trim();ls.s('isea_key',key);close();toast(key?'API Key disimpan.':'Mode lokal aktif.')};
 };
-function closeAiModal(){if($('aiModal'))$('aiModal').classList.remove('active')}
-if($('modalCancel'))$('modalCancel').onclick=()=>{au.clk();closeAiModal()};
-if($('modalSave'))$('modalSave').onclick=()=>{
- au.clk();
- aiK=$('modalKeyInput').value.trim();
- ls.s('isea_aik',aiK);
- closeAiModal();
- toast(aiK?'API Key disimpan.':'Mode lokal aktif.');
-};
-if($('aiModal'))$('aiModal').addEventListener('click',e=>{if(e.target===$('aiModal'))closeAiModal()});
-if($('exAI'))$('exAI').onclick=()=>{const q=G.qs[G.i];show('ai');askAI(`Jelaskan lebih lanjut tentang: "${q.q}" (jawaban: ${q.o[0]})`)};
-const ch=$('chips');if(ch)CHIPS.forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>askAI(t);ch.appendChild(b)});
+if($('aiGo'))$('aiGo').onclick=()=>{au.clk();sendAI()};
+if($('aiIn'))$('aiIn').addEventListener('keydown',e=>{if(e.key==='Enter')sendAI()});
+if($('exAI'))$('exAI').onclick=()=>{au.clk();show('ai');addM('Jelaskan lebih lanjut soal ini:\n'+G.qs[G.i].q,'u');addM(G.qs[G.i].e,'b')};
 
-/* ===== NAVIGASI BAWAH & INISIALISASI ===== */
+/* ===== NAVIGASI BAWAH ===== */
 if($('nav'))$('nav').onclick=e=>{
  const b=e.target.closest('button');
  if(!b)return;
- if(isMemberLockedInQuiz())return toast('Selesaikan kuis dulu sebelum pindah menu.');
+ if(isMemberLockedInQuiz()){
+  toast('Selesaikan kuis dulu sebelum pindah menu.');
+  return;
+ }
  au.clk();
- openTab(b.dataset.t);
+ vib(14);
+ const nextTab=b.dataset.t;
+ const curTab=NAVMAP[cs]||'quiz';
+ const nextIdx=SWIPE_TABS.indexOf(nextTab);
+ const curIdx=SWIPE_TABS.indexOf(curTab);
+ const dir=(nextIdx!==-1&&curIdx!==-1&&nextIdx!==curIdx)?(nextIdx<curIdx?'right':'left'):undefined;
+ openTab(nextTab, dir);
 };
 
-if($('fact'))$('fact').innerHTML='<b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
+/* ===== INISIALISASI ===== */
+if($('fact'))$('fact').innerHTML='<b>Fakta kosmos:</b> '+FACTS[Math.random()*FACTS.length|0];
+addM('Halo! Aku Kosmo, asisten astronomi ISEA. Ada yang ingin kamu tanyakan?','b');
 
-const savedTimeRate = ls.g('isea_member_time_rate', 1.0);
-if(typeof savedTimeRate === 'number' && savedTimeRate > 0){
-  memberTimeRate = savedTimeRate;
-}
-
-check30DayRankCycle();
 initNameSystem();
 initOnline();
 initGoogleOwnerAuth();
-renderChat();
-syncQuizLockUI();
+check30DayRankCycle();
+
+const savedQuiz = ls.g('isea_active_quiz', null);
+if (savedQuiz && savedQuiz.live && !isOwnerDevice()) {
+    G = savedQuiz;
+    G.qs = (G.qs || []).map(q => ({
+        ...q,
+        picked: q.picked ?? null,
+        isCorrect: q.isCorrect ?? null
+    }));
+    G.wrong = G.wrong || [];
+    G.times = G.times || [];
+    show('quiz');
+    render();
+} else {
+    clearActiveQuizState();
+    syncQuizLockUI();
+}
 
 setTimeout(()=>{
  const ld=$('ld');
  if(ld)ld.classList.add('out');
  au.onLoaderComplete();
- drainLocalPrankQueue();
-
- const savedQuiz = ls.g('isea_active_quiz', null);
- if(!isOwnerDevice() && savedQuiz && savedQuiz.live && Array.isArray(savedQuiz.qs) && savedQuiz.qs.length > 0){
-  G = savedQuiz;
-  G.i = Math.min(Math.max(0, Number(G.i) || 0), G.qs.length - 1);
-  show('quiz');
-  render();
-  toast('Sesi kuis dilanjutkan.');
- }
-}, 1450);
+ if(window.resizeSpaceGame)window.resizeSpaceGame();
+ if(window.drawSkyChart)window.drawSkyChart();
+},1350);
 </script>
 </body>
 </html>
