@@ -1507,7 +1507,10 @@ const au={
   if(this.c.state==='running'){
    apply();
   }else{
-   this.c.resume().then(apply).catch(()=>{});
+   const pr=this.c.resume();
+   if(pr&&typeof pr.then==='function'){
+    pr.then(apply).catch(()=>{});
+   }
   }
  },
 
@@ -1522,12 +1525,6 @@ const au={
   this.ensureCtx();
   if(this.c.state==='running'&&this.builtMode===this.mode)return;
   this.syncAudioState(false);
- },
-
- setObjectMode(m){
-  this.mode=m||'bh';
-  if(!this.on||!this.loaderDone)return;
-  this.syncAudioState(true);
  },
 
  t(f,ty='sine',du=.22,v=.14){
@@ -1548,7 +1545,10 @@ const au={
   if(this.c.state==='running'){
    playNow();
   }else{
-   this.c.resume().then(playNow).catch(()=>{});
+   const pr=this.c.resume();
+   if(pr&&typeof pr.then==='function'){
+    pr.then(playNow).catch(()=>{});
+   }
   }
  },
 
@@ -1560,9 +1560,12 @@ const au={
    this.master.gain.cancelScheduledValues(t);
    this.master.gain.setTargetAtTime(MASTER_VOL,t,0.08);
    if(this.loaderDone){
-    this.c.resume().then(()=>{
-     if(this.on&&this.loaderDone)this.buildObjectAmb(this.mode,true);
-    }).catch(()=>{});
+    const pr=this.c.resume();
+    if(pr&&typeof pr.then==='function'){
+     pr.then(()=>{
+      if(this.on&&this.loaderDone)this.buildObjectAmb(this.mode,true);
+     }).catch(()=>{});
+    }
    }
   }else{
    this.clearAmb();
@@ -1717,7 +1720,8 @@ function setThumbIndex(idx, offsetPx=0){
 function vis(m){
  const mode=BG_MODES.includes(m)?m:'bh';
  curBgMode=mode;
- au.setObjectMode(mode);
+ au.mode=mode;
+ if(au.on&&au.loaderDone)au.syncAudioState(true);
  const idx=BG_MODES.indexOf(mode);
  sc.tm=mode==='ns'?1:0;
  sc.gm=mode==='gr'?1:0;
@@ -2143,7 +2147,6 @@ function mergePlayerEntry(prev, incoming, mode='best'){
    isOwner: Boolean(prev.isOwner || incoming.isOwner)
   };
  }
- // Mode terbaik / global: simpan skor tertinggi member, update detail jika skor baru >= skor lama
  if((incoming.s || 0) >= (prev.s || 0)){
   return {
    ...prev,
@@ -2160,7 +2163,7 @@ function mergePlayerEntry(prev, incoming, mode='best'){
   t: prev.t,
   p: prev.p,
   diff: prev.diff || incoming.diff,
-  d: prev.d || incoming.d || Date.now(),
+  d: prev.d || prev.d || Date.now(),
   isOwner: Boolean(prev.isOwner || incoming.isOwner)
  };
 }
@@ -2794,7 +2797,7 @@ function launchApp(){
   const w=Math.max(0,2200-performance.now());
   setTimeout(()=>{
    ld.classList.add('out');
-   setTimeout(()=>au.onLoaderComplete(),220);
+   au.onLoaderComplete();
   },w);
  }else{
   au.onLoaderComplete();
