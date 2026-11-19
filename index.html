@@ -557,7 +557,7 @@ function initGoogleOwnerAuth(){
         provider.setCustomParameters({ prompt: 'select_account' });
         const res = await firebase.auth().signInWithPopup(provider);
         if(res && res.user){
-          prompt('Login Berhasil! Salin User UID kamu di bawah ini:', res.user.uid);
+          toast('👑 Login Owner Berhasil!');
         }
       }catch(err){
         alert('Gagal login Google: ' + (err.code || err.message || err));
@@ -567,10 +567,14 @@ function initGoogleOwnerAuth(){
   firebase.auth().onAuthStateChanged((user) => {
     GOOGLE_AUTH_USER = user || null;
     if(gBtn){
-      if(user){
-        gBtn.textContent = isGoogleOwnerVerified() ? '👑' : '✅';
+      if(isGoogleOwnerVerified()){
+        gBtn.classList.add('hidden');
+      }else if(user){
+        gBtn.classList.remove('hidden');
+        gBtn.textContent = '✅';
         gBtn.title = `Login: ${user.email || user.uid} | UID: ${user.uid}`;
       }else{
+        gBtn.classList.remove('hidden');
         gBtn.textContent = '🔑';
         gBtn.title = 'Login Google Owner';
       }
