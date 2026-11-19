@@ -167,31 +167,85 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .toast.v{opacity:1;transform:translate(-50%,0) scale(1)}
 html{scroll-behavior:smooth}
 
-/* ===== LOADER ===== */
-#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .65s var(--sm),visibility .65s}
-#ld.out{opacity:0;visibility:hidden;pointer-events:none}
-.loader-container{position:relative;display:flex;align-items:center;justify-content:center;width:140px;height:140px}
-.orb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff8a3d,#010103 80%);position:relative;box-shadow:0 0 50px rgba(255,138,61,.7),inset 0 0 15px rgba(255,200,140,.9);animation:pulOrb 2s ease-in-out infinite}
-.orb:before{content:"";position:absolute;inset:-22px;border-radius:50%;border:2px dashed rgba(56,189,248,.6);animation:spnRev 4s linear infinite}
-.orb:after{content:"";position:absolute;inset:-36px;border-radius:50%;border:2px solid rgba(168,85,247,.4);animation:spn 2.5s linear infinite}
-@keyframes spn{to{transform:rotate(360deg)}}
-@keyframes spnRev{to{transform:rotate(-360deg)}}
-@keyframes pulOrb{0%,100%{transform:scale(.95);box-shadow:0 0 40px rgba(255,138,61,.5)}50%{transform:scale(1.08);box-shadow:0 0 75px rgba(56,189,248,.9)}}
-.ldt{font:800 2.4rem 'Space Grotesk',sans-serif;letter-spacing:.35em;padding-left:.35em;background:linear-gradient(90deg,#38bdf8,#a855f7,#ff8a3d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glowText 1.8s ease-in-out infinite alternate}
-@keyframes glowText{from{filter:drop-shadow(0 0 8px rgba(56,189,248,.4))}to{filter:drop-shadow(0 0 22px rgba(255,138,61,.8))}}
-.lds{font-size:.74rem;letter-spacing:.25em;color:var(--mu);font-weight:700;text-transform:uppercase;animation:pulseSub 1.5s ease-in-out infinite alternate}
-@keyframes pulseSub{from{opacity:.5}to{opacity:1}}
+/* ===== LOADER BLACK HOLE BERPUTAR ===== */
+#ld{
+  position:fixed;inset:0;z-index:100;
+  background:radial-gradient(circle at 50% 42%,rgba(28,16,48,.72) 0%,rgba(7,11,24,.94) 55%,#030408 100%);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  transition:opacity .75s var(--sm),transform .75s var(--sm),visibility .75s;
+}
+#ld.out{opacity:0;transform:scale(1.06);visibility:hidden;pointer-events:none}
 
-.hi{display:flex;align-items:center;gap:8px;font:800 3.4rem/1 'Space Grotesk',sans-serif}
-.hi-l{display:inline-block;opacity:0;background:linear-gradient(90deg,#38bdf8,#a855f7,#ff8a3d,#38bdf8);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 14px rgba(168,85,247,.55));animation:hiPop .9s var(--sp) forwards,hiShine 3s linear infinite}
-.hi-l:nth-child(2){animation-delay:.2s,0s}
-@keyframes hiPop{0%{opacity:0;transform:translateY(46px) scale(.3) rotate(-14deg);filter:blur(10px)}60%{opacity:1;transform:translateY(-10px) scale(1.15) rotate(3deg);filter:blur(0)}100%{opacity:1;transform:none}}
+.bh-loader{
+  position:relative;width:168px;height:168px;
+  display:flex;align-items:center;justify-content:center;
+  animation:bhFloat 3.6s ease-in-out infinite;
+}
+@keyframes bhFloat{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-6px) scale(1.03)}
+}
+.bh-halo{
+  position:absolute;inset:-18px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,138,61,.26) 28%,rgba(168,85,247,.16) 56%,transparent 75%);
+  filter:blur(12px);
+  animation:bhPulse 2.8s ease-in-out infinite;
+}
+@keyframes bhPulse{
+  0%,100%{opacity:.72;transform:scale(.96)}
+  50%{opacity:1;transform:scale(1.06)}
+}
+.bh-disk{
+  position:absolute;width:154px;height:66px;border-radius:50%;
+  transform:rotate(-18deg);
+  background:conic-gradient(from 0deg,
+    rgba(255,138,61,0) 0deg,
+    rgba(255,175,95,.88) 55deg,
+    rgba(255,245,220,.98) 95deg,
+    rgba(192,132,252,.78) 165deg,
+    rgba(56,189,248,.62) 235deg,
+    rgba(255,138,61,.85) 305deg,
+    rgba(255,138,61,0) 360deg);
+  -webkit-mask:radial-gradient(ellipse at center,transparent 43%,rgba(0,0,0,.65) 54%,#000 72%,transparent 98%);
+          mask:radial-gradient(ellipse at center,transparent 43%,rgba(0,0,0,.65) 54%,#000 72%,transparent 98%);
+  filter:drop-shadow(0 0 16px rgba(255,138,61,.55));
+  animation:bhDiskSpin 3.4s linear infinite;
+}
+@keyframes bhDiskSpin{
+  0%{transform:rotate(-18deg) rotate(0deg) scaleX(1.04) scaleY(.52)}
+  100%{transform:rotate(-18deg) rotate(360deg) scaleX(1.04) scaleY(.52)}
+}
+.bh-lens{
+  position:absolute;width:92px;height:92px;border-radius:50%;
+  border:2px solid rgba(255,214,165,.55);
+  box-shadow:0 0 24px rgba(255,138,61,.42),inset 0 0 18px rgba(56,189,248,.22);
+  animation:bhRingSpin 6s linear infinite;
+}
+@keyframes bhRingSpin{
+  to{transform:rotate(360deg)}
+}
+.bh-horizon{
+  position:relative;z-index:2;width:68px;height:68px;border-radius:50%;
+  background:radial-gradient(circle at 32% 30%,#141829 0%,#030408 68%,#000 100%);
+  box-shadow:0 0 28px rgba(0,0,0,.95),0 0 14px rgba(255,159,90,.65),inset 0 0 14px rgba(0,0,0,1);
+}
+
+.hi{display:flex;align-items:center;gap:8px;font:800 3.3rem/1 'Space Grotesk',sans-serif}
+.hi-l{display:inline-block;opacity:0;background:linear-gradient(90deg,#fdba74,#f8fafc,#93c5fd,#fdba74);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 14px rgba(255,138,61,.42));animation:hiPop .95s var(--fl) forwards,hiShine 3.2s linear infinite}
+.hi-l:nth-child(2){animation-delay:.18s,0s}
+@keyframes hiPop{0%{opacity:0;transform:translateY(36px) scale(.4) rotate(-10deg);filter:blur(8px)}65%{opacity:1;transform:translateY(-8px) scale(1.1) rotate(2deg);filter:blur(0)}100%{opacity:1;transform:none}}
 @keyframes hiShine{to{background-position:300% 0}}
-.hi-w{display:inline-block;font-size:3rem;opacity:0;transform-origin:70% 75%;animation:hiIn .5s .55s ease-out forwards,hiWave 1.1s 1s ease-in-out infinite}
+.hi-w{display:inline-block;font-size:2.9rem;opacity:0;transform-origin:70% 75%;animation:hiIn .5s .5s ease-out forwards,hiWave 1.2s .95s ease-in-out infinite}
 @keyframes hiIn{to{opacity:1}}
 @keyframes hiWave{0%,100%{transform:rotate(0)}15%{transform:rotate(16deg)}30%{transform:rotate(-10deg)}45%{transform:rotate(16deg)}60%{transform:rotate(-6deg)}75%{transform:rotate(10deg)}}
-.ldbar{width:160px;height:3px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
-.ldbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8a3d,#a855f7,#38bdf8);animation:ldfill 2.4s var(--sm) forwards}
+
+.ldt{font:800 2.3rem 'Space Grotesk',sans-serif;letter-spacing:.35em;padding-left:.35em;background:linear-gradient(90deg,#fdba74,#f8fafc,#7dd3fc,#c084fc);background-size:240% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glowText 2.2s ease-in-out infinite alternate}
+@keyframes glowText{from{filter:drop-shadow(0 0 8px rgba(255,138,61,.35))}to{filter:drop-shadow(0 0 22px rgba(125,211,252,.75))}}
+.lds{font-size:.74rem;letter-spacing:.26em;color:var(--mu);font-weight:700;text-transform:uppercase;animation:pulseSub 1.6s ease-in-out infinite alternate}
+@keyframes pulseSub{from{opacity:.5}to{opacity:1}}
+.ldbar{width:176px;height:4px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;box-shadow:inset 0 0 6px rgba(0,0,0,.6)}
+.ldbar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ff8a3d,#c084fc,#38bdf8);animation:ldfill 2.4s var(--sm) forwards}
 @keyframes ldfill{to{width:100%}}
 
 .leave{opacity:0!important;transform:translateY(-12px) scale(.985)!important;transition:transform .24s var(--sp),opacity .2s ease-out!important}
@@ -263,7 +317,12 @@ html{scroll-behavior:smooth}
 </head>
 <body>
 <div id="ld">
-  <div class="loader-container"><div class="orb"></div></div>
+  <div class="bh-loader">
+    <div class="bh-halo"></div>
+    <div class="bh-disk"></div>
+    <div class="bh-lens"></div>
+    <div class="bh-horizon"></div>
+  </div>
   <div class="hi"><span class="hi-l">H</span><span class="hi-l">i</span><span class="hi-w">👋</span></div>
   <div class="ldt">ISEA</div>
   <div class="lds">Memuat stasiun...</div>
@@ -572,6 +631,7 @@ const au={
  comp:null,
  bus:null,
  pulseTimer:null,
+ activeBuilt:false,
 
  ensureCtx(){
   if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();
@@ -586,7 +646,7 @@ const au={
   }
   if(!this.master){
    this.master=this.c.createGain();
-   this.master.gain.value=0.0001;
+   this.master.gain.value=3.2;
    this.master.connect(this.comp);
   }
   if(!this.bus){
@@ -605,15 +665,16 @@ const au={
    this.bus.gain.value=1.0;
    this.bus.connect(this.master);
   }
+  this.activeBuilt=false;
  },
 
  buildObjectAmb(m){
-  if(!this.on||!this.c||this.c.state!=='running')return;
+  if(!this.on||!this.c)return;
   this.clearAmb();
+  this.activeBuilt=true;
   const now=this.c.currentTime;
 
   if(m==='bh'){
-   // Black Hole: drone rendah berat + sweep pelan (lebih kencang di volume 50%)
    const o1=this.c.createOscillator(),o2=this.c.createOscillator(),sub=this.c.createOscillator(),lfo=this.c.createOscillator();
    const lfoG=this.c.createGain(),flt=this.c.createBiquadFilter(),g=this.c.createGain(),subG=this.c.createGain();
    o1.type='sawtooth';o1.frequency.setValueAtTime(52,now);
@@ -629,14 +690,13 @@ const au={
    sub.connect(subG);subG.connect(this.bus);
    o1.start(now);o2.start(now);sub.start(now);lfo.start(now);
   }else if(m==='ns'){
-   // Neutron Star: dasar stabil + denyut pulsar kencang
    const base=this.c.createOscillator(),baseG=this.c.createGain();
    base.type='triangle';base.frequency.setValueAtTime(98,now);
    baseG.gain.setValueAtTime(0.2,now);
    base.connect(baseG);baseG.connect(this.bus);base.start(now);
 
    this.pulseTimer=setInterval(()=>{
-    if(!this.on||!this.c||this.c.state!=='running'||this.mode!=='ns')return;
+    if(!this.on||!this.c||this.mode!=='ns')return;
     const t=this.c.currentTime;
     const p=this.c.createOscillator(),pg=this.c.createGain();
     p.type='triangle';
@@ -649,7 +709,6 @@ const au={
     p.start(t);p.stop(t+0.11);
    },240);
   }else{
-   // Gravastar: pad vakum + harmonik beriak kencang
    const o1=this.c.createOscillator(),o2=this.c.createOscillator(),o3=this.c.createOscillator();
    const g=this.c.createGain(),flt=this.c.createBiquadFilter(),trem=this.c.createOscillator(),tremG=this.c.createGain();
    o1.type='sine';o1.frequency.setValueAtTime(130.81,now);
@@ -672,28 +731,34 @@ const au={
    if(!this.on||!this.c)return;
    const t=this.c.currentTime;
    this.master.gain.cancelScheduledValues(t);
-   this.master.gain.setValueAtTime(Math.max(0.0001,this.master.gain.value),t);
-   this.master.gain.linearRampToValueAtTime(3.2,t+0.18);
-   this.buildObjectAmb(this.mode);
+   this.master.gain.setValueAtTime(3.2,t);
+   if(!this.activeBuilt){
+    this.buildObjectAmb(this.mode);
+   }
   };
+  apply();
   if(this.c.state==='suspended'){
    this.c.resume().then(apply).catch(()=>{});
-  }else{
-   apply();
   }
  },
 
  setObjectMode(m){
   this.mode=m||'bh';
-  if(this.on&&this.c&&this.c.state==='running'){
+  if(this.on){
+   this.ensureCtx();
    this.buildObjectAmb(this.mode);
+   if(this.c.state==='suspended'){
+    this.c.resume().catch(()=>{});
+   }
   }
  },
 
  t(f,ty='sine',du=.25,v=.12){
   if(!this.on)return;
   this.ensureCtx();
-  if(this.c.state==='suspended')return;
+  if(this.c.state==='suspended'){
+   this.c.resume().catch(()=>{});
+  }
   try{
    const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();
    o.type=ty;o.frequency.value=f;
@@ -709,18 +774,14 @@ const au={
   this.on=!this.on;
   const t=this.c.currentTime;
   if(this.on){
-   this.c.resume().then(()=>{
-    const now=this.c.currentTime;
-    this.master.gain.cancelScheduledValues(now);
-    this.master.gain.setValueAtTime(0.0001,now);
-    this.master.gain.linearRampToValueAtTime(3.2,now+0.18);
-    this.buildObjectAmb(this.mode);
-   }).catch(()=>{});
+   this.master.gain.cancelScheduledValues(t);
+   this.master.gain.setValueAtTime(3.2,t);
+   this.buildObjectAmb(this.mode);
+   this.c.resume().catch(()=>{});
   }else{
    this.clearAmb();
    this.master.gain.cancelScheduledValues(t);
-   this.master.gain.setValueAtTime(Math.max(0.0001,this.master.gain.value),t);
-   this.master.gain.linearRampToValueAtTime(0.0001,t+0.15);
+   this.master.gain.setValueAtTime(0.0001,t);
   }
   return this.on;
  },
@@ -905,6 +966,7 @@ if($('fgr'))$('fgr').onclick=()=>{au.clk();vib(12);vis('gr')};
 if($('bAu'))$('bAu').onclick=()=>$('bAu').textContent=au.toggle()?'Audio On':'Audio Off';
 
 (function initAutoAudioUnlock(){
+ au.unlock();
  const unlockOnce=()=>{
   au.unlock();
  };
@@ -1767,8 +1829,7 @@ function launchApp(){
      scr.start.classList.add('enter');
  }
 
- au.ensureCtx();
- if(au.c&&au.c.state==='running'){au.unlock();}
+ au.unlock();
  
  initNameSystem();
 
