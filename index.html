@@ -1131,7 +1131,7 @@ label.l{
     
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
       <div id="nameNotice" style="font-size:.72rem;color:var(--mu);font-weight:600;"></div>
-      <button id="bResetOwner" style="display:none;background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;">Reset Nama</button>
+      <button id="bResetOwner" style="display:none!important;background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;" disabled>Reset Nama</button>
     </div>
     
     <label class="l">Topik</label>
@@ -1847,15 +1847,18 @@ function initNameSystem() {
     const bReset = $('bResetOwner');
     if(!nameInput) return;
 
+    if(bReset) {
+        bReset.style.display = 'none';
+        bReset.disabled = true;
+        bReset.onclick = null;
+    }
+
     if(isOwnerDevice()) {
         nameInput.value = 'KovTheGreat';
         nameInput.disabled = true;
         if(bSetName) bSetName.disabled = true;
         if(notice) notice.textContent = '';
-        if(bReset) bReset.style.display = 'none';
     } else {
-        if(bReset) bReset.style.display = 'inline-block';
-        
         let savedName = ls.g('isea_username', '');
         let lastChange = ls.g('isea_name_time', 0);
         let now = Date.now();
@@ -1907,16 +1910,6 @@ function initNameSystem() {
                 if(notice) notice.textContent = 'Terkunci 15 hari.';
             };
         }
-    }
-
-    if(bReset) {
-        bReset.onclick = () => {
-            localStorage.removeItem('isea_username');
-            localStorage.removeItem('isea_name_time');
-            localStorage.removeItem('is_true_owner_token');
-            toast('Nama & cooldown di-reset.');
-            initNameSystem();
-        };
     }
 }
 
