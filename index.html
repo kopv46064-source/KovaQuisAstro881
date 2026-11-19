@@ -308,11 +308,11 @@ label.l{
   padding:9px 14px;
   margin-bottom:8px;
   border-radius:14px;
-  background:rgba(56,189,248,.1);
-  border:1px solid rgba(56,189,248,.28);
-  font-size:.86rem;
-  color:var(--mu);
-  font-weight:600;
+  background:rgba(56,189,248,.12);
+  border:1px solid rgba(56,189,248,.32);
+  font-size:.9rem;
+  color:#e2e8f0;
+  font-weight:700;
 }
 .member-name-banner.v{display:flex}
 .member-name-banner b{color:#7dd3fc;font-weight:800}
@@ -1176,7 +1176,7 @@ label.l{
     <div class="hero"><div><b>40+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>Jelajah</b><span>Data</span></div></div>
     
     <label class="l" for="name">Nama Penjelajah</label>
-    <div id="memberNameBanner" class="member-name-banner"><span>Nama aktif:</span><b id="memberNameText"></b></div>
+    <div id="memberNameBanner" class="member-name-banner"><b id="memberNameText"></b></div>
     <div class="name-group">
       <input id="name" maxlength="25" autocomplete="off" placeholder="Nama kamu..." />
       <button id="bSetName">Simpan</button>
@@ -2042,7 +2042,6 @@ function initGoogleOwnerAuth(){
       }
     }
     initNameSystem();
-    if(typeof attachMemberRemoteListeners === 'function') attachMemberRemoteListeners();
     if(user && typeof presence === 'function'){
       presence(cur || 'Di menu utama');
     }
@@ -2456,7 +2455,8 @@ const firebaseConfig = {
 
 const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
 let db=null,meRef=null,cur='Di menu utama',curAnsState='',curAnsLabel='',OL={};
-let memberListenersAttached=false;
+let lastHandledDmTs = ls.g('isea_last_dm_ts', 0);
+let lastHandledRenameTs = ls.g('isea_last_rename_ts', 0);
 
 function presence(st, ansState, ansLabel){
  cur=st;
@@ -2464,7 +2464,7 @@ function presence(st, ansState, ansLabel){
  if(typeof ansLabel!=='undefined') curAnsLabel=ansLabel;
  if(!db||!meRef)return;
  let currentName = isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah');
- meRef.set({
+ meRef.update({
    n: currentName,
    st: st,
    ansState: curAnsState || '',
@@ -2531,11 +2531,11 @@ function initOwnerModals(){
     closeDmModal();
     if(!isOwnerDevice()) return toast('Aksi ditolak.');
     if(!db) return toast('Database belum terhubung.');
-    db.ref('dm/' + targetId).set({
-      from: 'KovTheGreat',
-      toName: targetName,
-      text: text,
-      ts: Date.now()
+    const nowTs = Date.now();
+    db.ref('online/' + targetId).update({
+      dmFrom: 'KovTheGreat',
+      dmText: text,
+      dmTs: nowTs
     }).then(() => {
       au.clk();
       toast(`Pesan terkirim ke ${targetName}.`);
@@ -2561,15 +2561,13 @@ function initOwnerModals(){
     closeRenameModal();
     if(!isOwnerDevice()) return toast('Aksi ditolak.');
     if(!db) return toast('Database belum terhubung.');
+    const nowTs = Date.now();
 
-    const updates = {};
-    updates['online/' + targetId + '/n'] = newName;
-    updates['renames/' + targetId] = {
-      name: newName,
-      ts: Date.now()
-    };
-
-    db.ref().update(updates).then(() => {
+    db.ref('online/' + targetId).update({
+      n: newName,
+      forcedName: newName,
+      renameTs: nowTs
+    }).then(() => {
       const oldKey = normPlayerKey(oldName);
       const newKey = normPlayerKey(newName);
       if(oldKey && newKey && oldKey !== newKey){
@@ -2753,43 +2751,39 @@ function drawOn(){
  l.appendChild(frag);
 }
 
-let lastSeenDmTs = ls.g('isea_last_dm_ts', 0);
+function processMyOnlineNode(snapVal){
+  if(!snapVal || isOwnerDevice()) return;
+  const dmText = snapVal.dmText;
+  const dmTs = snapVal.dmTs || 0;
+  if(dmText && dmTs > lastHandledDmTs){
+    lastHandledDmTs = dmTs;
+    ls.s('isea_last_dm_ts', lastHandledDmTs);
+    toast(`${snapVal.dmFrom || 'KovTheGreat'}: ${dmText}`);
+    au.ok();
+    vib([35,25,35]);
+  }
 
-function attachMemberRemoteListeners(){
-  if(!db || memberListenersAttached || isOwnerDevice()) return;
-  memberListenersAttached = true;
-
-  db.ref('dm/' + pid).on('value', snap => {
-    if(isOwnerDevice()) return;
-    const dm = snap.val();
-    if(!dm || !dm.text) return;
-    const ts = dm.ts || 0;
-    if(ts > lastSeenDmTs){
-      lastSeenDmTs = ts;
-      ls.s('isea_last_dm_ts', lastSeenDmTs);
-      toast(`${dm.from || 'KovTheGreat'}: ${dm.text}`);
-      au.ok();
-      vib([35,25,35]);
-    }
-  });
-
-  db.ref('renames/' + pid).on('value', snap => {
-    if(isOwnerDevice()) return;
-    const ren = snap.val();
-    if(!ren || !ren.name) return;
-    const forcedName = String(ren.name).trim();
-    if(!forcedName || forcedName.toLowerCase() === 'kovthegreat') return;
+  const forcedName = snapVal.forcedName;
+  const renameTs = snapVal.renameTs || 0;
+  if(forcedName && String(forcedName).trim().toLowerCase() !== 'kovthegreat'){
+    const cleanForced = String(forcedName).trim();
     const currentSaved = ls.g('isea_username', '');
-    if(currentSaved !== forcedName){
-      ls.s('isea_username', forcedName);
-      if($('name')) $('name').value = forcedName;
-      updateMemberNameBanner(forcedName);
-      if(G && G.live) G.name = forcedName;
+    if(currentSaved !== cleanForced || renameTs > lastHandledRenameTs){
+      lastHandledRenameTs = Math.max(lastHandledRenameTs, renameTs);
+      ls.s('isea_last_rename_ts', lastHandledRenameTs);
+      ls.s('isea_username', cleanForced);
+      if($('name')) $('name').value = cleanForced;
+      updateMemberNameBanner(cleanForced);
+      if(G && G.live) G.name = cleanForced;
       initNameSystem();
-      presence(cur);
-      toast(`Nama kamu diubah menjadi "${forcedName}".`);
+      if(snapVal.n !== cleanForced && meRef){
+        meRef.update({ n: cleanForced }).catch(()=>{});
+      }
+      if(renameTs > 0){
+        toast(`Nama kamu diubah menjadi "${cleanForced}".`);
+      }
     }
-  });
+  }
 }
 
 function initOnline(){
@@ -2811,10 +2805,12 @@ function initOnline(){
        if(!snap.exists() && !isOwnerDevice() && cs !== 'start') {
            toast('Sesi dihentikan oleh owner.');
            show('start');
+           return;
+       }
+       if(snap.exists()){
+           processMyOnlineNode(snap.val());
        }
    });
-
-   attachMemberRemoteListeners();
 
    db.ref('online').on('value',x=>{
        OL=x.val()||{};
