@@ -983,6 +983,25 @@ label.l{
 .modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff}
 .modal-btn.danger{background:linear-gradient(135deg,#e11d48,#f97316);color:#fff}
 
+.jail-menu-list{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
+.jail-opt-btn{
+  width:100%;
+  text-align:left;
+  padding:13px 15px;
+  border-radius:16px;
+  border:1px solid rgba(125,211,252,.22);
+  background:rgba(15,23,42,.82);
+  color:#f8fafc;
+  font:700 .88rem/1.35 inherit;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:transform .26s var(--fl),border-color .2s var(--sp),background .2s var(--sp);
+}
+.jail-opt-btn:hover{border-color:#38bdf8;background:rgba(24,36,64,.95);transform:translate3d(2px,0,0)}
+.jail-opt-btn small{color:#94a3b8;font-weight:600;font-size:.75rem}
+
 /* ===== OVERLAY ANIMASI SEDOT BLACK HOLE ===== */
 #bhSuckOverlay{
   position:fixed;
@@ -1445,6 +1464,34 @@ label.l{
 <div id="bhSuckOverlay">
   <canvas id="bhSuckCanvas"></canvas>
   <div class="bh-suck-caption" id="bhSuckCaption">Tersedot ke Black Hole!</div>
+</div>
+
+<div class="modal-overlay" id="jailModal">
+  <div class="modal-box" style="border-color:rgba(255,138,61,.5)">
+    <div class="modal-title">Menu Jailin (Owner)</div>
+    <div class="modal-desc" id="jailModalDesc">Pilih efek jail untuk member terpilih.</div>
+    <div class="jail-menu-list">
+      <button type="button" class="jail-opt-btn" id="jailOptBh">
+        <span>Sedot Black Hole</span>
+        <small>Animasi + Antrean</small>
+      </button>
+      <button type="button" class="jail-opt-btn" id="jailOptFast">
+        <span>Percepat Waktu (2.2x)</span>
+        <small>Timer ngebut</small>
+      </button>
+      <button type="button" class="jail-opt-btn" id="jailOptSlow">
+        <span>Perlambat Waktu (0.45x)</span>
+        <small>Dilatasi waktu</small>
+      </button>
+      <button type="button" class="jail-opt-btn" id="jailOptNorm">
+        <span>Normalisasi Waktu (1.0x)</span>
+        <small>Kecepatan normal</small>
+      </button>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="jailCancel">Tutup</button>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="aiModal">
@@ -1973,7 +2020,12 @@ function drainLocalPrankQueue(){
   if(bhSuckPlaying || document.hidden) return;
   if(!localPrankQueue.length) return;
   const next = localPrankQueue.shift();
-  playBlackHoleHumanSuck(next.text || 'Tersedot ke Black Hole!');
+  if(next.type === 'bh_suck'){
+    playBlackHoleHumanSuck(next.text || 'Tersedot ke Black Hole!');
+  }else if(next.type === 'time_rate'){
+    applyMemberTimeRate(next.rate || 1, next.label || 'Waktu dinormalisasi');
+    drainLocalPrankQueue();
+  }
 }
 
 /* ===== STATE & KUNCI KELUAR KUIS UNTUK MEMBER (OWNER Punya Tombol Keluar) ===== */
@@ -1983,6 +2035,19 @@ const wrap=$('stageWrap');
 let cs='start';
 const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
 const SWIPE_TABS=['quiz','exp','ai','lb'];
+
+let memberTimeRate = 1.0;
+let lastTimerFrame = 0;
+
+function applyMemberTimeRate(rate, caption){
+  if(isOwnerDevice()) return;
+  const nextRate = Math.max(0.2, Math.min(4.0, Number(rate) || 1.0));
+  memberTimeRate = nextRate;
+  ls.s('isea_member_time_rate', memberTimeRate);
+  if(caption){
+    toast(caption);
+  }
+}
 
 function isMemberLockedInQuiz(){
   return Boolean(G && G.live && !isOwnerDevice());
@@ -2187,6 +2252,7 @@ if($('bAu'))$('bAu').onclick=()=>{
  document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&au.loaderDone&&au.on)au.syncAudioState(false);
   if(!document.hidden){
+   lastTimerFrame = performance.now();
    drainLocalPrankQueue();
    if(db && meRef && !isOwnerDevice()){
     meRef.once('value').then(sn => { if(sn.exists()) processMyOnlineNode(sn.val()); }).catch(()=>{});
@@ -2194,12 +2260,14 @@ if($('bAu'))$('bAu').onclick=()=>{
   }
  });
  window.addEventListener('pageshow',()=>{
+  lastTimerFrame = performance.now();
   drainLocalPrankQueue();
   if(db && meRef && !isOwnerDevice()){
    meRef.once('value').then(sn => { if(sn.exists()) processMyOnlineNode(sn.val()); }).catch(()=>{});
   }
  });
  window.addEventListener('focus',()=>{
+  lastTimerFrame = performance.now();
   drainLocalPrankQueue();
  });
 })();
@@ -2494,14 +2562,18 @@ function render(){
   });
   c.appendChild(frag);
  }
- G.left=TIME;G.max=TIME;G.t0=performance.now();
+ G.left=TIME;G.max=TIME;lastTimerFrame=performance.now();
  clearInterval(G.iv);
  G.iv=setInterval(tick,100);
  tick();
 }
 
 function tick(){
- const el=(performance.now()-G.t0)/1000;G.left=Math.max(0,G.max-el);
+ const now=performance.now();
+ const rawDt=Math.max(0,(now-lastTimerFrame)/1000);
+ lastTimerFrame=now;
+ const rate=isOwnerDevice()?1.0:memberTimeRate;
+ G.left=Math.max(0,G.left-rawDt*rate);
  const ratio=G.max>0?G.left/G.max:0;
  if($('tmBar')){$('tmBar').style.transform=`scaleX(${ratio})`;$('tmBar').style.backgroundPosition=(1-ratio)*100+'% 0';}
  if($('tL'))$('tL').textContent=Math.ceil(G.left)+'s';
@@ -2512,7 +2584,7 @@ function tick(){
 function answer(i){
  if(G.ans)return;G.ans=true;clearInterval(G.iv);
  const q=G.qs[G.i],bs=[...document.querySelectorAll('.op')];bs.forEach(b=>b.disabled=true);
- const used=G.max-G.left,right=i>=0&&q.opts[i]===q.o[0],ci=q.opts.indexOf(q.o[0]);
+ const used=Math.max(0,G.max-G.left),right=i>=0&&q.opts[i]===q.o[0],ci=q.opts.indexOf(q.o[0]);
  G.times.push(used);
  
  let mult=1.0;
@@ -2548,7 +2620,7 @@ function answer(i){
 }
 
 if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
-if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik')};
+if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.left+=10;G.max+=10;toast('+10 detik')};
 if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
 /* ===== HASIL & LEADERBOARD ===== */
@@ -2776,7 +2848,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin.')}catch(e){toast('Gagal menyalin.')}
 };
 
-/* ===== ONLINE, OWNER LIVE MONITOR, DM, RENAME, JAILIN (ANTREAN SAAT KELUAR) & KICK ENGINE ===== */
+/* ===== ONLINE, OWNER LIVE MONITOR, DM, RENAME, JAILIN (ANTREAN & WAKTU) & KICK ENGINE ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -2813,6 +2885,7 @@ function presence(st, ansState, ansLabel){
 let pendingKick = null;
 let pendingDm = null;
 let pendingRename = null;
+let pendingJailTarget = null;
 
 function closeKickModal(){
   const m = $('kickModal');
@@ -2834,36 +2907,98 @@ function closeRenameModal(){
   pendingRename = null;
 }
 
-function triggerBlackHolePrank(targetId, targetName){
+function closeJailModal(){
+  const m = $('jailModal');
+  if(m) m.classList.remove('active');
+  pendingJailTarget = null;
+}
+
+function sendJailEffectToTarget(targetId, targetName, actionType){
   if(!isOwnerDevice()) return toast('Aksi ditolak.');
   if(!db) return toast('Database belum terhubung.');
   au.clk();
   const nowTs = Date.now();
-  const text = `${targetName} tersedot ke Black Hole!`;
   const targetRef = db.ref('online/' + targetId);
 
   targetRef.once('value').then(sn => {
     const existing = sn.exists() ? sn.val() : {};
     const prevQueue = Array.isArray(existing.prankQueue) ? existing.prankQueue.slice(-10) : [];
-    prevQueue.push({
-      type: 'bh_suck',
-      text: text,
-      ts: nowTs
-    });
+
+    if(actionType === 'bh_suck'){
+      const text = `${targetName} tersedot ke Black Hole!`;
+      prevQueue.push({ type: 'bh_suck', text, ts: nowTs });
+      return targetRef.update({
+        prankType: 'bh_suck',
+        prankText: text,
+        prankTs: nowTs,
+        prankQueue: prevQueue
+      }).then(() => {
+        toast(`Efek sedot black hole dikirim ke ${targetName}.`);
+      });
+    }
+
+    let rate = 1.0;
+    let label = `Waktu ${targetName} dinormalisasi (1.0x)`;
+    if(actionType === 'time_fast'){
+      rate = 2.2;
+      label = `Waktu ${targetName} dipercepat (2.2x)!`;
+    }else if(actionType === 'time_slow'){
+      rate = 0.45;
+      label = `Waktu ${targetName} diperlambat (0.45x)!`;
+    }
+
+    prevQueue.push({ type: 'time_rate', rate, label, ts: nowTs });
     return targetRef.update({
-      prankType: 'bh_suck',
-      prankText: text,
-      prankTs: nowTs,
+      timeRate: rate,
+      timeRateLabel: label,
+      timeRateTs: nowTs,
       prankQueue: prevQueue
+    }).then(() => {
+      toast(`${label}`);
     });
-  }).then(() => {
-    toast(`Efek sedot black hole dikirim ke ${targetName} (tetap jalan pas dia buka lagi).`);
   }).catch((error) => {
     toast(`Gagal kirim efek: ${error.message}`);
   });
 }
 
+function openJailMenuModal(targetId, targetName){
+  if(!isOwnerDevice()) return toast('Aksi ditolak.');
+  au.clk();
+  pendingJailTarget = { targetId, targetName };
+  if($('jailModalDesc')) $('jailModalDesc').textContent = `Pilih efek jail untuk "${targetName}":`;
+  if($('jailModal')) $('jailModal').classList.add('active');
+}
+
 function initOwnerModals(){
+  const jailCancel = $('jailCancel');
+  const jailOverlay = $('jailModal');
+  if(jailCancel) jailCancel.onclick = () => { au.clk(); closeJailModal(); };
+  if(jailOverlay) jailOverlay.onclick = (e) => { if(e.target === jailOverlay) closeJailModal(); };
+  if($('jailOptBh')) $('jailOptBh').onclick = () => {
+    if(!pendingJailTarget) return;
+    const { targetId, targetName } = pendingJailTarget;
+    closeJailModal();
+    sendJailEffectToTarget(targetId, targetName, 'bh_suck');
+  };
+  if($('jailOptFast')) $('jailOptFast').onclick = () => {
+    if(!pendingJailTarget) return;
+    const { targetId, targetName } = pendingJailTarget;
+    closeJailModal();
+    sendJailEffectToTarget(targetId, targetName, 'time_fast');
+  };
+  if($('jailOptSlow')) $('jailOptSlow').onclick = () => {
+    if(!pendingJailTarget) return;
+    const { targetId, targetName } = pendingJailTarget;
+    closeJailModal();
+    sendJailEffectToTarget(targetId, targetName, 'time_slow');
+  };
+  if($('jailOptNorm')) $('jailOptNorm').onclick = () => {
+    if(!pendingJailTarget) return;
+    const { targetId, targetName } = pendingJailTarget;
+    closeJailModal();
+    sendJailEffectToTarget(targetId, targetName, 'time_normal');
+  };
+
   const cancelBtn = $('kickCancel');
   const confirmBtn = $('kickConfirm');
   const overlay = $('kickModal');
@@ -3070,12 +3205,13 @@ function drawOn(){
 
       const smallEl = li.querySelector('small');
       const baseSt = v.st || 'Di menu utama';
+      const rateInfo = (typeof v.timeRate === 'number' && v.timeRate !== 1) ? ` · Waktu ${v.timeRate}x` : '';
       if(!isTargetOwner && (v.ansState === 'ok' || v.ansState === 'no')){
           const lbl = v.ansLabel || (v.ansState === 'ok' ? 'Benar' : 'Salah');
           const cls = v.ansState === 'ok' ? 'ans-ok' : 'ans-no';
-          smallEl.innerHTML = `${baseSt} · <span class="${cls}">${lbl}</span>`;
+          smallEl.innerHTML = `${baseSt} · <span class="${cls}">${lbl}</span>${rateInfo}`;
       }else{
-          smallEl.textContent = baseSt;
+          smallEl.textContent = baseSt + rateInfo;
       }
 
       if(k !== pid && !isTargetOwner) {
@@ -3095,7 +3231,7 @@ function drawOn(){
           const jailBtn = document.createElement('button');
           jailBtn.className = 'jail-btn';
           jailBtn.textContent = 'Jailin';
-          jailBtn.onclick = () => triggerBlackHolePrank(k, userName);
+          jailBtn.onclick = () => openJailMenuModal(k, userName);
 
           const kickBtn = document.createElement('button');
           kickBtn.className = 'kick-btn';
@@ -3159,12 +3295,21 @@ function processMyOnlineNode(snapVal){
   const incomingItems = [];
   if(Array.isArray(snapVal.prankQueue)){
     snapVal.prankQueue.forEach(item => {
-      if(item && item.type === 'bh_suck' && (item.ts || 0) > lastHandledPrankTs){
-        incomingItems.push({
-          type: 'bh_suck',
-          text: item.text || 'Tersedot ke Black Hole!',
-          ts: item.ts
-        });
+      if(item && (item.ts || 0) > lastHandledPrankTs){
+        if(item.type === 'bh_suck'){
+          incomingItems.push({
+            type: 'bh_suck',
+            text: item.text || 'Tersedot ke Black Hole!',
+            ts: item.ts
+          });
+        }else if(item.type === 'time_rate'){
+          incomingItems.push({
+            type: 'time_rate',
+            rate: item.rate || 1.0,
+            label: item.label || 'Kecepatan waktu diperbarui.',
+            ts: item.ts
+          });
+        }
       }
     });
   }
@@ -3176,6 +3321,16 @@ function processMyOnlineNode(snapVal){
       type: 'bh_suck',
       text: snapVal.prankText || 'Tersedot ke Black Hole!',
       ts: prankTs
+    });
+  }
+
+  const timeRateTs = snapVal.timeRateTs || 0;
+  if(typeof snapVal.timeRate === 'number' && timeRateTs > lastHandledPrankTs && !incomingItems.some(x => x.ts === timeRateTs)){
+    incomingItems.push({
+      type: 'time_rate',
+      rate: snapVal.timeRate,
+      label: snapVal.timeRateLabel || `Kecepatan waktu: ${snapVal.timeRate}x`,
+      ts: timeRateTs
     });
   }
 
@@ -3509,6 +3664,7 @@ function launchApp(){
  initNameSystem();
 
  if(!isOwnerDevice()) {
+     memberTimeRate = Number(ls.g('isea_member_time_rate', 1.0)) || 1.0;
      const savedQuiz = ls.g('isea_active_quiz', null);
      if(savedQuiz && savedQuiz.live && savedQuiz.i < savedQuiz.qs.length) {
          G = savedQuiz;
