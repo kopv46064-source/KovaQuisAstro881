@@ -301,6 +301,22 @@ label.l{
   margin:20px 0 9px;
 }
 
+.member-name-banner{
+  display:none;
+  align-items:center;
+  gap:8px;
+  padding:9px 14px;
+  margin-bottom:8px;
+  border-radius:14px;
+  background:rgba(56,189,248,.1);
+  border:1px solid rgba(56,189,248,.28);
+  font-size:.86rem;
+  color:var(--mu);
+  font-weight:600;
+}
+.member-name-banner.v{display:flex}
+.member-name-banner b{color:#7dd3fc;font-weight:800}
+
 /* ===== INPUT & SEGMENTED CONTROLS ===== */
 #name{
   width:100%;
@@ -1160,6 +1176,7 @@ label.l{
     <div class="hero"><div><b>40+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>Jelajah</b><span>Data</span></div></div>
     
     <label class="l" for="name">Nama Penjelajah</label>
+    <div id="memberNameBanner" class="member-name-banner"><span>Nama aktif:</span><b id="memberNameText"></b></div>
     <div class="name-group">
       <input id="name" maxlength="25" autocomplete="off" placeholder="Nama kamu..." />
       <button id="bSetName">Simpan</button>
@@ -1895,6 +1912,19 @@ function isOwnerDevice() {
     return isGoogleOwnerVerified() || ls.g('is_true_owner_token', '') === OWNER_SECRET_TOKEN;
 }
 
+function updateMemberNameBanner(displayName){
+  const banner = $('memberNameBanner');
+  const txt = $('memberNameText');
+  if(!banner || !txt) return;
+  if(!isOwnerDevice() && displayName && String(displayName).trim() && String(displayName).trim().toLowerCase() !== 'kovthegreat'){
+    txt.textContent = String(displayName).trim();
+    banner.classList.add('v');
+  }else{
+    txt.textContent = '';
+    banner.classList.remove('v');
+  }
+}
+
 function initNameSystem() {
     const gBtn = $('bGAuth');
     if(isOwnerDevice() && gBtn){
@@ -1918,6 +1948,7 @@ function initNameSystem() {
         nameInput.disabled = true;
         if(bSetName) bSetName.disabled = true;
         if(notice) notice.textContent = '';
+        updateMemberNameBanner('');
     } else {
         let savedName = ls.g('isea_username', '');
         let lastChange = ls.g('isea_name_time', 0);
@@ -1926,6 +1957,7 @@ function initNameSystem() {
 
         if(savedName && savedName.toLowerCase() !== 'kovthegreat') {
             nameInput.value = savedName;
+            updateMemberNameBanner(savedName);
             if(cooldownLeft > 0) {
                 nameInput.disabled = true;
                 if(bSetName) bSetName.disabled = true;
@@ -1938,6 +1970,7 @@ function initNameSystem() {
             }
         } else {
             nameInput.value = '';
+            updateMemberNameBanner('');
             nameInput.disabled = false;
             if(bSetName) bSetName.disabled = false;
             if(notice) notice.textContent = '';
@@ -1964,10 +1997,12 @@ function initNameSystem() {
 
                 ls.s('isea_username', val);
                 ls.s('isea_name_time', Date.now());
+                updateMemberNameBanner(val);
                 nameInput.disabled = true;
                 bSetName.disabled = true;
                 toast('Nama tersimpan (cooldown 15 hari).');
                 if(notice) notice.textContent = 'Terkunci 15 hari.';
+                presence(cur);
             };
         }
     }
@@ -2007,6 +2042,7 @@ function initGoogleOwnerAuth(){
       }
     }
     initNameSystem();
+    if(typeof attachMemberRemoteListeners === 'function') attachMemberRemoteListeners();
     if(user && typeof presence === 'function'){
       presence(cur || 'Di menu utama');
     }
@@ -2067,6 +2103,7 @@ function start(){
          return;
      }
      ls.s('isea_username', name);
+     updateMemberNameBanner(name);
  }
 
  au.clk();
@@ -2419,6 +2456,7 @@ const firebaseConfig = {
 
 const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
 let db=null,meRef=null,cur='Di menu utama',curAnsState='',curAnsLabel='',OL={};
+let memberListenersAttached=false;
 
 function presence(st, ansState, ansLabel){
  cur=st;
@@ -2717,6 +2755,43 @@ function drawOn(){
 
 let lastSeenDmTs = ls.g('isea_last_dm_ts', 0);
 
+function attachMemberRemoteListeners(){
+  if(!db || memberListenersAttached || isOwnerDevice()) return;
+  memberListenersAttached = true;
+
+  db.ref('dm/' + pid).on('value', snap => {
+    if(isOwnerDevice()) return;
+    const dm = snap.val();
+    if(!dm || !dm.text) return;
+    const ts = dm.ts || 0;
+    if(ts > lastSeenDmTs){
+      lastSeenDmTs = ts;
+      ls.s('isea_last_dm_ts', lastSeenDmTs);
+      toast(`${dm.from || 'KovTheGreat'}: ${dm.text}`);
+      au.ok();
+      vib([35,25,35]);
+    }
+  });
+
+  db.ref('renames/' + pid).on('value', snap => {
+    if(isOwnerDevice()) return;
+    const ren = snap.val();
+    if(!ren || !ren.name) return;
+    const forcedName = String(ren.name).trim();
+    if(!forcedName || forcedName.toLowerCase() === 'kovthegreat') return;
+    const currentSaved = ls.g('isea_username', '');
+    if(currentSaved !== forcedName){
+      ls.s('isea_username', forcedName);
+      if($('name')) $('name').value = forcedName;
+      updateMemberNameBanner(forcedName);
+      if(G && G.live) G.name = forcedName;
+      initNameSystem();
+      presence(cur);
+      toast(`Nama kamu diubah menjadi "${forcedName}".`);
+    }
+  });
+}
+
 function initOnline(){
  try{
   if(typeof firebase!=='undefined'){
@@ -2739,36 +2814,7 @@ function initOnline(){
        }
    });
 
-   if(!isOwnerDevice()){
-     db.ref('dm/' + pid).on('value', snap => {
-       const dm = snap.val();
-       if(!dm || !dm.text) return;
-       const ts = dm.ts || Date.now();
-       if(ts > lastSeenDmTs){
-         lastSeenDmTs = ts;
-         ls.s('isea_last_dm_ts', lastSeenDmTs);
-         toast(`${dm.from || 'KovTheGreat'}: ${dm.text}`);
-         au.ok();
-         vib([35,25,35]);
-       }
-     });
-
-     db.ref('renames/' + pid).on('value', snap => {
-       const ren = snap.val();
-       if(!ren || !ren.name) return;
-       const forcedName = String(ren.name).trim();
-       if(!forcedName || forcedName.toLowerCase() === 'kovthegreat') return;
-       const currentSaved = ls.g('isea_username', '');
-       if(currentSaved !== forcedName){
-         ls.s('isea_username', forcedName);
-         if($('name')) $('name').value = forcedName;
-         if(G && G.live) G.name = forcedName;
-         initNameSystem();
-         presence(cur);
-         toast(`Nama kamu diubah menjadi "${forcedName}".`);
-       }
-     });
-   }
+   attachMemberRemoteListeners();
 
    db.ref('online').on('value',x=>{
        OL=x.val()||{};
