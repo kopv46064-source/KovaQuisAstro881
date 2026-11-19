@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#030408" />
-<title>ISEA Kuis Kosmos — by KovTheGreat (Mega Secure Edition)</title>
+<title>ISEA Kuis Kosmos — by KovTheGreat</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
 :root{--bg:#030408;--glass:rgba(10,14,28,.84);--bd:rgba(125,211,252,.16);--bh:#ff8a3d;--ns:#38bdf8;--tx:#f8fafc;--mu:#94a3b8;--ok:#10b981;--no:#f43f5e;--sp:cubic-bezier(.16,1,.3,1);--sm:cubic-bezier(.22,1,.36,1)}
@@ -44,8 +44,8 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 #bSetName{padding:16px 20px;border-radius:18px;border:0;background:linear-gradient(135deg,#38bdf8,#a855f7);color:#fff;font:700 .95rem 'Space Grotesk',sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 8px 22px rgba(168,85,247,.28);transition:transform .28s var(--sp),filter .2s}
 #bSetName:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}
 #bSetName:disabled{opacity:.4;filter:grayscale(.5);cursor:not-allowed}
-.seg{display:flex;gap:8px}
-.seg button{flex:1;padding:12px 8px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.6);color:var(--mu);font:700 .86rem inherit;font-family:inherit;cursor:pointer;transition:all .3s var(--sp)}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{flex:1;min-width:84px;padding:12px 8px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.6);color:var(--mu);font:700 .86rem inherit;font-family:inherit;cursor:pointer;transition:all .3s var(--sp)}
 .seg button:hover{border-color:rgba(125,211,252,.4);color:#fff;transform:translateY(-1px)}
 .seg button.on{color:#fff;border-color:#a855f7;background:linear-gradient(135deg,rgba(168,85,247,.3),rgba(56,189,248,.18));box-shadow:0 0 22px rgba(168,85,247,.28);transform:translateY(-2px)}
 .fact{margin:20px 0;padding:15px 18px;border-radius:18px;background:rgba(15,23,42,.62);border:1px dashed rgba(125,211,252,.35);font-size:.86rem;line-height:1.55;color:#cbd5e1;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
@@ -142,7 +142,7 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .toast.v{opacity:1;transform:translate(-50%,0)}
 html{scroll-behavior:smooth}
 
-/* ===== ANIMASI LOADING KOSMIK PREMIUM YANG AMAN & ANTI-STUCK ===== */
+/* ===== LOADER ===== */
 #ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .6s var(--sm),visibility .6s}
 #ld.out{opacity:0;visibility:hidden;pointer-events:none}
 .loader-container{position:relative;display:flex;align-items:center;justify-content:center;width:140px;height:140px}
@@ -157,7 +157,6 @@ html{scroll-behavior:smooth}
 .lds{font-size:.74rem;letter-spacing:.25em;color:var(--mu);font-weight:700;text-transform:uppercase;animation:pulseSub 1.5s ease-in-out infinite alternate}
 @keyframes pulseSub{from{opacity:.5}to{opacity:1}}
 
-/* ===== ANIMASI HI ===== */
 .hi{display:flex;align-items:center;gap:8px;font:800 3.4rem/1 'Space Grotesk',sans-serif}
 .hi-l{display:inline-block;opacity:0;background:linear-gradient(90deg,#38bdf8,#a855f7,#ff8a3d,#38bdf8);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 14px rgba(168,85,247,.55));animation:hiPop .9s var(--sp) forwards,hiShine 3s linear infinite}
 .hi-l:nth-child(2){animation-delay:.2s,0s}
@@ -219,6 +218,7 @@ html{scroll-behavior:smooth}
 .mini-presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .mini-presets button{padding:6px 11px;border-radius:999px;border:1px solid rgba(125,211,252,.24);background:rgba(15,23,42,.8);color:#cbd5e1;font:700 .74rem inherit;cursor:pointer;transition:all .22s var(--sp)}
 .mini-presets button:hover{border-color:#38bdf8;color:#fff;background:rgba(56,189,248,.16);transform:translateY(-1px)}
+.swipe-hint{font-size:.72rem;color:var(--mu);margin-top:4px;font-weight:600}
 @media(min-width:760px){.shell{max-width:920px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
 @media(max-width:520px){.card{padding:24px 18px;border-radius:24px}.hm{display:none}}
 </style>
@@ -231,7 +231,7 @@ html{scroll-behavior:smooth}
   <div class="loader-container"><div class="orb"></div></div>
   <div class="hi"><span class="hi-l">H</span><span class="hi-l">i</span><span class="hi-w">👋</span></div>
   <div class="ldt">ISEA</div>
-  <div class="lds">MENGHUBUNGKAN KE STASIUN KOSMOS...</div>
+  <div class="lds">Memuat stasiun...</div>
   <div class="ldbar"><i></i></div>
 </div>
 <script>setTimeout(function(){var l=document.getElementById('ld');if(l)l.classList.add('out')},4500)</script>
@@ -239,14 +239,14 @@ html{scroll-behavior:smooth}
 <canvas id="cv"></canvas>
 <header class="top">
   <div class="grp">
-    <button id="fbh" class="gb a-bh">🕳️ <span class="hm">Black Hole</span></button>
-    <button id="fns" class="gb">💫 <span class="hm">Neutron Star</span></button>
+    <button id="fbh" class="gb a-bh">Black Hole</button>
+    <button id="fns" class="gb">Neutron Star</button>
   </div>
   <div class="grp">
-    <button id="bGAuth" class="gb" type="button" title="Login Google Owner">🔑</button>
-    <button id="bOn" class="gb hidden">🟢 0</button>
-    <button id="bLb" class="gb">🏆</button>
-    <button id="bAu" class="gb">🔇</button>
+    <button id="bGAuth" class="gb" type="button" title="Login Google Owner">Login</button>
+    <button id="bOn" class="gb hidden">Online 0</button>
+    <button id="bLb" class="gb">Rank</button>
+    <button id="bAu" class="gb">Audio Off</button>
   </div>
 </header>
 
@@ -254,45 +254,46 @@ html{scroll-behavior:smooth}
   <div class="org"><div class="acr">ISEA</div><div class="full">International Space Education Association</div><div class="by">by <span class="cn">KovTheGreat</span></div></div>
 
   <section id="sStart" class="card enter">
-    <div class="badge">✨ Simulasi Kosmik Interaktif Mega Secure Edition</div>
+    <div class="badge">ISEA Kuis Kosmos</div>
     <h1>Misteri Astronomi & Kosmos</h1>
-    <p class="sub">Uji wawasan astrofisikamu bersama <b>ISEA</b>: Puluhan soal astronomi, timer, bantuan, tingkat kesulitan berlipat ganda, kalkulator gravitasi, ensiklopedia tata surya, dan papan peringkat global.</p>
-    <div class="hero"><div><b>40+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>🔭</b><span>Jelajah</span></div></div>
+    <p class="sub">Kuis astronomi, timer, bantuan, multiplier level, kalkulator gravitasi, data tata surya, dan papan peringkat.</p>
+    <div class="hero"><div><b>40+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>Jelajah</b><span>Data</span></div></div>
     
     <label class="l" for="name">Nama Penjelajah</label>
     <div class="name-group">
-      <input id="name" maxlength="25" autocomplete="off" placeholder="Tulis namamu..." />
-      <button id="bSetName">OKE</button>
+      <input id="name" maxlength="25" autocomplete="off" placeholder="Nama kamu..." />
+      <button id="bSetName">Simpan</button>
     </div>
     
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
       <div id="nameNotice" style="font-size:.72rem;color:var(--mu);font-weight:600;"></div>
-      <button id="bResetOwner" style="display:none;background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;">Reset Nama / Cooldown 🔄</button>
+      <button id="bResetOwner" style="display:none;background:none;border:0;color:#f43f5e;font-size:.7rem;font-weight:700;cursor:pointer;padding:2px 6px;">Reset Nama</button>
     </div>
     
-    <label class="l">Topik Kajian</label>
-    <div class="seg" id="segM"><button data-v="all" class="on">🌌 Semua Topik</button><button data-v="bh">🕳️ Black Hole</button><button data-v="ns">💫 Bintang Neutron</button></div>
+    <label class="l">Topik</label>
+    <div class="seg" id="segM"><button data-v="all" class="on">Semua</button><button data-v="bh">Black Hole</button><button data-v="ns">Neutron Star</button></div>
     
-    <label class="l">Tingkat Kesulitan (Multiplier Poin)</label>
-    <div class="seg" id="segD"><button data-v="easy">🟢 Easy (x1)</button><button data-v="normal" class="on">🟡 Normal (x1.5)</button><button data-v="hard">🔥 Hard (x2.5)</button></div>
+    <label class="l">Kesulitan</label>
+    <div class="seg" id="segD"><button data-v="easy">Easy (x1)</button><button data-v="normal" class="on">Normal (x1.5)</button><button data-v="hard">Hard (x2.5)</button></div>
 
     <label class="l">Jumlah Soal</label>
     <div class="seg" id="segN"><button data-v="10" class="on">10</button><button data-v="20">20</button><button data-v="30">30</button></div>
     
     <div class="fact" id="fact"></div>
-    <button id="bGo" class="pb">Mulai Ekspedisi 🚀</button>
-    <button id="bLb2" class="sb">🏆 Papan Peringkat</button>
+    <button id="bGo" class="pb">Mulai Kuis</button>
+    <button id="bLb2" class="sb">Papan Peringkat</button>
+    <div class="swipe-hint">Geser kiri/kanan di layar buat pindah tab.</div>
   </section>
 
   <section id="sQuiz" class="card hidden">
-    <div class="qh"><span id="qTag" class="tag bh">Black Hole</span><div class="st"><span id="qSc">⭐ 0</span><span id="qSt">🔥 0</span><span id="qCt">1/10</span></div></div>
+    <div class="qh"><span id="qTag" class="tag bh">Black Hole</span><div class="st"><span id="qSc">0 pts</span><span id="qSt">x0</span><span id="qCt">1/10</span></div></div>
     <div class="tm"><i id="tmBar"></i></div>
     <div class="pg"><i id="pgBar"></i></div>
-    <div class="ll"><button id="l50">✂️ 50:50</button><button id="lT">⏱️ +10 detik</button><span id="tL" class="st" style="margin-left:auto;font-size:.95rem">20s</span></div>
+    <div class="ll"><button id="l50">50:50</button><button id="lT">+10 detik</button><span id="tL" class="st" style="margin-left:auto;font-size:.95rem">20s</span></div>
     <h2 id="qTx" class="qt"></h2>
     <div id="ops" class="ops"></div>
-    <div id="ex" class="ex"><b id="exT"></b><span id="exX"></span><button id="exAI" class="sb" style="margin-top:14px">🤖 Tanya Kosmo AI soal ini</button></div>
-    <button id="nx" class="pb">Lanjut →</button>
+    <div id="ex" class="ex"><b id="exT"></b><span id="exX"></span><button id="exAI" class="sb" style="margin-top:14px">Tanya Kosmo soal ini</button></div>
+    <button id="nx" class="pb">Lanjut</button>
   </section>
 
   <section id="sRes" class="card hidden">
@@ -300,56 +301,67 @@ html{scroll-behavior:smooth}
     <h2 class="rt" id="rT"></h2>
     <p class="rd" id="rD"></p>
     <div class="sum"><div><b id="rC">0</b><span>Benar</span></div><div><b id="rP">0</b><span>Skor</span></div><div><b id="rS">0</b><span>Streak</span></div><div><b id="rTm">0s</b><span>Rata-rata</span></div></div>
-    <label class="l" id="rvL">Perlu Dipelajari</label>
+    <label class="l" id="rvL">Salah / Perlu Diulang</label>
     <div class="rv" id="rv"></div>
-    <button id="bSh" class="sb">📤 Bagikan Skor</button>
-    <button id="bAg" class="pb" style="margin-top:10px">Ulangi Ekspedisi 🔄</button>
-    <button id="bHm" class="sb">🏠 Menu Utama</button>
+    <button id="bSh" class="sb">Bagikan Skor</button>
+    <button id="bAg" class="pb" style="margin-top:10px">Main Lagi</button>
+    <button id="bHm" class="sb">Menu Utama</button>
   </section>
 
   <section id="sLb" class="card hidden">
-    <h1 style="font-size:1.7rem">🏆 Papan Peringkat</h1>
-    <div class="seg" id="segL" style="margin-top:6px"><button data-v="best" class="on">🏅 Terbaik</button><button data-v="new">🕒 Terbaru</button><button data-v="all">🌍 Global</button></div>
+    <h1 style="font-size:1.7rem">Papan Peringkat</h1>
+    <div class="seg" id="segL" style="margin-top:6px"><button data-v="best" class="on">Terbaik</button><button data-v="new">Terbaru</button><button data-v="all">Global</button></div>
     <ul class="lb" id="lbL"></ul>
-    <button id="bRk" class="sb" style="margin:0 0 10px">📋 Salin Rekap (kirim ke WA)</button>
-    <button id="bBack" class="pb">← Kembali</button>
+    <button id="bRk" class="sb" style="margin:0 0 10px">Salin Rekap</button>
+    <button id="bBack" class="pb">Kembali</button>
   </section>
   
   <section id="sOn" class="card hidden">
-    <h1 style="font-size:1.7rem" id="onTitle">🟢 Lagi Online</h1>
+    <h1 style="font-size:1.7rem" id="onTitle">Lagi Online</h1>
     <p class="sub" id="onC" style="margin:6px 0 0"></p>
     <ul class="lb" id="onL"></ul>
-    <button id="bOnBack" class="pb">← Kembali</button>
+    <button id="bOnBack" class="pb">Kembali</button>
   </section>
 
   <section id="sExp" class="card hidden">
-    <h1 style="font-size:1.7rem">🔭 Jelajah Kosmos & Tata Surya</h1>
-    <p class="sub" style="margin:6px 0 0">Eksplorasi objek ekstrem, ensiklopedia planet tata surya, kalkulator astrofisika, dan teleskop luar angkasa.</p>
-    
-    <label class="l">Sistem Tata Surya & Planet</label>
-    <div class="chips" id="planetChips" style="margin-bottom:16px">
-      <button class="on" data-p="mercury">Mercury</button>
-      <button data-p="venus">Venus</button>
-      <button data-p="earth">Earth</button>
-      <button data-p="mars">Mars</button>
-      <button data-p="jupiter">Jupiter</button>
-      <button data-p="saturn">Saturn</button>
-      <button data-p="uranus">Uranus</button>
-      <button data-p="neptune">Neptune</button>
-    </div>
-    <div id="planetInfo" class="tool-card" style="margin-bottom:20px;border-color:rgba(56,189,248,.4)">
-      <h3 id="planetTitle">🌍 Bumi (Earth)</h3>
-      <p id="planetDesc">Satu-satunya planet di tata surya yang diketahui memiliki kehidupan. Memiliki atmosfer kaya oksigen dan air cair di permukaannya.</p>
-      <div id="planetStats" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+    <h1 style="font-size:1.7rem">Jelajah Kosmos & Tata Surya</h1>
+    <p class="sub" style="margin:6px 0 14px">Data planet, objek ekstrem, dan kalkulator hitungan astrofisika.</p>
+
+    <div class="seg" id="expModeSeg" style="margin-bottom:18px">
+      <button data-em="all" class="on">Semua</button>
+      <button data-em="planets">Tata Surya</button>
+      <button data-em="objects">Objek Ekstrem</button>
+      <button data-em="tools">Kalkulator & Log</button>
     </div>
 
-    <label class="l">Objek Ekstrem & Astrofisika</label>
-    <div class="exg" id="exg"></div>
+    <div id="expPlanetsBlock">
+      <label class="l">Planet Tata Surya</label>
+      <div class="chips" id="planetChips" style="margin-bottom:16px">
+        <button class="on" data-p="mercury">Mercury</button>
+        <button data-p="venus">Venus</button>
+        <button data-p="earth">Earth</button>
+        <button data-p="mars">Mars</button>
+        <button data-p="jupiter">Jupiter</button>
+        <button data-p="saturn">Saturn</button>
+        <button data-p="uranus">Uranus</button>
+        <button data-p="neptune">Neptune</button>
+      </div>
+      <div id="planetInfo" class="tool-card" style="margin-bottom:20px;border-color:rgba(56,189,248,.4)">
+        <h3 id="planetTitle">Earth</h3>
+        <p id="planetDesc">Memiliki air cair di permukaan dan atmosfer yang mendukung kehidupan.</p>
+        <div id="planetStats" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+      </div>
+    </div>
 
-    <div class="extra-box" style="display:grid;gap:14px;margin-top:20px">
+    <div id="expObjectsBlock">
+      <label class="l">Objek Ekstrem</label>
+      <div class="exg" id="exg"></div>
+    </div>
+
+    <div class="extra-box" id="expToolsBlock" style="display:grid;gap:14px;margin-top:20px">
       <div class="tool-card">
-        <h3>⚡ Kalkulator Dilatasi Waktu Gravitasi</h3>
-        <p>Simulasikan seberapa lambat waktu berjalan di dekat cakrawala peristiwa lubang hitam berdasarkan massa.</p>
+        <h3>Dilatasi Waktu Gravitasi</h3>
+        <p>Hitung perlambatan waktu di dekat horizon lubang hitam berdasarkan massa.</p>
         <div style="display:flex;gap:10px">
           <input id="calcMass" class="modal-input" type="number" placeholder="Massa (M☉)" value="10" style="margin:0"/>
           <button id="calcBtn" class="pb" style="width:140px;padding:0">Hitung</button>
@@ -358,30 +370,30 @@ html{scroll-behavior:smooth}
       </div>
 
       <div class="tool-card">
-        <h3>🌌 Kalkulator Radius Schwarzschild & Kecepatan Lepas</h3>
-        <p>Hitung jari-jari cakrawala peristiwa ($R_s$) dan kecepatan lepas pada jarak tertentu dari pusat massa.</p>
+        <h3>Radius Schwarzschild & Kecepatan Lepas</h3>
+        <p>Hitung jari-jari cakrawala peristiwa (Rs) dan kecepatan lepas pada jarak tertentu.</p>
         <div class="mini-presets" id="massPresets">
-          <button type="button" data-m="1">☀️ Matahari (1 M☉)</button>
-          <button type="button" data-m="10">🕳️ BH Bintang (10 M☉)</button>
-          <button type="button" data-m="4000000">🌀 Sgr A* (4jt M☉)</button>
+          <button type="button" data-m="1">Matahari (1 M☉)</button>
+          <button type="button" data-m="10">BH Bintang (10 M☉)</button>
+          <button type="button" data-m="4000000">Sgr A* (4jt M☉)</button>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <input id="schMass" class="modal-input" type="number" step="any" placeholder="Massa (M☉)" value="10" style="margin:0;flex:1;min-width:140px"/>
-          <input id="escDistKm" class="modal-input" type="number" step="any" placeholder="Jarak (km, opsional)" style="margin:0;flex:1;min-width:140px"/>
-          <button id="schBtn" class="pb" style="width:140px;padding:12px 16px">Kalkulasi</button>
+          <input id="escDistKm" class="modal-input" type="number" step="any" placeholder="Jarak km (opsional)" style="margin:0;flex:1;min-width:140px"/>
+          <button id="schBtn" class="pb" style="width:140px;padding:12px 16px">Hitung</button>
         </div>
         <div id="schRes" style="margin-top:10px;font-size:.85rem;color:#fdba74;font-weight:700;line-height:1.55"></div>
       </div>
 
       <div class="tool-card">
-        <h3>🚀 Simulator Waktu Tempuh Cahaya Antarbintang</h3>
-        <p>Ukur berapa lama sinyal atau cahaya menempuh jarak dari Bumi ke berbagai target kosmik.</p>
+        <h3>Waktu Tempuh Cahaya</h3>
+        <p>Estimasi waktu tempuh cahaya berdasarkan jarak dalam tahun cahaya.</p>
         <div class="mini-presets" id="lightPresets">
-          <button type="button" data-ly="0.00000128" data-label="Bulan">🌕 Bulan</button>
-          <button type="button" data-ly="0.0000158" data-label="Matahari">☀️ Matahari</button>
-          <button type="button" data-ly="4.24" data-label="Proxima Centauri">⭐ Proxima (4,24 th)</button>
-          <button type="button" data-ly="26000" data-label="Pusat Bima Sakti">🌀 Sgr A* (26k th)</button>
-          <button type="button" data-ly="2537000" data-label="Galaksi Andromeda">🌌 Andromeda (2,53jt th)</button>
+          <button type="button" data-ly="0.00000128" data-label="Bulan">Bulan</button>
+          <button type="button" data-ly="0.0000158" data-label="Matahari">Matahari</button>
+          <button type="button" data-ly="4.24" data-label="Proxima Centauri">Proxima (4,24 th)</button>
+          <button type="button" data-ly="26000" data-label="Pusat Bima Sakti">Sgr A* (26k th)</button>
+          <button type="button" data-ly="2537000" data-label="Galaksi Andromeda">Andromeda (2,53jt th)</button>
         </div>
         <div style="display:flex;gap:10px">
           <input id="lightLy" class="modal-input" type="number" step="any" placeholder="Jarak (Tahun Cahaya)" value="4.24" style="margin:0"/>
@@ -391,47 +403,47 @@ html{scroll-behavior:smooth}
       </div>
 
       <div class="tool-card">
-        <h3>📜 Log Aktivitas Stasiun ISEA</h3>
-        <p>Catatan real-time misi penjelajahan yang terhubung langsung dengan satelit pusat.</p>
+        <h3>Log Aktivitas</h3>
+        <p>Catatan aktivitas sesi di web.</p>
         <div id="activityLog" style="font-size:.82rem;color:var(--mu);background:rgba(3,4,8,.5);padding:10px;border-radius:12px;max-height:110px;overflow-y:auto"></div>
       </div>
     </div>
   </section>
 
   <section id="sAI" class="card hidden">
-    <div class="aih"><h1 style="font-size:1.7rem">🤖 Kosmo AI</h1><button id="aiK" class="gb">⚙️ Kunci AI</button></div>
-    <p class="sub" style="margin:6px 0 0">Tanya apa saja soal lubang hitam, bintang neutron, planet, dan kosmos.</p>
+    <div class="aih"><h1 style="font-size:1.7rem">Kosmo AI</h1><button id="aiK" class="gb">API Key</button></div>
+    <p class="sub" style="margin:6px 0 0">Tanya soal lubang hitam, bintang neutron, planet, dan astronomi.</p>
     <div class="chat" id="chat"></div>
     <div class="chips" id="chips"></div>
-    <div class="ci"><input id="aiIn" maxlength="300" placeholder="Tanya Kosmo..." autocomplete="off"><button id="aiGo" class="pb">➤</button></div>
+    <div class="ci"><input id="aiIn" maxlength="300" placeholder="Ketik pertanyaan..." autocomplete="off"><button id="aiGo" class="pb">Kirim</button></div>
   </section>
 </main>
 <nav id="nav">
-  <button data-t="quiz" class="on">🎯<span>Kuis</span></button>
-  <button data-t="exp">🔭<span>Jelajah</span></button>
-  <button data-t="ai">🤖<span>AI</span></button>
-  <button data-t="lb">🏆<span>Peringkat</span></button>
+  <button data-t="quiz" class="on">Kuis</button>
+  <button data-t="exp">Jelajah</button>
+  <button data-t="ai">AI</button>
+  <button data-t="lb">Rank</button>
 </nav>
 
 <div class="modal-overlay" id="aiModal">
   <div class="modal-box">
-    <div class="modal-title">⚙️ Konfigurasi Kunci AI</div>
-    <div class="modal-desc">Masukkan API Key Anthropic kamu untuk mengaktifkan kecerdasan penuh Kosmo AI. Data disimpan aman secara lokal di perangkat ini.</div>
+    <div class="modal-title">Pengaturan API Key</div>
+    <div class="modal-desc">Masukkan API Key Anthropic untuk mode online. Tersimpan di browser lokal.</div>
     <input type="password" id="modalKeyInput" class="modal-input" placeholder="sk-ant-..." autocomplete="off" />
     <div class="modal-actions">
       <button class="modal-btn cancel" id="modalCancel">Batal</button>
-      <button class="modal-btn submit" id="modalSave">Simpan Kunci</button>
+      <button class="modal-btn submit" id="modalSave">Simpan</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="kickModal">
   <div class="modal-box" style="border-color:rgba(244,63,94,.45)">
-    <div class="modal-title" style="background:linear-gradient(135deg,#fff,#fda4af);-webkit-background-clip:text;-webkit-text-fill-color:transparent">👢 Konfirmasi Kick Member</div>
-    <div class="modal-desc" id="kickModalDesc">Yakin ingin mengeluarkan member ini dari stasiun ISEA?</div>
+    <div class="modal-title" style="background:linear-gradient(135deg,#fff,#fda4af);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Konfirmasi Kick</div>
+    <div class="modal-desc" id="kickModalDesc">Yakin ingin mengeluarkan member ini?</div>
     <div class="modal-actions">
       <button class="modal-btn cancel" id="kickCancel">Batal</button>
-      <button class="modal-btn danger" id="kickConfirm">Kick Sekarang</button>
+      <button class="modal-btn danger" id="kickConfirm">Kick</button>
     </div>
   </div>
 </div>
@@ -440,7 +452,7 @@ html{scroll-behavior:smooth}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BANK SOAL MEGA EDITION (40+ Soal) ===== */
+/* ===== BANK SOAL ===== */
 const Q=(m,q,o,e)=>({m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
@@ -529,6 +541,14 @@ let G={}, cfg={mode:'all',diff:'normal',n:10};
 const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
 let cs='start';
 const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
+const SWIPE_TABS=['quiz','exp','ai','lb'];
+
+function openTab(t){
+ if(t==='quiz')show(G.live?'quiz':'start');
+ else if(t==='lb')board();
+ else show(t);
+}
+
 function show(k){
  const c=scr[cs],n=scr[k];if(!n)return;cs=k;
  if($('nav'))$('nav').classList.toggle('off',k==='quiz');
@@ -536,10 +556,40 @@ function show(k){
  const go=()=>{Object.values(scr).forEach(e=>{if(e){e.classList.add('hidden');e.classList.remove('enter','leave')}});n.classList.remove('hidden');void n.offsetWidth;n.classList.add('enter');window.scrollTo({top:0,behavior:'smooth'})};
  if(c&&c!==n&&!c.classList.contains('hidden')){c.classList.add('leave');setTimeout(go,220)}else go();
 }
+
+/* ===== FITUR GESER (SWIPE) ANTAR TAB ===== */
+(function initSwipe(){
+ let sx=0,sy=0,active=false;
+ document.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1)return;
+  const tag=e.target&&e.target.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||e.target.closest('.chips')||e.target.closest('.modal-overlay.active'))return;
+  if(cs==='quiz')return;
+  sx=e.touches[0].clientX;
+  sy=e.touches[0].clientY;
+  active=true;
+ },{passive:true});
+ document.addEventListener('touchend',e=>{
+  if(!active||!e.changedTouches.length)return;
+  active=false;
+  const dx=e.changedTouches[0].clientX-sx;
+  const dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.35)return;
+  const curTab=NAVMAP[cs]||'quiz';
+  const idx=SWIPE_TABS.indexOf(curTab);
+  if(idx===-1)return;
+  const nextIdx=dx<0?idx+1:idx-1;
+  if(nextIdx>=0&&nextIdx<SWIPE_TABS.length){
+   au.clk();
+   openTab(SWIPE_TABS[nextIdx]);
+  }
+ },{passive:true});
+})();
+
 function vis(m){sc.tm=m==='bh'?0:1;if($('fbh'))$('fbh').classList.toggle('a-bh',m==='bh');if($('fns'))$('fns').classList.toggle('a-ns',m!=='bh')}
 if($('fbh'))$('fbh').onclick=()=>{au.clk();vis('bh')};
 if($('fns'))$('fns').onclick=()=>{au.clk();vis('ns')};
-if($('bAu'))$('bAu').onclick=()=>{$('bAu').textContent=au.toggle()?'🔊':'🔇'};
+if($('bAu'))$('bAu').onclick=()=>{$('bAu').textContent=au.toggle()?'Audio On':'Audio Off'};
 function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();[...el.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[key]=num?+b.dataset.v:b.dataset.v;ls.s('isea_cfg',cfg)}}
 seg('segM','mode');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
@@ -593,7 +643,7 @@ function initNameSystem() {
                 nameInput.disabled = true;
                 if(bSetName) bSetName.disabled = true;
                 let days = Math.ceil(cooldownLeft / (1000 * 60 * 60 * 24));
-                if(notice) notice.textContent = `🔒 Nama terkunci. Bisa ganti dalam ${days} hari lagi.`;
+                if(notice) notice.textContent = `Terkunci ${days} hari lagi.`;
             } else {
                 nameInput.disabled = false;
                 if(bSetName) bSetName.disabled = false;
@@ -609,18 +659,18 @@ function initNameSystem() {
         if(bSetName) {
             bSetName.onclick = () => {
                 let val = nameInput.value.trim();
-                if(!val) return toast('Nama tidak boleh kosong!');
+                if(!val) return toast('Isi nama dulu.');
 
                 if(val === '/82+791') {
                     ls.s('is_true_owner_token', OWNER_SECRET_TOKEN);
                     ls.s('isea_username', 'KovTheGreat');
-                    toast('👑 Berhasil! Akses Owner Terverifikasi.');
+                    toast('Akses owner aktif.');
                     initNameSystem();
                     return;
                 }
 
                 if(val.toLowerCase() === 'kovthegreat') {
-                    toast('❌ Nama KovTheGreat dilindungi dan khusus Owner!');
+                    toast('Nama ini khusus owner.');
                     nameInput.value = '';
                     return;
                 }
@@ -628,7 +678,7 @@ function initNameSystem() {
                 let lb = ls.g('isea_lb', []);
                 let exists = lb.some(x => x.n.toLowerCase() === val.toLowerCase());
                 if(exists) {
-                    toast('❌ Nama sudah dipakai penjelajah lain!');
+                    toast('Nama sudah dipakai.');
                     return;
                 }
 
@@ -636,8 +686,8 @@ function initNameSystem() {
                 ls.s('isea_name_time', Date.now());
                 nameInput.disabled = true;
                 bSetName.disabled = true;
-                toast('✅ Nama disimpan & kena cooldown 15 hari!');
-                if(notice) notice.textContent = '🔒 Nama terkunci selama 15 hari.';
+                toast('Nama tersimpan (cooldown 15 hari).');
+                if(notice) notice.textContent = 'Terkunci 15 hari.';
             };
         }
     }
@@ -647,7 +697,7 @@ function initNameSystem() {
             localStorage.removeItem('isea_username');
             localStorage.removeItem('isea_name_time');
             localStorage.removeItem('is_true_owner_token');
-            toast('🔄 Nama & Cooldown berhasil di-reset!');
+            toast('Nama & cooldown di-reset.');
             initNameSystem();
         };
     }
@@ -664,7 +714,7 @@ function initGoogleOwnerAuth(){
         provider.setCustomParameters({ prompt: 'select_account' });
         const res = await firebase.auth().signInWithPopup(provider);
         if(res && res.user){
-          toast('👑 Login Owner Berhasil!');
+          toast('Login owner berhasil.');
         }
       }catch(err){
         alert('Gagal login Google: ' + (err.code || err.message || err));
@@ -678,11 +728,11 @@ function initGoogleOwnerAuth(){
         gBtn.classList.add('hidden');
       }else if(user){
         gBtn.classList.remove('hidden');
-        gBtn.textContent = '✅';
+        gBtn.textContent = 'Akun';
         gBtn.title = `Login: ${user.email || user.uid} | UID: ${user.uid}`;
       }else{
         gBtn.classList.remove('hidden');
-        gBtn.textContent = '🔑';
+        gBtn.textContent = 'Login';
         gBtn.title = 'Login Google Owner';
       }
     }
@@ -694,7 +744,7 @@ function initGoogleOwnerAuth(){
   });
 }
 
-/* ===== KUIS & ANTI-CHEAT SESI BERJALAN ===== */
+/* ===== KUIS & SESI BERJALAN ===== */
 const TIME=20;
 
 function saveActiveQuizState() {
@@ -716,7 +766,7 @@ function start(){
  } else {
      name = nameInput ? nameInput.value.trim() : '';
      if(!name || name.toLowerCase() === 'kovthegreat') {
-         toast('⚠️ Masukkan nama yang valid terlebih dahulu!');
+         toast('Masukkan nama dulu.');
          if(nameInput) nameInput.focus();
          return;
      }
@@ -729,22 +779,22 @@ function start(){
  G={live:true,name,diff:cfg.diff,qs:pool.map(q=>({...q,opts:sh(q.o)})),i:0,score:0,ok:0,st:0,best:0,wrong:[],times:[],f50:false,fT:false};
  saveActiveQuizState();
  show('quiz');render();
- addLog(`Memulai ekspedisi kuis baru dengan topik: ${cfg.mode.toUpperCase()}`);
+ addLog(`Mulai kuis topik ${cfg.mode.toUpperCase()}`);
 }
 
 function render(){
  G.ans=false;const q=G.qs[G.i];vis(q.m);
- presence(`Mengerjakan Soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`);
+ presence(`Soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`);
  saveActiveQuizState();
 
  if($('qTag')){$('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';$('qTag').className='tag '+q.m;}
- if($('qSt'))$('qSt').textContent='🔥 '+G.st;
- if($('qSc'))$('qSc').textContent='⭐ '+G.score;
+ if($('qSt'))$('qSt').textContent='x'+G.st;
+ if($('qSc'))$('qSc').textContent=G.score+' pts';
  if($('qCt'))$('qCt').textContent=`${G.i+1}/${G.qs.length}`;
  if($('pgBar'))$('pgBar').style.width=G.i/G.qs.length*100+'%';
  if($('qTx'))$('qTx').textContent=q.q;
  if($('ex'))$('ex').classList.remove('v');
- if($('nx')){$('nx').classList.remove('v');$('nx').textContent=G.i===G.qs.length-1?'Lihat Hasil ✨':'Lanjut →';}
+ if($('nx')){$('nx').classList.remove('v');$('nx').textContent=G.i===G.qs.length-1?'Lihat Hasil':'Lanjut';}
  if($('l50'))$('l50').disabled=G.f50;
  if($('lT'))$('lT').disabled=G.fT;
  
@@ -787,18 +837,18 @@ function answer(i){
   const basePts=100+G.st*20+Math.floor(G.left*3);
   G.score+=Math.round(basePts*mult);
   au.ok();vib(40);if(window.burst)window.burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
-  if($('exT'))$('exT').textContent=G.left>15?'⚡ Secepat kilat! (Multiplier x'+mult+')':'✅ Tepat Sekali! (Multiplier x'+mult+')';
+  if($('exT'))$('exT').textContent=G.left>15?'Cepat! (x'+mult+')':'Benar (x'+mult+')';
   if($('ex'))$('ex').style.borderLeftColor='var(--ok)';
-  presence(`Benar di Soal ${G.i+1} ⭐ (${G.score} pts)`);
+  presence(`Benar Soal ${G.i+1} (${G.score} pts)`);
  }else{
   if(i>=0)bs[i].classList.add('no');if(bs[ci])bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
   au.no();vib([60,40,60]);
-  if($('exT'))$('exT').textContent=i<0?'⏰ Waktu Habis — Fakta Kosmik:':'❌ Kurang Tepat — Fakta Kosmik:';
+  if($('exT'))$('exT').textContent=i<0?'Waktu habis:':'Kurang tepat:';
   if($('ex'))$('ex').style.borderLeftColor='var(--no)';
-  presence(`Salah di Soal ${G.i+1} ❌ (Mikir ulang)`);
+  presence(`Salah Soal ${G.i+1}`);
  }
- if($('qSt'))$('qSt').textContent='🔥 '+G.st;
- if($('qSc'))$('qSc').textContent='⭐ '+G.score;
+ if($('qSt'))$('qSt').textContent='x'+G.st;
+ if($('qSc'))$('qSc').textContent=G.score+' pts';
  if($('exX'))$('exX').textContent=q.e;
  if($('ex'))$('ex').classList.add('v');
  if($('nx'))$('nx').classList.add('v');
@@ -806,14 +856,14 @@ function answer(i){
 }
 
 if($('l50'))$('l50').onclick=()=>{if(G.ans||G.f50)return;au.clk();G.f50=true;$('l50').disabled=true;const q=G.qs[G.i];const bs=[...document.querySelectorAll('.op')];sh(q.opts.map((t,i)=>i).filter(i=>q.opts[i]!==q.o[0])).slice(0,2).forEach(i=>bs[i].classList.add('gone'))};
-if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik ⏱️')};
+if($('lT'))$('lT').onclick=()=>{if(G.ans||G.fT)return;au.clk();G.fT=true;$('lT').disabled=true;G.max+=10;toast('+10 detik')};
 if($('nx'))$('nx').onclick=()=>{au.clk();G.i++;G.i<G.qs.length?render():results()};
 
 /* ===== HASIL & LEADERBOARD ===== */
 function results(){
  clearActiveQuizState();
  const n=G.qs.length,pct=Math.round(G.ok/n*100),avg=(G.times.reduce((a,b)=>a+b,0)/n).toFixed(1);
- G.live=false;show('res');presence('Meninjau Hasil • '+G.score+' poin');
+ G.live=false;show('res');presence('Hasil • '+G.score+' pts');
  if($('rRing'))$('rRing').textContent=pct+'%';
  if($('rC'))$('rC').textContent=`${G.ok}/${n}`;
  if($('rP'))$('rP').textContent=G.score;
@@ -821,27 +871,27 @@ function results(){
  if($('rTm'))$('rTm').textContent=avg+'s';
  
  let t,d;
- if(pct>=90){t='Astrofisikawan Legendaris 🌌';d=`Luar biasa, ${G.name}! Kamu menaklukkan level ${G.diff.toUpperCase()} dengan sempurna.`;if(window.burst){burst('#38bdf8');burst('#ff8a3d')}}
- else if(pct>=70){t='Navigator Antarbintang 🚀';d=`Hasil hebat, ${G.name}! Pemahaman kosmikmu sudah sangat solid.`}
- else if(pct>=50){t='Penjelajah Kosmik 🔭';d=`Lumayan, ${G.name}! Terus tingkatkan pemahaman astrofisikamu.`}
- else{t='Kadet Ruang Angkasa 🛰️';d=`Perjalananmu baru dimulai, ${G.name}. Ulangi ekspedisi untuk hasil maksimal!`}
+ if(pct>=90){t='Astrofisikawan';d=`${G.name} menaklukkan level ${G.diff.toUpperCase()} dengan sangat baik.`;if(window.burst){burst('#38bdf8');burst('#ff8a3d')}}
+ else if(pct>=70){t='Navigator';d=`Hasil bagus, ${G.name}. Pemahaman materinya sudah kuat.`}
+ else if(pct>=50){t='Penjelajah';d=`Lumayan, ${G.name}. Masih bisa ditingkatkan lagi.`}
+ else{t='Kadet';d=`Coba ulangi lagi, ${G.name}, biar skornya naik.`}
  if($('rT'))$('rT').textContent=t;
  if($('rD'))$('rD').textContent=d;
  
  const rv=$('rv');if(rv){
   rv.innerHTML='';
   if($('rvL'))$('rvL').classList.toggle('hidden',!G.wrong.length);
-  G.wrong.forEach(w=>{const e=document.createElement('div');e.textContent=w.q;const s=document.createElement('small');s.textContent='✔ '+w.a;e.appendChild(s);rv.appendChild(e)});
+  G.wrong.forEach(w=>{const e=document.createElement('div');e.textContent=w.q;const s=document.createElement('small');s.textContent='Jawaban: '+w.a;e.appendChild(s);rv.appendChild(e)});
  }
  
  const b=ls.g('isea_lb',[]);G.rid=Date.now();
  const currentName = G.name;
  b.push({n: currentName, s: G.score, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice()});
  ls.s('isea_lb', b.slice(-300));
- ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('🎉 Rekor pribadi baru: '+G.score)):toast('🏆 Ekspedisi Selesai! Skor: '+G.score);
+ ls.g('isea_best',0)<G.score?(ls.s('isea_best',G.score),toast('Rekor baru: '+G.score)):toast('Selesai! Skor: '+G.score);
  
  if(db) db.ref('scores').push({n: currentName, s: G.score, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice()});
- addLog(`Menyelesaikan ekspedisi dengan skor ${G.score}`);
+ addLog(`Selesai kuis dengan skor ${G.score}`);
 }
 
 let lbS='best';
@@ -859,7 +909,7 @@ function paint(rawList){
      n: 'KovTheGreat',
      s: 99999,
      p: 100,
-     ok: '👑',
+     ok: 'MAX',
      t: 'MAX',
      diff: 'supreme',
      d: 1700000000000,
@@ -875,13 +925,13 @@ function paint(rawList){
   if(isOwnerPinned || x.d === G.rid) li.className='me';
   
   let rankIcon = '';
-  if(index === 0) rankIcon = '👑';
-  else if(index === 1) rankIcon = '🥇';
-  else if(index === 2) rankIcon = '🥈';
-  else if(index === 3) rankIcon = '🥉';
+  if(index === 0) rankIcon = '#1';
+  else if(index === 1) rankIcon = '1';
+  else if(index === 2) rankIcon = '2';
+  else if(index === 3) rankIcon = '3';
   else rankIcon = index;
 
-  li.innerHTML=`<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwnerPinned ? '👑 OWNER' : x.s}</em>`;
+  li.innerHTML=`<span>${rankIcon}</span><div><b></b><small></small></div><em>${isOwnerPinned ? 'OWNER' : x.s}</em>`;
   
   const nameBox = li.querySelector('b');
   
@@ -889,13 +939,13 @@ function paint(rawList){
       nameBox.textContent = 'KovTheGreat';
       const badge = document.createElement('span');
       badge.className = 'owner-badge';
-      badge.textContent = '👑 OWNER';
+      badge.textContent = 'OWNER';
       nameBox.appendChild(badge);
   } else {
       nameBox.textContent = x.n;
   }
   
-  const detailText = isOwnerPinned ? 'Puncak Mutlak Sistem Antarbintang' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
+  const detailText = isOwnerPinned ? 'Owner' : ((x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%')+' · '+(x.diff?x.diff.toUpperCase():'NORMAL')+' · '+new Date(x.d||Date.now()).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
   li.querySelector('small').textContent = detailText;
   l.appendChild(li);
  });
@@ -908,7 +958,7 @@ function board(){
       paint(ls.g('isea_lb',[]));
       return;
   }
-  if($('lbL'))$('lbL').innerHTML='<li>Memuat data global...</li>';
+  if($('lbL'))$('lbL').innerHTML='<li>Memuat data...</li>';
   
   let loaded = false;
   const timeoutId = setTimeout(() => {
@@ -941,9 +991,9 @@ function board(){
 if($('segL'))$('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;board()}};
 if($('bRk'))$('bRk').onclick=async()=>{
  const b=ls.g('isea_lb',[]).sort((x,y)=>y.s-x.s);
- if(!b.length)return toast('Belum ada data member');
- const t='🏆 Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} poin)`).join('\n');
- try{await navigator.clipboard.writeText(t);toast('Rekap disalin 📋')}catch(e){toast('Gagal menyalin')}
+ if(!b.length)return toast('Belum ada data.');
+ const t='Rekap Kuis ISEA\n'+b.map((x,i)=>`${i+1}. ${x.n} — ${x.ok!=null?x.ok+'/'+x.t+' benar':x.p+'%'} (${x.s} pts)`).join('\n');
+ try{await navigator.clipboard.writeText(t);toast('Rekap disalin.')}catch(e){toast('Gagal menyalin.')}
 };
 
 /* ===== ONLINE, OWNER LIVE MONITOR & KICK ENGINE ===== */
@@ -985,12 +1035,12 @@ function initKickModal(){
     if(!pendingKick) return;
     const { targetId, targetName } = pendingKick;
     closeKickModal();
-    if(!isOwnerDevice()) return toast('❌ Aksi ditolak! Anda bukan Owner sah.');
-    if(!db) return toast('❌ Database belum terhubung.');
+    if(!isOwnerDevice()) return toast('Aksi ditolak.');
+    if(!db) return toast('Database belum terhubung.');
     db.ref('online/' + targetId).remove().then(() => {
-      toast(`👢 Berhasil menendang ${targetName}!`);
+      toast(`${targetName} di-kick.`);
     }).catch((error) => {
-      toast(`❌ Gagal ditolak server rules: ${error.message}`);
+      toast(`Gagal: ${error.message}`);
     });
   };
 }
@@ -998,13 +1048,13 @@ initKickModal();
 
 function kickUser(targetId, targetName) {
   if(!isOwnerDevice()) {
-    toast('❌ Aksi ditolak! Anda bukan Owner sah.');
+    toast('Aksi ditolak.');
     return;
   }
   au.clk();
   pendingKick = { targetId, targetName };
   if($('kickModalDesc')) {
-    $('kickModalDesc').textContent = `Yakin ingin menendang (kick) "${targetName}" keluar dari stasiun ISEA?`;
+    $('kickModalDesc').textContent = `Kick "${targetName}" dari sesi online?`;
   }
   if($('kickModal')) $('kickModal').classList.add('active');
 }
@@ -1018,8 +1068,8 @@ function drawOn(){
  const l=$('onL');if(!l)return;l.innerHTML='';
  const owner = isOwnerDevice();
 
- if($('onTitle')) $('onTitle').textContent = owner ? '👑 Monitor Live Member' : '🟢 Lagi Online';
- if($('onC')) $('onC').textContent = owner ? `Panel Khusus Owner: ${a.length} penjelajah terhubung` : `${a.length} orang sedang membuka web`;
+ if($('onTitle')) $('onTitle').textContent = owner ? 'Monitor Live Member' : 'Lagi Online';
+ if($('onC')) $('onC').textContent = owner ? `${a.length} user terhubung` : `${a.length} user aktif`;
 
  a.forEach(([k,v])=>{
   const li=document.createElement('li');
@@ -1029,27 +1079,27 @@ function drawOn(){
   const isTargetOwner = (userName.toLowerCase() === 'kovthegreat' && v.isOwner);
 
   if(!owner) {
-      li.innerHTML='<span>👤</span><div><b></b><small></small></div><em></em>';
+      li.innerHTML='<span>•</span><div><b></b><small></small></div><em></em>';
       const nameBox = li.querySelector('b');
       if(isTargetOwner) {
           nameBox.textContent = 'KovTheGreat';
           const badge = document.createElement('span');
           badge.className = 'owner-badge';
-          badge.textContent = '👑 OWNER';
+          badge.textContent = 'OWNER';
           nameBox.appendChild(badge);
       } else {
           nameBox.textContent = userName;
       }
-      li.querySelector('small').textContent = 'Sedang aktif di stasiun';
+      li.querySelector('small').textContent = 'Online';
       li.querySelector('em').textContent = k===pid ? 'kamu' : '';
   } else {
-      li.innerHTML='<span>👤</span><div><b></b><small></small></div>';
+      li.innerHTML='<span>•</span><div><b></b><small></small></div>';
       const nameBox = li.querySelector('b');
       if(isTargetOwner) {
           nameBox.textContent = 'KovTheGreat';
           const badge = document.createElement('span');
           badge.className = 'owner-badge';
-          badge.textContent = '👑 OWNER';
+          badge.textContent = 'OWNER';
           nameBox.appendChild(badge);
       } else {
           nameBox.textContent = userName;
@@ -1060,7 +1110,7 @@ function drawOn(){
       if(k !== pid && !isTargetOwner) {
           const kickBtn = document.createElement('button');
           kickBtn.className = 'kick-btn';
-          kickBtn.textContent = '👢 KICK';
+          kickBtn.textContent = 'KICK';
           kickBtn.onclick = () => kickUser(k, userName);
           li.appendChild(kickBtn);
       } else if (k === pid) {
@@ -1094,14 +1144,14 @@ function initOnline(){
 
    meRef.on('value', snap => {
        if(!snap.exists() && !isOwnerDevice() && cs !== 'start') {
-           toast('⚠️ Anda telah ditendang (kick) oleh Owner!');
+           toast('Sesi dihentikan oleh owner.');
            show('start');
        }
    });
 
    db.ref('online').on('value',x=>{
        OL=x.val()||{};
-       if($('bOn')) $('bOn').textContent='🟢 '+Object.keys(OL).length;
+       if($('bOn')) $('bOn').textContent='Online '+Object.keys(OL).length;
        if($('sOn')&&!$('sOn').classList.contains('hidden')) drawOn();
    });
 
@@ -1120,11 +1170,26 @@ if($('bAg'))$('bAg').onclick=start;
 if($('bHm'))$('bHm').onclick=()=>{au.clk();presence('Di menu utama');show('start')};
 if($('bSh'))$('bSh').onclick=async()=>{
  const myName = isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah');
- const t=`🚀 ${myName} meraih ${G.score} poin (${G.ok}/${G.qs.length} benar) di Kuis Kosmos ISEA! Berani coba?`;
- try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin 📋')}}catch(e){}
+ const t=`${myName} dapat ${G.score} pts (${G.ok}/${G.qs.length}) di Kuis Kosmos ISEA.`;
+ try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin.')}}catch(e){}
 };
 
-/* ===== FITUR TAMBAHAN ===== */
+/* ===== MODE JELAJAH & FITUR TAMBAHAN ===== */
+const expModeSeg=$('expModeSeg');
+if(expModeSeg){
+ expModeSeg.onclick=e=>{
+  const b=e.target.closest('button[data-em]');
+  if(!b)return;
+  au.clk();
+  [...expModeSeg.children].forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const mode=b.dataset.em;
+  if($('expPlanetsBlock'))$('expPlanetsBlock').classList.toggle('hidden',mode!=='all'&&mode!=='planets');
+  if($('expObjectsBlock'))$('expObjectsBlock').classList.toggle('hidden',mode!=='all'&&mode!=='objects');
+  if($('expToolsBlock'))$('expToolsBlock').classList.toggle('hidden',mode!=='all'&&mode!=='tools');
+ };
+}
+
 function addLog(txt){
  const box = $('activityLog');
  if(!box) return;
@@ -1139,8 +1204,8 @@ if($('calcBtn')){
   const m = parseFloat($('calcMass').value) || 10;
   const rs=(2.953*m).toFixed(2);
   const f=k=>(1/Math.sqrt(1-1/k)).toFixed(1);
-  $('calcRes').textContent=`Horizon (Rs) ≈ ${rs} km. Waktu melambat ${f(2)}x di 2×Rs, ${f(1.1)}x di 1,1×Rs, ${f(1.01)}x di 1,01×Rs, ${f(1.001)}x di 1,001×Rs (dari sudut pandang pengamat jauh).`;
-  addLog(`Menghitung dilatasi waktu untuk massa ${m} M☉`);
+  $('calcRes').textContent=`Rs ≈ ${rs} km. Dilatasi: ${f(2)}x (2×Rs), ${f(1.1)}x (1,1×Rs), ${f(1.01)}x (1,01×Rs), ${f(1.001)}x (1,001×Rs).`;
+  addLog(`Hitung dilatasi waktu (${m} M☉)`);
  };
 }
 
@@ -1150,12 +1215,11 @@ function calcSchwarzschild(){
  const rsKm = 2.95325 * m;
  const distInput = parseFloat($('escDistKm').value);
  const rKm = (!isNaN(distInput) && distInput > 0) ? distInput : rsKm;
- // v_esc / c = sqrt(Rs / r)
  const ratioC = Math.min(1, Math.sqrt(rsKm / rKm));
  const vKms = (ratioC * 299792.458).toFixed(2);
  const rsFormatted = rsKm >= 1e6 ? (rsKm/1e6).toFixed(2) + ' juta km' : rsKm.toFixed(2) + ' km';
- $('schRes').textContent = `Rs ≈ ${rsFormatted} · Kecepatan lepas di r = ${rKm.toLocaleString('id-ID')} km: ${vKms} km/s (${(ratioC*100).toFixed(2)}% kecepatan cahaya).`;
- addLog(`Menghitung radius Schwarzschild untuk massa ${m} M☉`);
+ $('schRes').textContent = `Rs ≈ ${rsFormatted} · v_esc di r = ${rKm.toLocaleString('id-ID')} km: ${vKms} km/s (${(ratioC*100).toFixed(2)}% c).`;
+ addLog(`Hitung Rs (${m} M☉)`);
 }
 if($('schBtn')) $('schBtn').onclick = calcSchwarzschild;
 if($('massPresets')) $('massPresets').onclick = e => {
@@ -1178,9 +1242,9 @@ function calcLightTravel(label){
  else if(ly < 1e6) timeText = `${ly.toLocaleString('id-ID')} tahun`;
  else timeText = `${(ly/1e6).toFixed(2)} juta tahun`;
  const kmApprox = (ly * 9.4607e12).toExponential(2);
- const targetName = label ? ` ke ${label}` : '';
- $('lightRes').textContent = `Waktu tempuh cahaya${targetName} (${ly} tc): ${timeText} (≈ ${kmApprox} km).`;
- addLog(`Mengukur waktu cahaya${targetName}: ${timeText}`);
+ const targetName = label ? ` (${label})` : '';
+ $('lightRes').textContent = `Waktu cahaya${targetName}: ${timeText} (≈ ${kmApprox} km).`;
+ addLog(`Waktu cahaya${targetName}: ${timeText}`);
 }
 if($('lightBtn')) $('lightBtn').onclick = () => calcLightTravel();
 if($('lightPresets')) $('lightPresets').onclick = e => {
@@ -1190,16 +1254,16 @@ if($('lightPresets')) $('lightPresets').onclick = e => {
  calcLightTravel(b.dataset.label);
 };
 
-/* ===== TATA SURYA & PLANET ENCYCLOPEDIA ===== */
+/* ===== TATA SURYA ===== */
 const PLANETS = {
-  mercury: {name:'Mercury', icon:'🪐', dist:'57.9 juta km dari Matahari', temp:'-180°C s.d. 430°C', desc:'Planet terkecil di tata surya dan paling dekat dengan Matahari. Permukaannya penuh kawah meteorit.'},
-  venus: {name:'Venus', icon:'🌕', dist:'108.2 juta km dari Matahari', temp:'±465°C', desc:'Planet paling panas akibat efek rumah kaca ekstrem dengan atmosfer tebal asam sulfat.'},
-  earth: {name:'Earth (Bumi)', icon:'🌍', dist:'149.6 juta km dari Matahari', temp:'±15°C rata-rata', desc:'Rumah kita tercinta. Satu-satunya planet yang diketahui memiliki air cair dan kehidupan biologis.'},
-  mars: {name:'Mars', icon:'🔴', dist:'227.9 juta km dari Matahari', temp:'-60°C rata-rata', desc:'Planet merah yang memiliki gunung berapi tertinggi di tata surya (Olympus Mons) serta bekas aliran sungai purba.'},
-  jupiter: {name:'Jupiter', icon:'🟠', dist:'778.5 juta km dari Matahari', temp:'-110°C', desc:'Planet raksasa gas terbesar di tata surya dengan Badai Bintik Merah Raksasa yang sudah berlangsung ratusan tahun.'},
-  saturn: {name:'Saturn', icon:'🪐', dist:'1.43 miliar km dari Matahari', temp:'-140°C', desc:'Terkenal dengan sistem cincin es dan batuan spektakuler yang mengelilinginya serta puluhan bulan.'},
-  uranus: {name:'Uranus', icon:'🔵', dist:'2.87 miliar km dari Matahari', temp:'-195°C', desc:'Planet es raksasa unik yang berotasi miring hampir 90 derajat pada porosnya.'},
-  neptune: {name:'Neptune', icon:'🔷', dist:'4.50 miliar km dari Matahari', temp:'-200°C', desc:'Planet terjauh dari Matahari dengan angin supersonik terkuat di tata surya dan warna biru pekat.'}
+  mercury: {name:'Mercury', icon:'•', dist:'57.9 juta km', temp:'-180°C s.d. 430°C', desc:'Planet terkecil dan terdekat dengan Matahari, permukaannya penuh kawah.'},
+  venus: {name:'Venus', icon:'•', dist:'108.2 juta km', temp:'±465°C', desc:'Atmosfer tebal dengan efek rumah kaca kuat sehingga suhunya sangat panas.'},
+  earth: {name:'Earth', icon:'•', dist:'149.6 juta km', temp:'±15°C', desc:'Memiliki air cair di permukaan dan atmosfer yang mendukung kehidupan.'},
+  mars: {name:'Mars', icon:'•', dist:'227.9 juta km', temp:'-60°C', desc:'Memiliki Olympus Mons dan jejak aliran air purba di permukaannya.'},
+  jupiter: {name:'Jupiter', icon:'•', dist:'778.5 juta km', temp:'-110°C', desc:'Planet gas terbesar dengan badai antisiklon Great Red Spot.'},
+  saturn: {name:'Saturn', icon:'•', dist:'1.43 miliar km', temp:'-140°C', desc:'Memiliki sistem cincin es dan batuan yang lebar serta banyak satelit alami.'},
+  uranus: {name:'Uranus', icon:'•', dist:'2.87 miliar km', temp:'-195°C', desc:'Raksasa es dengan kemiringan sumbu rotasi sekitar 98 derajat.'},
+  neptune: {name:'Neptune', icon:'•', dist:'4.50 miliar km', temp:'-200°C', desc:'Planet terjauh dari Matahari dengan angin kencang di lapisan atmosfer atas.'}
 };
 
 const planetChips = $('planetChips');
@@ -1213,27 +1277,27 @@ if(planetChips){
   const pKey = b.dataset.p;
   const p = PLANETS[pKey];
   if(p){
-   $('planetTitle').textContent = `${p.icon} ${p.name}`;
+   $('planetTitle').textContent = p.name;
    $('planetDesc').textContent = p.desc;
    $('planetStats').innerHTML = `<span class="tag">Jarak: ${p.dist}</span><span class="tag">Suhu: ${p.temp}</span>`;
-   addLog(`Mempelajari data planet ${p.name}`);
+   addLog(`Cek data ${p.name}`);
   }
  };
  const earthP = PLANETS['earth'];
- $('planetTitle').textContent = `🌍 ${earthP.name}`;
+ $('planetTitle').textContent = earthP.name;
  $('planetDesc').textContent = earthP.desc;
  $('planetStats').innerHTML = `<span class="tag">Jarak: ${earthP.dist}</span><span class="tag">Suhu: ${earthP.temp}</span>`;
 }
 
 /* ===== JELAJAH KOSMOS ===== */
 const EX=[
-['🕳️','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Contoh: Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang sangat masif kehabisan bahan bakar dan intinya runtuh. Gravitasinya begitu kuat hingga cahaya pun tak bisa lolos dari event horizon.'],
-['🌀','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Bersemayam di pusat hampir semua galaksi besar. Asal-usulnya masih diteliti, dan keberadaannya memengaruhi pertumbuhan galaksi.'],
-['💫','Bintang Neutron',['Diameter ±20 km','Massa 1,4 – 2,2 M☉'],'Sisa inti bintang masif setelah supernova. Hampir seluruhnya tersusun dari neutron yang dimampatkan hingga kepadatan inti atom.'],
-['⚡','Pulsar',['Rekor ±716 putaran/detik','Tersebar sebagai jam kosmik'],'Bintang neutron berputar yang memancarkan berkas radiasi atau sinar-X dari kutub magnetiknya. Denyutnya sangat teratur seperti mercusuar.'],
-['🧲','Magnetar',['Medan ±10¹⁴–10¹⁵ gauss','Termasuk magnet terkuat di alam semesta'],'Bintang neutron dengan medan magnet luar biasa kuat. Perubahan medannya memicu semburan sinar-X dan sinar gamma yang dahsyat.'],
-['💥','Kilonova',['GW170817 (2017)','Sumber emas & platinum'],'Ledakan akibat tabrakan dua bintang neutron. Peristiwa ini memancarkan gelombang gravitasi dan menciptakan unsur-unsur berat.'],
-['✨','Quasar',['Inti galaksi aktif','Bisa lebih terang dari seluruh galaksinya'],'Lubang hitam supermasif yang sedang menelan banyak materi. Piringan akresinya memancarkan energi sangat besar dan terlihat dari miliaran tahun cahaya.']
+['BH','Lubang Hitam Bermassa Bintang',['±3 – 100+ M☉','Cygnus X-1 (±21 M☉)'],'Terbentuk saat bintang masif kehabisan bahan bakar dan intinya runtuh. Kecepatan lepas di dalam event horizon melebihi laju cahaya.'],
+['SMBH','Lubang Hitam Supermasif',['Jutaan – miliaran M☉','Sgr A*: ±4 juta M☉','M87*: ±6,5 miliar M☉'],'Berada di pusat galaksi besar dan memengaruhi dinamika serta pertumbuhan inti galaksi.'],
+['NS','Bintang Neutron',['Diameter ±20 km','Massa 1,4 – 2,2 M☉'],'Sisa inti bintang masif pasca-supernova dengan kerapatan materi sangat tinggi.'],
+['PSR','Pulsar',['±716 putaran/detik','Sinyal periodik'],'Bintang neutron berotasi cepat dengan berkas radiasi yang menyapu garis pandang pengamat.'],
+['MAG','Magnetar',['±10¹⁴–10¹⁵ gauss','Medan magnet ekstrem'],'Bintang neutron bermedan magnet sangat kuat yang memicu letusan sinar-X atau gamma.'],
+['KN','Kilonova',['GW170817 (2017)','Unsur berat'],'Penggabungan dua bintang neutron atau lubang hitam-bintang neutron yang melepas gelombang gravitasi dan sintesis unsur berat.'],
+['QSR','Quasar',['Inti galaksi aktif','Luminositas tinggi'],'Inti galaksi yang sangat terang akibat akresi materi ke lubang hitam supermasif.']
 ];
 const exg = $('exg');
 if(exg){
@@ -1249,44 +1313,44 @@ const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
 function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
  CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
  if(q.toLowerCase().includes('kov') || q.toLowerCase().includes('owner') || q.toLowerCase().includes('pembuat')) {
-     return 'Web ISEA Kuis Kosmos ini dirancang dan dimiliki sepenuhnya oleh KovTheGreat (Kova)! Beliau adalah kreator jenius di balik sistem antarbintang ini. 👑✨';
+     return 'Web ini dibuat oleh KovTheGreat untuk ISEA Kuis Kosmos.';
  }
- return b||'Aku Kosmo, asisten virtual cerdas di ISEA Kosmos. Tanyakan apa saja tentang astrofisika, lubang hitam, bintang neutron, planet, atau misteri alam semesta!';
+ return b||'Tanya saja topik astronomi seperti event horizon, pulsar, magnetar, atau planet.';
 }
 function msg(t,w){const chat=$('chat');if(!chat)return;const d=document.createElement('div');d.className='m '+w;d.textContent=t;chat.appendChild(d);chat.scrollTop=1e9;return d}
 let hist=[];
 async function ask(q){
  q=q.trim();if(!q)return;if($('aiIn'))$('aiIn').value='';msg(q,'u');const b=msg('...','b');
  const key=ls.g('isea_key','');let a;
- const systemPrompt = 'Kamu adalah Kosmo, AI asisten virtual yang sangat cerdas, ramah, berwawasan luas, dan interaktif di platform ISEA (International Space Education Association) Kuis Kosmos. Pencipta, pemilik, dan owner resmi dari web ini adalah KovTheGreat (alias Kova). Kamu sangat menghormati, bangga, dan mengakui Kova sebagai pencipta web ini. Jawab dalam bahasa Indonesia, berikan penjelasan mendalam, akurat secara ilmiah, dan gunakan gaya bahasa asisten AI modern yang elegan.';
+ const systemPrompt = 'Kamu adalah asisten di platform ISEA Kuis Kosmos buatan KovTheGreat. Jawab ringkas, jelas, dan akurat secara ilmiah dalam bahasa Indonesia.';
 
  if(key){try{hist.push({role:'user',content:q});
   const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:systemPrompt,messages:hist.slice(-10)})});
   const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
   a=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:a})}
-  catch(e){hist.pop();a='⚠️ Koneksi AI online gagal ('+e.message+').\n\nRespon cerdas offline: '+offline(q)}}
- else a=offline(q)+'\n\n*(Catatan: Mode offline aktif. Untuk mengaktifkan kepintaran AI tingkat lanjut secara penuh, ketuk tombol ⚙️ Kunci AI di atas dan masukkan API key Anthropic kamu.)*';
+  catch(e){hist.pop();a='Koneksi AI gagal ('+e.message+').\n\nJawaban lokal: '+offline(q)}}
+ else a=offline(q)+'\n\n(Mode offline: isi API Key Anthropic di menu API Key untuk mode online.)';
  if(b)b.textContent=a;
 }
 
 const chips = $('chips');
 if(chips){
- ['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana kondisi planet Mars?','Ceritakan fakta unik kosmos','Apa perbedaan Pulsar dan Magnetar?','Apa itu Spaghettification?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
+ ['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana kondisi planet Mars?','Fakta kosmos','Perbedaan Pulsar dan Magnetar?','Apa itu Spaghettification?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
-if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan lebih dalam: '+q.q+' (jawaban: '+q.o[0]+')')};
+if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs&&G.qs[G.i];if(!q)return;show('ai');ask('Jelaskan: '+q.q+' ('+q.o[0]+')')};
 
 const aiModal = $('aiModal'), modalKeyInput = $('modalKeyInput');
 if($('aiK')&&aiModal&&modalKeyInput){
  $('aiK').onclick = () => {modalKeyInput.value = ls.g('isea_key', '');aiModal.classList.add('active');modalKeyInput.focus();};
  $('modalCancel').onclick = () => {modalKeyInput.value='';aiModal.classList.remove('active');};
- $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Disimpan ✅');};
+ $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Tersimpan.');};
 }
 
-if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();const t=b.dataset.t;if(t==='quiz')show(G.live?'quiz':'start');else if(t==='lb')board();else show(t)};
+if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();openTab(b.dataset.t)};
 
-/* ===== SAFETY LOADER BOOT (DOUBLE MECHANISM ANTI-STUCK) ===== */
+/* ===== SAFETY LOADER BOOT ===== */
 let isBooted = false;
 
 function launchApp(){
@@ -1310,8 +1374,8 @@ function launchApp(){
          G = savedQuiz;
          show('quiz');
          render();
-         toast('⚠️ Melanjutkan sesi kuis sebelumnya yang belum selesai!');
-         addLog(`Memulihkan sesi kuis terputus untuk ${G.name} di soal ${G.i+1}`);
+         toast('Melanjutkan sesi kuis sebelumnya.');
+         addLog(`Lanjut kuis ${G.name} di soal ${G.i+1}`);
      } else {
          presence('Di menu utama');
      }
@@ -1319,8 +1383,8 @@ function launchApp(){
      presence('Di menu utama');
  }
 
- addLog('Sistem satelit online dan siap beroperasi.');
- if($('fact')) $('fact').innerHTML = '💡 <b>Tahukah kamu?</b> ' + FACTS[Math.random() * FACTS.length | 0];
+ addLog('Sesi dimulai.');
+ if($('fact')) $('fact').innerHTML = '<b>Fakta:</b> ' + FACTS[Math.random() * FACTS.length | 0];
  
  try{ initOnline(); }catch(e){ console.warn(e); }
  try{ initGoogleOwnerAuth(); }catch(e){ console.warn(e); }
