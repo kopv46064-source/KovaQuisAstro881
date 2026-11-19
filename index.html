@@ -2236,6 +2236,7 @@ function results(){
 }
 
 let lbS='best';
+let lbSeq=0;
 function paint(rawList){
  const l=$('lbL');if(!l)return;l.innerHTML='';
  
@@ -2291,52 +2292,56 @@ function paint(rawList){
 }
 
 function board(dir){
- au.clk();if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));show('lb', dir);
+ const reqId = ++lbSeq;
+ au.clk();
+ if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));
+
  if(lbS==='all'){
   if(!db){
-      paint(ls.g('isea_lb',[]));
-      return;
+   paint(ls.g('isea_lb',[]));
+   show('lb', dir);
+   return;
   }
-  if($('lbL'))$('lbL').innerHTML='<li>Memuat data...</li>';
-  
-  let loaded = false;
+
+  let settled = false;
+  const finish = (list) => {
+   if(settled || reqId !== lbSeq) return;
+   settled = true;
+   clearTimeout(timeoutId);
+   paint(list);
+   show('lb', dir);
+  };
+
   const timeoutId = setTimeout(() => {
-      if(!loaded){
-          loaded = true;
-          paint(ls.g('isea_lb',[]));
-      }
+   finish(ls.g('isea_lb',[]));
   }, 1200);
 
   Promise.all([
-    db.ref('scores_by_user').once('value').catch(()=>null),
-    db.ref('scores').limitToLast(80).once('value').catch(()=>null)
+   db.ref('scores_by_user').once('value').catch(()=>null),
+   db.ref('scores').limitToLast(80).once('value').catch(()=>null)
   ]).then(([byUserSn, legacySn])=>{
-      if(loaded) return;
-      loaded = true;
-      clearTimeout(timeoutId);
-      const a=[];
-      if(byUserSn){
-        byUserSn.forEach(c=>{
-          const val = c.val();
-          if(val && val.n) a.push(val);
-        });
-      }
-      if(legacySn){
-        legacySn.forEach(c=>{
-          const val = c.val();
-          if(val && val.n) a.push(val);
-        });
-      }
-      paint(a);
+   const a=[];
+   if(byUserSn){
+    byUserSn.forEach(c=>{
+     const val = c.val();
+     if(val && val.n) a.push(val);
+    });
+   }
+   if(legacySn){
+    legacySn.forEach(c=>{
+     const val = c.val();
+     if(val && val.n) a.push(val);
+    });
+   }
+   finish(a);
   }).catch(()=>{
-      if(loaded) return;
-      loaded = true;
-      clearTimeout(timeoutId);
-      paint(ls.g('isea_lb',[]));
+   finish(ls.g('isea_lb',[]));
   });
   return;
  }
+
  paint(ls.g('isea_lb',[]));
+ show('lb', dir);
 }
 if($('segL'))$('segL').onclick=e=>{const b=e.target.closest('button');if(b){lbS=b.dataset.v;board()}};
 if($('bRk'))$('bRk').onclick=async()=>{
