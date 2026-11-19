@@ -7,7 +7,7 @@
 <title>ISEA Kuis Kosmos — by KovTheGreat</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
-:root{--bg:#030408;--glass:rgba(10,14,28,.84);--bd:rgba(125,211,252,.16);--bh:#ff8a3d;--ns:#38bdf8;--tx:#f8fafc;--mu:#94a3b8;--ok:#10b981;--no:#f43f5e;--sp:cubic-bezier(.16,1,.3,1);--sm:cubic-bezier(.22,1,.36,1)}
+:root{--bg:#030408;--glass:rgba(10,14,28,.84);--bd:rgba(125,211,252,.16);--bh:#ff8a3d;--ns:#38bdf8;--gr:#c084fc;--tx:#f8fafc;--mu:#94a3b8;--ok:#10b981;--no:#f43f5e;--sp:cubic-bezier(.16,1,.3,1);--sm:cubic-bezier(.22,1,.36,1);--fl:cubic-bezier(.2,1.15,.3,1)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:rgba(8,12,24,.4);border-radius:999px}
@@ -16,87 +16,112 @@
 button:focus-visible,input:focus-visible{outline:2px solid rgba(56,189,248,.75);outline-offset:2px}
 body{background:var(--bg);color:var(--tx);font-family:'Plus Jakarta Sans',system-ui,sans-serif;min-height:100dvh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:space-between}
 canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.top{position:fixed;top:calc(14px + env(safe-area-inset-top));left:16px;right:16px;z-index:30;display:flex;justify-content:space-between;gap:10px}
-.grp{display:flex;gap:8px}
-.gb{background:rgba(10,14,28,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);color:var(--tx);padding:9px 15px;border-radius:999px;font:600 .82rem inherit;font-family:inherit;cursor:pointer;transition:transform .3s var(--sp),border-color .25s,box-shadow .25s,background .25s}
-.gb:hover{border-color:rgba(125,211,252,.45);background:rgba(18,26,48,.92);transform:translateY(-1px)}
+.top{position:fixed;top:calc(12px + env(safe-area-inset-top));left:12px;right:12px;z-index:30;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;pointer-events:none}
+.top .grp{pointer-events:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+/* Mode switcher atas 3 mode dengan thumb real-time */
+.mode-slider{position:relative;display:inline-grid;grid-template-columns:repeat(3,1fr);align-items:center;padding:3px;border-radius:999px;background:rgba(10,14,28,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);touch-action:pan-y;user-select:none;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.mode-thumb{position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px) / 3);border-radius:999px;background:linear-gradient(135deg,rgba(255,138,61,.28),rgba(249,115,22,.16));border:1px solid rgba(255,138,61,.55);box-shadow:0 0 18px rgba(255,138,61,.22);transition:transform .46s var(--fl),background .35s,border-color .35s,box-shadow .35s;pointer-events:none;will-change:transform}
+.mode-slider.dragging .mode-thumb{transition:none}
+.mode-slider.ns-mode .mode-thumb{background:linear-gradient(135deg,rgba(56,189,248,.28),rgba(14,165,233,.18));border-color:rgba(56,189,248,.55);box-shadow:0 0 18px rgba(56,189,248,.24)}
+.mode-slider.gr-mode .mode-thumb{background:linear-gradient(135deg,rgba(192,132,252,.3),rgba(168,85,247,.2));border-color:rgba(192,132,252,.6);box-shadow:0 0 18px rgba(192,132,252,.25)}
+.mode-slider .gb{position:relative;z-index:1;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;box-shadow:none;padding:6px 10px;border-radius:999px;color:var(--mu);text-align:center;white-space:nowrap;transition:color .3s var(--sp),transform .25s var(--sp)}
+.mode-slider .gb.a-bh,.mode-slider .gb.a-ns,.mode-slider .gb.a-gr{color:#fff;box-shadow:none}
+.mode-slider .gb:hover{background:transparent;transform:none;color:#e2e8f0}
+.mode-slider .gb:active{transform:scale(.95)}
+
+.gb{background:rgba(10,14,28,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);color:var(--tx);padding:8px 13px;border-radius:999px;font:600 .8rem inherit;font-family:inherit;white-space:nowrap;cursor:pointer;transition:transform .38s var(--fl),border-color .28s,box-shadow .28s,background .28s}
+.gb:hover{border-color:rgba(125,211,252,.45);background:rgba(18,26,48,.92);transform:translateY(-1.5px)}
 .gb:active{transform:scale(.94)}
 .gb.a-bh{border-color:var(--bh);box-shadow:0 0 20px rgba(255,138,61,.25)}
 .gb.a-ns{border-color:var(--ns);box-shadow:0 0 20px rgba(56,189,248,.25)}
-.shell{position:relative;z-index:10;width:100%;max-width:920px;padding:84px 20px 20px;margin:auto 0;display:flex;flex-direction:column;align-items:center}
+.gb.a-gr{border-color:var(--gr);box-shadow:0 0 20px rgba(192,132,252,.28)}
+.shell{position:relative;z-index:10;width:100%;max-width:920px;padding:92px 20px 20px;margin:auto 0;display:flex;flex-direction:column;align-items:center}
 .org{text-align:center;margin-bottom:20px}
 .acr{font:800 1.7rem 'Space Grotesk',sans-serif;letter-spacing:.32em;padding-left:.32em;background:linear-gradient(90deg,#7dd3fc,#f8fafc 55%,#fdba74);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .full{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mu);margin-top:2px}
 .by{font-size:.74rem;color:var(--mu);margin-top:4px;font-weight:600}
-.card{width:100%;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bd);border-radius:32px;padding:38px 34px;box-shadow:0 35px 90px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.12);transition:border-color .35s,box-shadow .35s}
+.card{width:100%;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bd);border-radius:32px;padding:38px 34px;box-shadow:0 35px 90px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.12);transition:border-color .4s var(--sp),box-shadow .4s var(--sp),transform .45s var(--fl)}
 .card:hover{border-color:rgba(125,211,252,.24)}
 .hidden{display:none!important}
-.enter{animation:ce .5s var(--sp) forwards}
-@keyframes ce{0%{opacity:0;transform:translateY(24px) scale(.97)}100%{opacity:1;transform:none}}
+.enter{animation:ce .58s var(--fl) forwards}
+@keyframes ce{0%{opacity:0;transform:translateY(22px) scale(.975)}100%{opacity:1;transform:none}}
 .badge{display:inline-block;padding:6px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(255,138,61,.18),rgba(56,189,248,.18));border:1px solid rgba(255,255,255,.15);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 h1{font:700 clamp(1.8rem,4.5vw,2.4rem)/1.15 'Space Grotesk',sans-serif;background:linear-gradient(135deg,#fff 15%,#93c5fd 55%,#fdba74 95%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
 .sub{color:var(--mu);line-height:1.65;margin-bottom:22px;font-size:.96rem}
 label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--mu);margin:18px 0 8px}
-#name{width:100%;padding:16px 20px;border-radius:18px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.75);color:#fff;font:600 1.05rem inherit;font-family:inherit;outline:none;transition:all .25s}
+#name{width:100%;padding:16px 20px;border-radius:18px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.75);color:#fff;font:600 1.05rem inherit;font-family:inherit;outline:none;transition:border-color .28s var(--sp),box-shadow .28s var(--sp),background .28s var(--sp)}
 #name:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.18)}
 #name:disabled{opacity:.6;cursor:not-allowed;background:rgba(15,23,42,.4)}
 .name-group{display:flex;gap:10px;align-items:center}
-#bSetName{padding:16px 20px;border-radius:18px;border:0;background:linear-gradient(135deg,#38bdf8,#a855f7);color:#fff;font:700 .95rem 'Space Grotesk',sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 8px 22px rgba(168,85,247,.28);transition:transform .28s var(--sp),filter .2s}
-#bSetName:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}
+#bSetName{padding:16px 20px;border-radius:18px;border:0;background:linear-gradient(135deg,#38bdf8,#a855f7);color:#fff;font:700 .95rem 'Space Grotesk',sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 8px 22px rgba(168,85,247,.28);transition:transform .38s var(--fl),filter .25s}
+#bSetName:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.08)}
+#bSetName:active:not(:disabled){transform:scale(.96)}
 #bSetName:disabled{opacity:.4;filter:grayscale(.5);cursor:not-allowed}
 .seg{display:flex;gap:8px;flex-wrap:wrap}
-.seg button{flex:1;min-width:84px;padding:12px 8px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.6);color:var(--mu);font:700 .86rem inherit;font-family:inherit;cursor:pointer;transition:all .3s var(--sp)}
-.seg button:hover{border-color:rgba(125,211,252,.4);color:#fff;transform:translateY(-1px)}
-.seg button.on{color:#fff;border-color:#a855f7;background:linear-gradient(135deg,rgba(168,85,247,.3),rgba(56,189,248,.18));box-shadow:0 0 22px rgba(168,85,247,.28);transform:translateY(-2px)}
-.fact{margin:20px 0;padding:15px 18px;border-radius:18px;background:rgba(15,23,42,.62);border:1px dashed rgba(125,211,252,.35);font-size:.86rem;line-height:1.55;color:#cbd5e1;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.seg button{flex:1;min-width:84px;padding:12px 8px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.6);color:var(--mu);font:700 .86rem inherit;font-family:inherit;cursor:pointer;transition:transform .38s var(--fl),border-color .28s,color .28s,background .32s,box-shadow .32s}
+.seg button:hover{border-color:rgba(125,211,252,.4);color:#fff;transform:translateY(-1.5px)}
+.seg button:active{transform:scale(.96)}
+.seg button.on{color:#fff;border-color:#a855f7;background:linear-gradient(135deg,rgba(168,85,247,.32),rgba(56,189,248,.2));box-shadow:0 0 22px rgba(168,85,247,.28);transform:translateY(-2px)}
+.fact{margin:20px 0;padding:15px 18px;border-radius:18px;background:rgba(15,23,42,.62);border:1px dashed rgba(125,211,252,.35);font-size:.86rem;line-height:1.55;color:#cbd5e1;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);transition:border-color .3s,transform .35s var(--fl)}
+.fact:hover{border-color:rgba(125,211,252,.55);transform:translateY(-1px)}
 .fact b{color:#7dd3fc}
-.pb{width:100%;padding:18px 24px;border:0;border-radius:20px;background:linear-gradient(135deg,#f97316,#a855f7 50%,#0ea5e9);background-size:200% 200%;color:#fff;font:700 1.08rem 'Space Grotesk',sans-serif;cursor:pointer;box-shadow:0 14px 35px rgba(168,85,247,.35);transition:transform .35s var(--sp),background-position .5s,box-shadow .3s}
-.pb:hover{background-position:100% 50%;transform:translateY(-2px);box-shadow:0 18px 40px rgba(168,85,247,.45)}
+.pb{width:100%;padding:18px 24px;border:0;border-radius:20px;background:linear-gradient(135deg,#f97316,#a855f7 50%,#0ea5e9);background-size:200% 200%;color:#fff;font:700 1.08rem 'Space Grotesk',sans-serif;cursor:pointer;box-shadow:0 14px 35px rgba(168,85,247,.35);transition:transform .4s var(--fl),background-position .55s var(--sm),box-shadow .35s}
+.pb:hover{background-position:100% 50%;transform:translateY(-2.5px);box-shadow:0 18px 40px rgba(168,85,247,.45)}
 .pb:active{transform:scale(.97)}
-.sb{width:100%;margin-top:10px;padding:14px;border-radius:18px;border:1px solid var(--bd);background:rgba(15,23,42,.68);color:var(--tx);font:700 .94rem inherit;font-family:inherit;cursor:pointer;transition:transform .3s var(--sp),border-color .25s,background .25s}
-.sb:hover{border-color:rgba(125,211,252,.45);background:rgba(24,35,58,.82);transform:translateY(-1px)}
-.sb:active{transform:scale(.98)}
-.qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
+.sb{width:100%;margin-top:10px;padding:14px;border-radius:18px;border:1px solid var(--bd);background:rgba(15,23,42,.68);color:var(--tx);font:700 .94rem inherit;font-family:inherit;cursor:pointer;transition:transform .38s var(--fl),border-color .28s,background .28s}
+.sb:hover{border-color:rgba(125,211,252,.45);background:rgba(24,35,58,.82);transform:translateY(-1.5px)}
+.sb:active{transform:scale(.975)}
+.qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.qh-left{display:flex;align-items:center;gap:8px}
 .tag{font-size:.74rem;font-weight:700;text-transform:uppercase;padding:6px 14px;border-radius:999px;background:rgba(56,189,248,.15);color:#7dd3fc;border:1px solid rgba(56,189,248,.3)}
 .tag.bh{background:rgba(255,138,61,.15);color:#fdba74;border-color:rgba(255,138,61,.3)}
+.tag.gr{background:rgba(168,85,247,.16);color:#e9d5ff;border-color:rgba(168,85,247,.36)}
+.bm-btn{padding:6px 12px;border-radius:999px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.7);color:var(--mu);font:700 .74rem inherit;cursor:pointer;transition:transform .32s var(--fl),border-color .25s,color .25s,background .25s}
+.bm-btn:hover{border-color:rgba(192,132,252,.5);color:#fff;transform:translateY(-1px)}
+.bm-btn.saved{border-color:#c084fc;background:rgba(168,85,247,.25);color:#f3e8ff;box-shadow:0 0 14px rgba(168,85,247,.22)}
 .st{display:flex;gap:12px;font-size:.88rem;font-weight:700;align-items:center}
 .tm{height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-bottom:8px}
 .tm i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#10b981,#fbbf24,#f43f5e);background-size:300% 100%;border-radius:999px}
 .pg{height:5px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-bottom:20px}
-.pg i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8a3d,#a855f7,#38bdf8);transition:width .5s var(--sp)}
+.pg i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8a3d,#a855f7,#38bdf8);transition:width .55s var(--fl)}
 .qt{font:700 clamp(1.2rem,3.5vw,1.45rem)/1.45 'Space Grotesk',sans-serif;margin-bottom:20px}
 .ops{display:flex;flex-direction:column;gap:12px}
-.op{width:100%;text-align:left;background:rgba(15,23,42,.65);border:1px solid rgba(148,163,184,.2);border-radius:20px;padding:16px 18px;color:#f1f5f9;font:600 .96rem inherit;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:14px;opacity:0;animation:os .45s var(--sp) forwards;transition:transform .3s var(--sp),background .25s,border-color .25s,box-shadow .25s,opacity .3s;position:relative;z-index:5}
-@keyframes os{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.op{width:100%;text-align:left;background:rgba(15,23,42,.65);border:1px solid rgba(148,163,184,.2);border-radius:20px;padding:16px 18px;color:#f1f5f9;font:600 .96rem inherit;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:14px;opacity:0;animation:os .48s var(--fl) forwards;transition:transform .38s var(--fl),background .28s,border-color .28s,box-shadow .28s,opacity .3s;position:relative;z-index:5}
+@keyframes os{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
 .op:hover:not(:disabled):not(.gone){transform:translateX(6px);border-color:rgba(125,211,252,.5);background:rgba(30,41,59,.75)}
+.op:active:not(:disabled):not(.gone){transform:translateX(3px) scale(.99)}
 .op.gone{opacity:.22!important;pointer-events:none;transform:scale(.98)}
-.op i{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;font:800 .84rem inherit;font-style:normal;flex-shrink:0}
+.op i{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;font:800 .84rem inherit;font-style:normal;flex-shrink:0;transition:background .28s,color .28s}
 .op.ok{background:rgba(16,185,129,.2);border-color:var(--ok);box-shadow:0 0 25px rgba(16,185,129,.25)}
 .op.ok i{background:var(--ok);color:#022c22}
 .op.no{background:rgba(244,63,94,.2);border-color:var(--no)}
 .op.no i{background:var(--no)}
 .ll{display:flex;gap:10px;margin-bottom:16px}
-.ll button{flex:1;padding:10px;border-radius:16px;border:1px solid var(--bd);background:rgba(15,23,42,.65);color:var(--tx);font:700 .8rem inherit;font-family:inherit;cursor:pointer;transition:transform .25s var(--sp),border-color .25s,background .25s}
-.ll button:hover:not(:disabled){border-color:rgba(125,211,252,.45);background:rgba(25,36,60,.85);transform:translateY(-1px)}
+.ll button{flex:1;padding:10px;border-radius:16px;border:1px solid var(--bd);background:rgba(15,23,42,.65);color:var(--tx);font:700 .8rem inherit;font-family:inherit;cursor:pointer;transition:transform .35s var(--fl),border-color .28s,background .28s}
+.ll button:hover:not(:disabled){border-color:rgba(125,211,252,.45);background:rgba(25,36,60,.85);transform:translateY(-1.5px)}
+.ll button:active:not(:disabled){transform:scale(.97)}
 .ll button:disabled{opacity:.4;cursor:not-allowed}
 .ex{margin-top:18px;padding:16px 18px;border-radius:20px;background:rgba(15,23,42,.85);border-left:4px solid var(--ns);font-size:.9rem;line-height:1.6;color:#cbd5e1;display:none}
-.ex.v{display:block;animation:ce .45s var(--sp) forwards}
+.ex.v{display:block;animation:ce .48s var(--fl) forwards}
 #nx{margin-top:16px;display:none}
-#nx.v{display:block;animation:ce .4s var(--sp) forwards}
-.ring{width:136px;height:136px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,rgba(56,189,248,.28),rgba(168,85,247,.22));border:2px solid rgba(125,211,252,.5);box-shadow:0 0 45px rgba(56,189,248,.25);font:800 2.3rem 'Space Grotesk',sans-serif}
+#nx.v{display:block;animation:ce .45s var(--fl) forwards}
+.ring{width:136px;height:136px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,rgba(56,189,248,.28),rgba(168,85,247,.22));border:2px solid rgba(125,211,252,.5);box-shadow:0 0 45px rgba(56,189,248,.25);font:800 2.3rem 'Space Grotesk',sans-serif;transition:transform .5s var(--fl)}
+.ring:hover{transform:scale(1.04)}
 .rt{text-align:center;font:700 1.7rem 'Space Grotesk',sans-serif;margin-bottom:6px}
 .rd{text-align:center;color:var(--mu);font-size:.95rem;line-height:1.6;margin-bottom:20px}
 .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
-.sum div{background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 4px;text-align:center;transition:transform .3s var(--sp),border-color .25s}
-.sum div:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.3)}
+.sum div{background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 4px;text-align:center;transition:transform .38s var(--fl),border-color .28s}
+.sum div:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.3)}
 .sum b{display:block;font:700 1.15rem 'Space Grotesk',sans-serif}
 .sum span{font-size:.68rem;color:var(--mu)}
 .rv{max-height:240px;overflow-y:auto;margin-bottom:16px;display:flex;flex-direction:column;gap:10px}
-.rv div{padding:12px 14px;border-radius:16px;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);font-size:.84rem;line-height:1.5}
+.rv div{padding:12px 14px;border-radius:16px;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);font-size:.84rem;line-height:1.5;transition:transform .3s var(--sp)}
+.rv div:hover{transform:translateX(2px)}
 .rv small{display:block;color:#6ee7b7;margin-top:4px}
 .lb{list-style:none;display:flex;flex-direction:column;gap:10px;margin:16px 0}
-.lb li{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);font-weight:700;font-size:.92rem;transition:transform .28s var(--sp),border-color .25s,background .25s}
-.lb li:hover{transform:translateX(3px);border-color:rgba(125,211,252,.28);background:rgba(20,30,52,.78)}
+.lb li{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);font-weight:700;font-size:.92rem;transition:transform .38s var(--fl),border-color .28s,background .28s}
+.lb li:hover{transform:translateX(4px);border-color:rgba(125,211,252,.28);background:rgba(20,30,52,.78)}
 .lb li span:first-child{width:28px;text-align:center}
 .lb li em{margin-left:auto;font-style:normal;color:#fbbf24;font-family:'Space Grotesk',sans-serif}
 .lb{max-height:50vh;overflow-y:auto}.lb li div{min-width:0}.lb li b{display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -118,14 +143,14 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
   white-space:nowrap;
   flex-shrink:0;
   box-shadow:0 0 14px rgba(244,63,94,.18);
-  transition:transform .28s var(--sp),background .22s,color .22s,border-color .22s,box-shadow .22s;
+  transition:transform .35s var(--fl),background .25s,color .25s,border-color .25s,box-shadow .25s;
 }
 .kick-btn:hover{
   background:rgba(244,63,94,.32);
   border-color:#fb7185;
   color:#fff;
   box-shadow:0 0 22px rgba(244,63,94,.42);
-  transform:translateY(-1px);
+  transform:translateY(-1.5px);
 }
 .kick-btn:active{
   transform:scale(.93);
@@ -138,12 +163,12 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .foot{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important;position:relative;z-index:10;padding:12px 18px calc(20px + env(safe-area-inset-bottom));text-align:center;font-size:.78rem;color:var(--mu)}
 .foot div{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(10,14,28,.75);border:1px solid rgba(255,255,255,.09)}
 .cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:rgba(15,23,42,.95);backdrop-filter:blur(14px);border:1px solid rgba(125,211,252,.3);padding:11px 20px;border-radius:999px;font-size:.88rem;font-weight:600;opacity:0;transition:all .4s var(--sp);z-index:60;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.55)}
-.toast.v{opacity:1;transform:translate(-50%,0)}
+.toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,22px) scale(.96);background:rgba(15,23,42,.95);backdrop-filter:blur(14px);border:1px solid rgba(125,211,252,.3);padding:11px 20px;border-radius:999px;font-size:.88rem;font-weight:600;opacity:0;transition:transform .46s var(--fl),opacity .35s var(--sp);z-index:60;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.55)}
+.toast.v{opacity:1;transform:translate(-50%,0) scale(1)}
 html{scroll-behavior:smooth}
 
 /* ===== LOADER ===== */
-#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .6s var(--sm),visibility .6s}
+#ld{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#080c24,#030408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .65s var(--sm),visibility .65s}
 #ld.out{opacity:0;visibility:hidden;pointer-events:none}
 .loader-container{position:relative;display:flex;align-items:center;justify-content:center;width:140px;height:140px}
 .orb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff8a3d,#010103 80%);position:relative;box-shadow:0 0 50px rgba(255,138,61,.7),inset 0 0 15px rgba(255,200,140,.9);animation:pulOrb 2s ease-in-out infinite}
@@ -169,58 +194,68 @@ html{scroll-behavior:smooth}
 .ldbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8a3d,#a855f7,#38bdf8);animation:ldfill 2.4s var(--sm) forwards}
 @keyframes ldfill{to{width:100%}}
 
-.leave{opacity:0!important;transform:translateY(-14px) scale(.98)!important;transition:all .22s ease-in}
+.leave{opacity:0!important;transform:translateY(-12px) scale(.985)!important;transition:transform .24s var(--sp),opacity .2s ease-out!important}
 .shell{padding-bottom:104px}
 .hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px}
-.hero div{background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px 4px;text-align:center;transition:transform .3s var(--sp),border-color .25s,box-shadow .25s}
+.hero div{background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px 4px;text-align:center;transition:transform .38s var(--fl),border-color .28s,box-shadow .28s}
 .hero div:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.35);box-shadow:0 10px 24px rgba(0,0,0,.35)}
 .hero b{display:block;font:700 1.2rem 'Space Grotesk',sans-serif;color:#7dd3fc}.hero span{font-size:.66rem;color:var(--mu)}
-#nav{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;display:flex;gap:6px;padding:7px;border-radius:999px;background:rgba(8,12,24,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--bd);box-shadow:0 14px 40px rgba(0,0,0,.65);transition:transform .45s var(--sp),opacity .3s}
+#nav{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;display:flex;gap:6px;padding:7px;border-radius:999px;background:rgba(8,12,24,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--bd);box-shadow:0 14px 40px rgba(0,0,0,.65);transition:transform .5s var(--fl),opacity .3s}
 #nav.off{transform:translate(-50%,130px);opacity:0;pointer-events:none}
-#nav button{border:0;background:transparent;color:var(--mu);padding:10px 14px;border-radius:999px;font:700 .76rem inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:all .35s var(--sp)}
+#nav button{border:0;background:transparent;color:var(--mu);padding:10px 14px;border-radius:999px;font:700 .76rem inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:transform .4s var(--fl),color .28s,background .32s,box-shadow .32s}
+#nav button:active{transform:scale(.94)}
 #nav button.on{background:linear-gradient(135deg,rgba(249,115,22,.32),rgba(168,85,247,.32));color:#fff;transform:translateY(-2px);box-shadow:0 6px 18px rgba(168,85,247,.25)}
 .exg{display:grid;gap:14px;margin:16px 0}
-.xi{border-radius:22px;background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:border-color .3s,box-shadow .3s,transform .3s var(--sp)}
+.xi{border-radius:22px;background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:border-color .32s,box-shadow .32s,transform .38s var(--fl)}
 .xi:hover{border-color:rgba(125,211,252,.28);transform:translateY(-2px)}
 .xi.open{border-color:rgba(125,211,252,.55);box-shadow:0 0 28px rgba(56,189,248,.18)}
 .xh{width:100%;display:flex;align-items:center;gap:14px;padding:16px 18px;background:none;border:0;color:#fff;font:700 .98rem inherit;font-family:inherit;text-align:left;cursor:pointer}
-.xh span:first-child{font-size:1.7rem}.xh em{margin-left:auto;font-style:normal;transition:transform .4s var(--sp)}.xi.open .xh em{transform:rotate(180deg)}
-.xb{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--sm)}.xi.open .xb{grid-template-rows:1fr}
+.xh span:first-child{font-size:1.1rem;min-width:44px;text-align:center;color:#7dd3fc}.xh em{margin-left:auto;font-style:normal;transition:transform .45s var(--fl)}.xi.open .xh em{transform:rotate(180deg)}
+.xb{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--sm),opacity .35s ease;opacity:.55}.xi.open .xb{grid-template-rows:1fr;opacity:1}
 .xb>div{overflow:hidden}.xb p{padding:0 18px 10px;font-size:.88rem;line-height:1.65;color:#cbd5e1}
 .xs{display:flex;flex-wrap:wrap;gap:6px;padding:0 18px 16px}.xs span{font-size:.74rem;padding:5px 11px;border-radius:999px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.28);color:#bae6fd;font-weight:700}
 .aih{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .chat{height:min(48vh,420px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:12px 10px;margin:14px 0;border-radius:22px;background:rgba(6,10,20,.45);border:1px solid rgba(125,211,252,.1)}
-.m{max-width:88%;padding:12px 16px;border-radius:20px;font-size:.92rem;line-height:1.6;white-space:pre-wrap;animation:ce .4s var(--sp)}
+.m{max-width:88%;padding:12px 16px;border-radius:20px;font-size:.92rem;line-height:1.6;white-space:pre-wrap;animation:ce .45s var(--fl)}
 .m.u{align-self:flex-end;background:linear-gradient(135deg,#f97316,#a855f7);border-bottom-right-radius:6px;box-shadow:0 8px 22px rgba(168,85,247,.25)}
 .m.b{align-self:flex-start;background:rgba(30,41,59,.9);border:1px solid var(--bd);border-bottom-left-radius:6px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}
-.chips button{flex-shrink:0;padding:9px 14px;border-radius:999px;border:1px solid var(--bd);background:rgba(15,23,42,.75);color:#cbd5e1;font:600 .8rem inherit;font-family:inherit;cursor:pointer;transition:all .25s var(--sp)}
-.chips button:hover{border-color:rgba(125,211,252,.45);color:#fff;transform:translateY(-1px)}
+.chips button{flex-shrink:0;padding:9px 14px;border-radius:999px;border:1px solid var(--bd);background:rgba(15,23,42,.75);color:#cbd5e1;font:600 .8rem inherit;font-family:inherit;cursor:pointer;transition:transform .34s var(--fl),border-color .25s,color .25s,background .28s,box-shadow .28s}
+.chips button:hover{border-color:rgba(125,211,252,.45);color:#fff;transform:translateY(-1.5px)}
+.chips button:active{transform:scale(.96)}
 .chips button.on{background:linear-gradient(135deg,rgba(249,115,22,.28),rgba(168,85,247,.28));border-color:#a855f7;color:#fff;box-shadow:0 0 16px rgba(168,85,247,.25)}
-.ci{display:flex;gap:10px}.ci input{flex:1;padding:15px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.75);color:#fff;font:600 .96rem inherit;font-family:inherit;outline:none;transition:border-color .25s,box-shadow .25s}.ci input:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.18)}.ci button{width:60px;padding:0}
-.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.82);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .35s}
+.ci{display:flex;gap:10px}.ci input{flex:1;padding:15px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.75);color:#fff;font:600 .96rem inherit;font-family:inherit;outline:none;transition:border-color .28s,box-shadow .28s}.ci input:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.18)}.ci button{width:60px;padding:0}
+.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.82);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .35s var(--sp),visibility .35s}
 .modal-overlay.active{opacity:1;visibility:visible}
-.modal-box{width:100%;max-width:440px;background:rgba(12,18,36,.95);border:1px solid rgba(125,211,252,.35);border-radius:28px;padding:28px 24px;box-shadow:0 25px 70px rgba(0,0,0,.75)}
+.modal-box{width:100%;max-width:440px;background:rgba(12,18,36,.95);border:1px solid rgba(125,211,252,.35);border-radius:28px;padding:28px 24px;box-shadow:0 25px 70px rgba(0,0,0,.75);transform:scale(.95) translateY(10px);transition:transform .42s var(--fl)}
+.modal-overlay.active .modal-box{transform:scale(1) translateY(0)}
 .modal-title{font:700 1.25rem 'Space Grotesk',sans-serif;margin-bottom:8px;background:linear-gradient(135deg,#fff,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .modal-desc{color:var(--mu);font-size:.88rem;line-height:1.55;margin-bottom:18px}
-.modal-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.8);color:#fff;font:600 .95rem inherit;outline:none;margin-bottom:20px;transition:border-color .25s,box-shadow .25s}
+.modal-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.8);color:#fff;font:600 .95rem inherit;outline:none;margin-bottom:20px;transition:border-color .28s,box-shadow .28s}
 .modal-input:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.16)}
 .modal-actions{display:flex;gap:10px}
-.modal-btn{flex:1;padding:13px;border-radius:14px;font:700 .9rem inherit;cursor:pointer;border:0;transition:transform .25s var(--sp),filter .2s}
-.modal-btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
-.modal-btn:active{transform:scale(.97)}
+.modal-btn{flex:1;padding:13px;border-radius:14px;font:700 .9rem inherit;cursor:pointer;border:0;transition:transform .35s var(--fl),filter .22s}
+.modal-btn:hover{transform:translateY(-1.5px);filter:brightness(1.06)}
+.modal-btn:active{transform:scale(.96)}
 .modal-btn.cancel{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.1);color:var(--mu)}
 .modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff}
-.tool-card{background:rgba(15,23,42,.7);border:1px solid rgba(125,211,252,.2);border-radius:20px;padding:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:border-color .3s,box-shadow .3s}
-.tool-card:hover{border-color:rgba(125,211,252,.36);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.tool-card{background:rgba(15,23,42,.7);border:1px solid rgba(125,211,252,.2);border-radius:20px;padding:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:border-color .32s,box-shadow .32s,transform .38s var(--fl)}
+.tool-card:hover{border-color:rgba(125,211,252,.36);box-shadow:0 12px 30px rgba(0,0,0,.35);transform:translateY(-2px)}
 .tool-card h3{font:700 1.05rem 'Space Grotesk',sans-serif;margin-bottom:8px;color:#7dd3fc}
 .tool-card p{font-size:.85rem;color:var(--mu);margin-bottom:12px;line-height:1.5}
 .mini-presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.mini-presets button{padding:6px 11px;border-radius:999px;border:1px solid rgba(125,211,252,.24);background:rgba(15,23,42,.8);color:#cbd5e1;font:700 .74rem inherit;cursor:pointer;transition:all .22s var(--sp)}
-.mini-presets button:hover{border-color:#38bdf8;color:#fff;background:rgba(56,189,248,.16);transform:translateY(-1px)}
+.mini-presets button{padding:6px 11px;border-radius:999px;border:1px solid rgba(125,211,252,.24);background:rgba(15,23,42,.8);color:#cbd5e1;font:700 .74rem inherit;cursor:pointer;transition:transform .32s var(--fl),border-color .22s,color .22s,background .22s}
+.mini-presets button:hover{border-color:#38bdf8;color:#fff;background:rgba(56,189,248,.16);transform:translateY(-1.5px)}
+.mini-presets button:active{transform:scale(.95)}
 .swipe-hint{font-size:.72rem;color:var(--mu);margin-top:4px;font-weight:600}
 @media(min-width:760px){.shell{max-width:920px}.card{padding:42px 42px}.ops{display:grid;grid-template-columns:1fr 1fr}.exg{grid-template-columns:1fr 1fr;align-items:start}}
-@media(max-width:520px){.card{padding:24px 18px;border-radius:24px}.hm{display:none}}
+@media(max-width:560px){
+  .card{padding:24px 18px;border-radius:24px}
+  .hm{display:none}
+  .mode-slider .gb{padding:6px 8px;font-size:.73rem}
+  .gb{padding:7px 10px;font-size:.73rem}
+  .shell{padding-top:102px}
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -239,14 +274,18 @@ html{scroll-behavior:smooth}
 <canvas id="cv"></canvas>
 <header class="top">
   <div class="grp">
-    <button id="fbh" class="gb a-bh">Black Hole</button>
-    <button id="fns" class="gb">Neutron Star</button>
+    <div id="modeSlider" class="mode-slider" title="Klik atau geser kiri/kanan buat ganti latar">
+      <div class="mode-thumb" id="modeThumb"></div>
+      <button id="fbh" class="gb a-bh" type="button">Black Hole</button>
+      <button id="fns" class="gb" type="button"><span class="hm">Neutron</span> Star</button>
+      <button id="fgr" class="gb" type="button">Gravastar</button>
+    </div>
   </div>
   <div class="grp">
     <button id="bGAuth" class="gb" type="button" title="Login Google Owner">Login</button>
-    <button id="bOn" class="gb hidden">Online 0</button>
-    <button id="bLb" class="gb">Rank</button>
-    <button id="bAu" class="gb">Audio Off</button>
+    <button id="bOn" class="gb hidden" type="button">Online 0</button>
+    <button id="bLb" class="gb" type="button">Rank</button>
+    <button id="bAu" class="gb" type="button">Audio On</button>
   </div>
 </header>
 
@@ -256,7 +295,7 @@ html{scroll-behavior:smooth}
   <section id="sStart" class="card enter">
     <div class="badge">ISEA Kuis Kosmos</div>
     <h1>Misteri Astronomi & Kosmos</h1>
-    <p class="sub">Kuis astronomi, timer, bantuan, multiplier level, kalkulator gravitasi, data tata surya, dan papan peringkat.</p>
+    <p class="sub">Kuis astronomi, objek hipotesis (gravastar), timer, bantuan, multiplier level, kalkulator gravitasi, data tata surya, dan papan peringkat.</p>
     <div class="hero"><div><b>40+</b><span>Soal</span></div><div><b>3</b><span>Level</span></div><div><b>AI</b><span>Kosmo</span></div><div><b>Jelajah</b><span>Data</span></div></div>
     
     <label class="l" for="name">Nama Penjelajah</label>
@@ -271,7 +310,10 @@ html{scroll-behavior:smooth}
     </div>
     
     <label class="l">Topik</label>
-    <div class="seg" id="segM"><button data-v="all" class="on">Semua</button><button data-v="bh">Black Hole</button><button data-v="ns">Neutron Star</button></div>
+    <div class="seg" id="segM"><button data-v="all" class="on">Semua</button><button data-v="bh">Black Hole</button><button data-v="ns">Neutron Star</button><button data-v="gr">Gravastar</button></div>
+
+    <label class="l">Sumber Soal</label>
+    <div class="seg" id="segS"><button data-v="all" class="on">Semua Soal</button><button data-v="wrong">Pernah Salah</button><button data-v="saved">Tersimpan</button></div>
     
     <label class="l">Kesulitan</label>
     <div class="seg" id="segD"><button data-v="easy">Easy (x1)</button><button data-v="normal" class="on">Normal (x1.5)</button><button data-v="hard">Hard (x2.5)</button></div>
@@ -282,11 +324,17 @@ html{scroll-behavior:smooth}
     <div class="fact" id="fact"></div>
     <button id="bGo" class="pb">Mulai Kuis</button>
     <button id="bLb2" class="sb">Papan Peringkat</button>
-    <div class="swipe-hint">Geser kiri/kanan di layar buat pindah tab.</div>
+    <div class="swipe-hint">Geser kiri/kanan di layar buat pindah tab, atau tarik switcher di atas buat ganti latar.</div>
   </section>
 
   <section id="sQuiz" class="card hidden">
-    <div class="qh"><span id="qTag" class="tag bh">Black Hole</span><div class="st"><span id="qSc">0 pts</span><span id="qSt">x0</span><span id="qCt">1/10</span></div></div>
+    <div class="qh">
+      <div class="qh-left">
+        <span id="qTag" class="tag bh">Black Hole</span>
+        <button id="bBm" class="bm-btn" type="button">Simpan</button>
+      </div>
+      <div class="st"><span id="qSc">0 pts</span><span id="qSt">x0</span><span id="qCt">1/10</span></div>
+    </div>
     <div class="tm"><i id="tmBar"></i></div>
     <div class="pg"><i id="pgBar"></i></div>
     <div class="ll"><button id="l50">50:50</button><button id="lT">+10 detik</button><span id="tL" class="st" style="margin-left:auto;font-size:.95rem">20s</span></div>
@@ -325,13 +373,26 @@ html{scroll-behavior:smooth}
 
   <section id="sExp" class="card hidden">
     <h1 style="font-size:1.7rem">Jelajah Kosmos & Tata Surya</h1>
-    <p class="sub" style="margin:6px 0 14px">Data planet, objek ekstrem, dan kalkulator hitungan astrofisika.</p>
+    <p class="sub" style="margin:6px 0 14px">Ringkasan materi, data planet, objek ekstrem dan hipotesis, serta kalkulator astrofisika.</p>
 
     <div class="seg" id="expModeSeg" style="margin-bottom:18px">
       <button data-em="all" class="on">Semua</button>
       <button data-em="planets">Tata Surya</button>
       <button data-em="objects">Objek Ekstrem</button>
       <button data-em="tools">Kalkulator & Log</button>
+    </div>
+
+    <div id="expNotesBlock" style="margin-bottom:18px">
+      <label class="l">Catatan Singkat Materi</label>
+      <div class="chips" id="noteChips" style="margin-bottom:10px">
+        <button class="on" data-nt="bh">Black Hole</button>
+        <button data-nt="ns">Neutron Star</button>
+        <button data-nt="gr">Gravastar</button>
+      </div>
+      <div id="noteCard" class="tool-card" style="border-color:rgba(255,138,61,.35)">
+        <h3 id="noteTitle">Black Hole</h3>
+        <p id="noteBody" style="margin:0">Wilayah dengan kelengkungan ruang-waktu ekstrem dan batas event horizon. Di dekat horizon terjadi dilatasi waktu gravitasi dan efek pasang surut (spaghettification).</p>
+      </div>
     </div>
 
     <div id="expPlanetsBlock">
@@ -354,7 +415,7 @@ html{scroll-behavior:smooth}
     </div>
 
     <div id="expObjectsBlock">
-      <label class="l">Objek Ekstrem</label>
+      <label class="l">Objek Ekstrem & Hipotesis</label>
       <div class="exg" id="exg"></div>
     </div>
 
@@ -412,7 +473,7 @@ html{scroll-behavior:smooth}
 
   <section id="sAI" class="card hidden">
     <div class="aih"><h1 style="font-size:1.7rem">Kosmo AI</h1><button id="aiK" class="gb">API Key</button></div>
-    <p class="sub" style="margin:6px 0 0">Tanya soal lubang hitam, bintang neutron, planet, dan astronomi.</p>
+    <p class="sub" style="margin:6px 0 0">Tanya soal lubang hitam, bintang neutron, gravastar, planet, dan astronomi.</p>
     <div class="chat" id="chat"></div>
     <div class="chips" id="chips"></div>
     <div class="ci"><input id="aiIn" maxlength="300" placeholder="Ketik pertanyaan..." autocomplete="off"><button id="aiGo" class="pb">Kirim</button></div>
@@ -453,7 +514,7 @@ html{scroll-behavior:smooth}
 
 <script>
 /* ===== BANK SOAL ===== */
-const Q=(m,q,o,e)=>({m,q,o,e});
+const Q=(m,q,o,e)=>({id:q.slice(0,28),m,q,o,e});
 const QS=[
 Q('bh','Apa nama batas di sekitar lubang hitam di mana kecepatan lepas melebihi kecepatan cahaya?',['Event Horizon (Horizon Peristiwa)','Singularitas Kuantum','Fotosfer Relativistik','Batas Chandrasekhar'],'Event Horizon adalah batas tanpa jalan kembali: tidak ada materi maupun cahaya yang bisa lolos setelah melewatinya.'),
 Q('ns','Seberapa padat materi sebuah bintang neutron?',['Satu sendok teh bermassa sekitar 1 miliar ton','Setara kepadatan inti Jupiter','10 kali lebih padat dari besi','Sama dengan kepadatan inti Matahari'],'Massa 1,4–2 kali Matahari dimampatkan dalam bola berdiameter sekitar 20 km.'),
@@ -489,26 +550,188 @@ Q('ns','Berapa kisaran suhu permukaan rata-rata bintang neutron yang baru lahir?
 Q('bh','Siapa fisikawan yang pertama kali menurunkan solusi matematis lubang hitam dari teori relativitas umum pada 1916?',['Karl Schwarzschild','Albert Einstein','Stephen Hawking','J. Robert Oppenheimer'],'Karl Schwarzschild menemukan solusi eksak persamaan medan Einstein saat bertugas di garis depan Perang Dunia I.'),
 Q('ns','Apa nama satelit ruang angkasa NASA yang dikhususkan memetakan sinar-X dari pulsar dan bintang neutron?',['NICER (Neutron star Interior Composition Explorer)','Hubble Space Telescope','James Webb Space Telescope','Voyager 1'],'NICER dipasang di Stasiun Luar Angkasa Internasional (ISS) untuk mengukur struktur bintang neutron dengan presisi tinggi.'),
 Q('bh','Apa efek yang terjadi jika dua lubang hitam supermasif bergabung?',['Memancarkan gelombang gravitasi dahsyat ke seluruh alam semesta','Menghasilkan supernova tipe II','Membentuk bintang neutron baru','Menghilang seketika tanpa jejak'],'Penggabungan lubang hitam merusak kelengkungan ruang-waktu dan mengirim riak gelombang gravitasi.'),
-Q('ns','Apa nama unsur terberat yang berhasil dideteksi dalam sisa tabrakan kilonova selain emas?',['Platina dan Uranium','Besi murni','Karbon aktif','Silikon cair'],'Kilonova adalah satu-satunya pabrik kosmik utama yang mampu mencetak unsur berat seperti emas dan uranium.')
+Q('ns','Apa nama unsur terberat yang berhasil dideteksi dalam sisa tabrakan kilonova selain emas?',['Platina dan Uranium','Besi murni','Karbon aktif','Silikon cair'],'Kilonova adalah satu-satunya pabrik kosmik utama yang mampu mencetak unsur berat seperti emas dan uranium.'),
+Q('gr','Apa kepanjangan dan gagasan utama dari Gravastar dalam astrofisika teoretis?',['Gravitational Vacuum Star: interior energi vakum tanpa singularitas pusat','Gravitational Star: bintang gas padat dengan inti besi','Gravity Variable Star: bintang yang massanya berubah-ubah','Gravitational Wave Star: pulsar pemancar gelombang radio'],'Gravastar diusulkan sebagai alternatif lubang hitam tanpa singularitas pusat dan tanpa event horizon mutlak.'),
+Q('gr','Apa isi bagian dalam (interior) gravastar menurut model Mazur–Mottola?',['Kondensat Bose–Einstein atau ruang bertekanan negatif (energi vakum)','Inti besi cair superpanas','Awan debu antarbintang dingin','Lapisan gas hidrogen dan helium'],'Bagian intinya berupa vakum bertekanan negatif yang menahan keruntuhan gravitasi sehingga tidak membentuk singularitas.'),
+Q('gr','Bagaimana batas luar gravastar digambarkan dibanding event horizon lubang hitam?',['Kulit tipis materi sangat padat (berketebalan orde panjang Planck) pengganti horizon','Permukaan batuan berpori seperti bulan','Lapisan awan gas setebal jutaan kilometer','Cincin es tipis yang berputar'],'Kulit tipis berenergi tinggi memisahkan interior energi vakum dari ruang luar.'),
+Q('gr','Mengapa astronom meneliti gravastar sebagai objek hipotesis?',['Untuk menguji apakah objek superpadat bisa menghindari singularitas & paradoks informasi','Karena gravastar sudah difoto langsung sejak 1950','Untuk menggantikan posisi Matahari di tata surya','Karena gravastar hanya ada di dalam tata surya'],'Gravastar menjadi salah satu model alternatif lubang hitam yang diuji lewat data gelombang gravitasi dan pencitraan bayangan.')
 ];
-const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.'];
+const FACTS=['Satu sendok teh materi bintang neutron bermassa miliaran ton.','Event Horizon Telescope menggabungkan teleskop di seluruh dunia menjadi satu "teleskop" seukuran Bumi.','Pulsar PSR J1748-2446ad berputar sekitar 716 kali per detik.','Lubang hitam tidak "menyedot"; ia hanya punya gravitasi sangat kuat di dekatnya.','Emas di perhiasanmu kemungkinan lahir dari tabrakan bintang neutron.','Cahaya tidak bisa lolos dari lubang hitam, tetapi kita bisa melihat piringan akresinya.','Gravastar adalah objek hipotesis yang mengganti singularitas pusat dengan interior energi vakum.'];
 
-/* ===== UTIL & AUDIO ===== */
+/* ===== UTIL & AUDIO OBJEK (BH / NS / GRAVASTAR) ===== */
 const $=id=>document.getElementById(id),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const ls={g:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-const vib=n=>navigator.vibrate&&navigator.vibrate(n);
+const vib=n=>{try{navigator.vibrate&&navigator.vibrate(n)}catch(e){}};
 function toast(t){const e=$('toast');if(!e)return;e.textContent=t;e.classList.add('v');setTimeout(()=>e.classList.remove('v'),2200)}
 
-const au={c:null,on:false,d:null,
- t(f,ty='sine',du=.25,v=.12){if(!this.on)return;try{const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.0001,n+du);o.connect(g);g.connect(this.c.destination);o.start(n);o.stop(n+du)}catch(e){}},
- toggle(){if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();try{this.c.resume()}catch(e){}this.on=!this.on;if(this.on){const o=this.c.createOscillator(),g=this.c.createGain();o.frequency.value=55;g.gain.value=.045;o.connect(g);g.connect(this.c.destination);o.start();this.d=o;}else if(this.d){this.d.stop();this.d=null}return this.on},
+const au={
+ c:null,
+ on:true,
+ mode:'bh',
+ master:null,
+ comp:null,
+ bus:null,
+ pulseTimer:null,
+
+ ensureCtx(){
+  if(!this.c)this.c=new(window.AudioContext||window.webkitAudioContext)();
+  if(!this.comp){
+   this.comp=this.c.createDynamicsCompressor();
+   this.comp.threshold.setValueAtTime(-14,this.c.currentTime);
+   this.comp.knee.setValueAtTime(18,this.c.currentTime);
+   this.comp.ratio.setValueAtTime(6,this.c.currentTime);
+   this.comp.attack.setValueAtTime(0.01,this.c.currentTime);
+   this.comp.release.setValueAtTime(0.18,this.c.currentTime);
+   this.comp.connect(this.c.destination);
+  }
+  if(!this.master){
+   this.master=this.c.createGain();
+   this.master.gain.value=0.0001;
+   this.master.connect(this.comp);
+  }
+  if(!this.bus){
+   this.bus=this.c.createGain();
+   this.bus.gain.value=1.0;
+   this.bus.connect(this.master);
+  }
+  return this.c;
+ },
+
+ clearAmb(){
+  if(this.pulseTimer){clearInterval(this.pulseTimer);this.pulseTimer=null;}
+  if(this.bus){
+   try{this.bus.disconnect();}catch(e){}
+   this.bus=this.c.createGain();
+   this.bus.gain.value=1.0;
+   this.bus.connect(this.master);
+  }
+ },
+
+ buildObjectAmb(m){
+  if(!this.on||!this.c||this.c.state!=='running')return;
+  this.clearAmb();
+  const now=this.c.currentTime;
+
+  if(m==='bh'){
+   // Black Hole: drone rendah berat + sweep pelan (lebih berisi di volume menengah)
+   const o1=this.c.createOscillator(),o2=this.c.createOscillator(),sub=this.c.createOscillator(),lfo=this.c.createOscillator();
+   const lfoG=this.c.createGain(),flt=this.c.createBiquadFilter(),g=this.c.createGain(),subG=this.c.createGain();
+   o1.type='sawtooth';o1.frequency.setValueAtTime(46,now);
+   o2.type='triangle';o2.frequency.setValueAtTime(69,now);
+   sub.type='sine';sub.frequency.setValueAtTime(36,now);
+   lfo.type='sine';lfo.frequency.setValueAtTime(0.24,now);
+   lfoG.gain.setValueAtTime(210,now);
+   flt.type='lowpass';flt.frequency.setValueAtTime(290,now);flt.Q.setValueAtTime(4.2,now);
+   g.gain.setValueAtTime(0.22,now);
+   subG.gain.setValueAtTime(0.18,now);
+   lfo.connect(lfoG);lfoG.connect(flt.frequency);
+   o1.connect(flt);o2.connect(flt);flt.connect(g);g.connect(this.bus);
+   sub.connect(subG);subG.connect(this.bus);
+   o1.start(now);o2.start(now);sub.start(now);lfo.start(now);
+  }else if(m==='ns'){
+   // Neutron Star: dasar stabil + denyut pulsar tegas
+   const base=this.c.createOscillator(),baseG=this.c.createGain();
+   base.type='triangle';base.frequency.setValueAtTime(86,now);
+   baseG.gain.setValueAtTime(0.09,now);
+   base.connect(baseG);baseG.connect(this.bus);base.start(now);
+
+   this.pulseTimer=setInterval(()=>{
+    if(!this.on||!this.c||this.c.state!=='running'||this.mode!=='ns')return;
+    const t=this.c.currentTime;
+    const p=this.c.createOscillator(),pg=this.c.createGain();
+    p.type='sine';
+    p.frequency.setValueAtTime(640,t);
+    p.frequency.exponentialRampToValueAtTime(210,t+0.08);
+    pg.gain.setValueAtTime(0.0001,t);
+    pg.gain.linearRampToValueAtTime(0.18,t+0.008);
+    pg.gain.exponentialRampToValueAtTime(0.0001,t+0.095);
+    p.connect(pg);pg.connect(this.bus);
+    p.start(t);p.stop(t+0.1);
+   },250);
+  }else{
+   // Gravastar: pad vakum halus + harmonik beriak jelas
+   const o1=this.c.createOscillator(),o2=this.c.createOscillator(),o3=this.c.createOscillator();
+   const g=this.c.createGain(),flt=this.c.createBiquadFilter(),trem=this.c.createOscillator(),tremG=this.c.createGain();
+   o1.type='sine';o1.frequency.setValueAtTime(118,now);
+   o2.type='sine';o2.frequency.setValueAtTime(177,now);
+   o3.type='triangle';o3.frequency.setValueAtTime(236,now);
+   flt.type='bandpass';flt.frequency.setValueAtTime(420,now);flt.Q.setValueAtTime(1.3,now);
+   trem.type='sine';trem.frequency.setValueAtTime(0.38,now);
+   tremG.gain.setValueAtTime(0.055,now);
+   g.gain.setValueAtTime(0.16,now);
+   trem.connect(tremG);tremG.connect(g.gain);
+   o1.connect(flt);o2.connect(flt);o3.connect(flt);flt.connect(g);g.connect(this.bus);
+   o1.start(now);o2.start(now);o3.start(now);trem.start(now);
+  }
+ },
+
+ unlock(){
+  if(!this.on)return;
+  this.ensureCtx();
+  const apply=()=>{
+   if(!this.on||!this.c)return;
+   const t=this.c.currentTime;
+   this.master.gain.cancelScheduledValues(t);
+   this.master.gain.setValueAtTime(Math.max(0.0001,this.master.gain.value),t);
+   this.master.gain.linearRampToValueAtTime(1.65,t+0.22);
+   this.buildObjectAmb(this.mode);
+  };
+  if(this.c.state==='suspended'){
+   this.c.resume().then(apply).catch(()=>{});
+  }else{
+   apply();
+  }
+ },
+
+ setObjectMode(m){
+  this.mode=m||'bh';
+  if(this.on&&this.c&&this.c.state==='running'){
+   this.buildObjectAmb(this.mode);
+  }
+ },
+
+ t(f,ty='sine',du=.25,v=.12){
+  if(!this.on)return;
+  this.ensureCtx();
+  if(this.c.state==='suspended')return;
+  try{
+   const n=this.c.currentTime,o=this.c.createOscillator(),g=this.c.createGain();
+   o.type=ty;o.frequency.value=f;
+   g.gain.setValueAtTime(v*1.35,n);
+   g.gain.exponentialRampToValueAtTime(.0001,n+du);
+   o.connect(g);g.connect(this.master);
+   o.start(n);o.stop(n+du);
+  }catch(e){}
+ },
+
+ toggle(){
+  this.ensureCtx();
+  this.on=!this.on;
+  const t=this.c.currentTime;
+  if(this.on){
+   this.c.resume().then(()=>{
+    const now=this.c.currentTime;
+    this.master.gain.cancelScheduledValues(now);
+    this.master.gain.setValueAtTime(0.0001,now);
+    this.master.gain.linearRampToValueAtTime(1.65,now+0.22);
+    this.buildObjectAmb(this.mode);
+   }).catch(()=>{});
+  }else{
+   this.clearAmb();
+   this.master.gain.cancelScheduledValues(t);
+   this.master.gain.setValueAtTime(Math.max(0.0001,this.master.gain.value),t);
+   this.master.gain.linearRampToValueAtTime(0.0001,t+0.15);
+  }
+  return this.on;
+ },
+
  ok(){this.t(523,'sine',.25,.14);setTimeout(()=>this.t(659,'sine',.28,.14),80);setTimeout(()=>this.t(784,'triangle',.4,.14),160)},
  no(){this.t(190,'sawtooth',.28,.09);setTimeout(()=>this.t(145,'sawtooth',.35,.09),110)},
  clk(){this.t(440,'sine',.08,.06)},tick(){this.t(900,'square',.05,.03)}
 };
 
-/* ===== CANVAS ===== */
-const sc={tm:0,bl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
+/* ===== CANVAS (BH / NS / GRAVASTAR) ===== */
+const sc={tm:0,bl:0,gm:0,gl:0,mx:0,my:0,sx:0,sy:0,t:0,bp:[]};
 const cv=$('cv'),cx=cv?cv.getContext('2d'):null;let W,H;
 if(cv && cx){
  const rs=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)};rs();addEventListener('resize',rs);
@@ -529,15 +752,30 @@ if(cv && cx){
   const p=.85+Math.abs(Math.cos(r))*.35;
   [-1,1].forEach(d=>{const j=cx.createLinearGradient(0,0,0,d*300*p);j.addColorStop(0,'rgba(224,242,254,.95)');j.addColorStop(.4,'rgba(56,189,248,.45)');j.addColorStop(1,'rgba(56,189,248,0)');cx.fillStyle=j;cx.beginPath();cx.moveTo(-4,0);cx.lineTo(-34*p,d*300*p);cx.lineTo(34*p,d*300*p);cx.lineTo(4,0);cx.fill()});
   cx.restore();cx.shadowColor='#38bdf8';cx.shadowBlur=35;cx.fillStyle='#fff';cx.beginPath();cx.arc(0,0,18,0,6.283);cx.fill();cx.restore()}
- (function loop(){sc.t+=.016;sc.bl+=(sc.tm-sc.bl)*.05;sc.sx+=(sc.mx-sc.sx)*.06;sc.sy+=(sc.my-sc.sy)*.06;cx.clearRect(0,0,W,H);
+ function drawGR(x,y,al,t){if(al<.01)return;cx.save();cx.globalAlpha=al;cx.translate(x,y);
+  const pulse=1+Math.sin(t*2.1)*.04;
+  let g=cx.createRadialGradient(0,0,18,0,0,250);g.addColorStop(0,'rgba(192,132,252,.45)');g.addColorStop(.45,'rgba(129,140,248,.18)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,250,0,6.283);cx.fill();
+  cx.save();cx.scale(pulse,pulse);
+  cx.strokeStyle='rgba(233,213,255,.82)';cx.lineWidth=3;cx.shadowColor='#c084fc';cx.shadowBlur=24;
+  cx.beginPath();cx.arc(0,0,74,0,6.283);cx.stroke();
+  cx.strokeStyle='rgba(56,189,248,.35)';cx.lineWidth=1.5;cx.setLineDash([6,8]);cx.rotate(t*.35);
+  cx.beginPath();cx.arc(0,0,96,0,6.283);cx.stroke();
+  cx.restore();
+  let core=cx.createRadialGradient(0,0,4,0,0,70);core.addColorStop(0,'rgba(243,232,255,.35)');core.addColorStop(.7,'rgba(88,28,135,.22)');core.addColorStop(1,'rgba(15,23,42,.65)');
+  cx.fillStyle=core;cx.beginPath();cx.arc(0,0,71,0,6.283);cx.fill();cx.restore()}
+ (function loop(){sc.t+=.016;sc.bl+=(sc.tm-sc.bl)*.07;sc.gl+=(sc.gm-sc.gl)*.07;sc.sx+=(sc.mx-sc.sx)*.065;sc.sy+=(sc.my-sc.sy)*.065;cx.clearRect(0,0,W,H);
   stars.forEach(s=>{cx.fillStyle=`rgba(226,232,240,${(.45+Math.sin(sc.t*2.2+s.w)*.45)*s.z})`;cx.beginPath();cx.arc((s.x*W+sc.sx*28*s.z+W)%W,(s.y*H+sc.sy*28*s.z+H)%H,s.s,0,6.283);cx.fill()});
-  const x=W/2+sc.sx*22,y=H*.25+sc.sy*18;drawBH(x,y,1-sc.bl);drawNS(x,y,sc.bl,sc.t);
+  const x=W/2+sc.sx*22,y=H*.25+sc.sy*18;
+  const grAl=sc.gl;
+  const bhAl=Math.max(0,(1-sc.bl)*(1-grAl));
+  const nsAl=Math.max(0,sc.bl*(1-grAl));
+  drawBH(x,y,bhAl);drawNS(x,y,nsAl,sc.t);drawGR(x,y,grAl,sc.t);
   for(let i=sc.bp.length-1;i>=0;i--){const p=sc.bp[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.95;p.vy*=.95;p.l-=.025;if(p.l<=0){sc.bp.splice(i,1);continue}cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,3.2*p.l,0,6.283);cx.fill();cx.globalAlpha=1}
   requestAnimationFrame(loop)})();
 }
 
 /* ===== STATE & NAVIGASI ===== */
-let G={}, cfg={mode:'all',diff:'normal',n:10};
+let G={}, cfg={mode:'all',src:'all',diff:'normal',n:10};
 const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
 let cs='start';
 const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
@@ -562,6 +800,7 @@ function show(k){
  let sx=0,sy=0,active=false;
  document.addEventListener('touchstart',e=>{
   if(e.touches.length!==1)return;
+  if(e.target&&e.target.closest('#modeSlider'))return;
   const tag=e.target&&e.target.tagName;
   if(tag==='INPUT'||tag==='TEXTAREA'||e.target.closest('.chips')||e.target.closest('.modal-overlay.active'))return;
   if(cs==='quiz')return;
@@ -581,18 +820,106 @@ function show(k){
   const nextIdx=dx<0?idx+1:idx-1;
   if(nextIdx>=0&&nextIdx<SWIPE_TABS.length){
    au.clk();
+   vib(14);
    openTab(SWIPE_TABS[nextIdx]);
   }
  },{passive:true});
 })();
 
-function vis(m){sc.tm=m==='bh'?0:1;if($('fbh'))$('fbh').classList.toggle('a-bh',m==='bh');if($('fns'))$('fns').classList.toggle('a-ns',m!=='bh')}
-if($('fbh'))$('fbh').onclick=()=>{au.clk();vis('bh')};
-if($('fns'))$('fns').onclick=()=>{au.clk();vis('ns')};
-if($('bAu'))$('bAu').onclick=()=>{$('bAu').textContent=au.toggle()?'Audio On':'Audio Off'};
+const BG_MODES=['bh','ns','gr'];
+let curBgMode='bh';
+
+function setThumbIndex(idx, offsetPx=0){
+ const thumb=$('modeThumb');
+ if(!thumb)return;
+ thumb.style.transform=`translate3d(calc(${idx*100}% + ${offsetPx}px),0,0)`;
+}
+
+function vis(m){
+ const mode=BG_MODES.includes(m)?m:'bh';
+ curBgMode=mode;
+ au.setObjectMode(mode);
+ const idx=BG_MODES.indexOf(mode);
+ sc.tm=mode==='ns'?1:0;
+ sc.gm=mode==='gr'?1:0;
+ if($('fbh'))$('fbh').classList.toggle('a-bh',mode==='bh');
+ if($('fns'))$('fns').classList.toggle('a-ns',mode==='ns');
+ if($('fgr'))$('fgr').classList.toggle('a-gr',mode==='gr');
+ const box=$('modeSlider');
+ if(box){
+  box.classList.remove('dragging');
+  box.classList.toggle('ns-mode',mode==='ns');
+  box.classList.toggle('gr-mode',mode==='gr');
+ }
+ setThumbIndex(idx,0);
+}
+if($('fbh'))$('fbh').onclick=()=>{au.clk();vib(12);vis('bh')};
+if($('fns'))$('fns').onclick=()=>{au.clk();vib(12);vis('ns')};
+if($('fgr'))$('fgr').onclick=()=>{au.clk();vib(12);vis('gr')};
+
+/* Geser kiri/kanan pada switcher 3 mode di bagian atas dengan thumb real-time */
+(function initHeaderModeSwipe(){
+ const box=$('modeSlider');
+ if(!box)return;
+ let startX=0,tracking=false,swiped=false;
+ const stepWidth=()=>Math.max(1,(box.clientWidth-6)/3);
+ box.addEventListener('pointerdown',e=>{
+  startX=e.clientX;
+  tracking=true;
+  swiped=false;
+  box.classList.add('dragging');
+ });
+ box.addEventListener('pointermove',e=>{
+  if(!tracking)return;
+  const dx=e.clientX-startX;
+  if(Math.abs(dx)>8)swiped=true;
+  const baseIdx=BG_MODES.indexOf(curBgMode);
+  const maxOffset=(BG_MODES.length-1-baseIdx)*stepWidth();
+  const minOffset=-baseIdx*stepWidth();
+  const clamped=Math.max(minOffset,Math.min(maxOffset,dx));
+  setThumbIndex(baseIdx,clamped);
+ });
+ const endDrag=e=>{
+  if(!tracking)return;
+  tracking=false;
+  box.classList.remove('dragging');
+  const dx=(e&&typeof e.clientX==='number')?e.clientX-startX:0;
+  const baseIdx=BG_MODES.indexOf(curBgMode);
+  if(Math.abs(dx)>22){
+   const nextIdx=dx>0?Math.min(BG_MODES.length-1,baseIdx+1):Math.max(0,baseIdx-1);
+   if(nextIdx!==baseIdx){au.clk();vib(14)}
+   vis(BG_MODES[nextIdx]);
+  }else{
+   vis(curBgMode);
+  }
+  setTimeout(()=>{swiped=false},80);
+ };
+ box.addEventListener('pointerup',endDrag);
+ box.addEventListener('pointercancel',endDrag);
+ ['fbh','fns','fgr'].forEach(id=>{
+  const btn=$(id);
+  if(btn)btn.addEventListener('click',e=>{if(swiped){e.stopImmediatePropagation()}},true);
+ });
+})();
+
+if($('bAu'))$('bAu').onclick=()=>$('bAu').textContent=au.toggle()?'Audio On':'Audio Off';
+
+(function initAutoAudioUnlock(){
+ const unlockOnce=()=>{
+  au.unlock();
+ };
+ ['pointerdown','touchstart','keydown','click'].forEach(ev=>{
+  document.addEventListener(ev,unlockOnce,{passive:true});
+ });
+})();
+
 function seg(id,key,num){const el=$(id);if(!el)return;el.onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();[...el.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[key]=num?+b.dataset.v:b.dataset.v;ls.s('isea_cfg',cfg)}}
-seg('segM','mode');seg('segD','diff');seg('segN','n',1);
+seg('segM','mode');seg('segS','src');seg('segD','diff');seg('segN','n',1);
 cfg=Object.assign(cfg,ls.g('isea_cfg',{}));
+(function syncSavedSegs(){
+ const sync=(id,val)=>{const el=$(id);if(!el)return;[...el.children].forEach(b=>b.classList.toggle('on',String(b.dataset.v)===String(val)))};
+ sync('segM',cfg.mode);sync('segS',cfg.src);sync('segD',cfg.diff);sync('segN',cfg.n);
+})();
 
 /* ===== SISTEM KEAMANAN TOKEN & GOOGLE AUTH OWNER ===== */
 const OWNER_SECRET_TOKEN = 'KOV_SUPER_SECURE_TOKEN_2026_XYZ';
@@ -758,6 +1085,32 @@ function clearActiveQuizState() {
     localStorage.removeItem('isea_active_quiz');
 }
 
+function updateBookmarkButton(){
+ const btn=$('bBm');
+ if(!btn||!G.qs||!G.qs[G.i])return;
+ const saved=ls.g('isea_saved_q',[]);
+ const qId=G.qs[G.i].id;
+ const isSaved=saved.includes(qId);
+ btn.classList.toggle('saved',isSaved);
+ btn.textContent=isSaved?'Tersimpan':'Simpan';
+}
+
+if($('bBm'))$('bBm').onclick=()=>{
+ if(!G.qs||!G.qs[G.i])return;
+ au.clk();vib(12);
+ const qId=G.qs[G.i].id;
+ let saved=ls.g('isea_saved_q',[]);
+ if(saved.includes(qId)){
+  saved=saved.filter(id=>id!==qId);
+  toast('Dihapus dari tersimpan.');
+ }else{
+  saved.push(qId);
+  toast('Soal disimpan.');
+ }
+ ls.s('isea_saved_q',saved);
+ updateBookmarkButton();
+};
+
 function start(){
  const nameInput = $('name');
  let name = '';
@@ -775,19 +1128,34 @@ function start(){
 
  au.clk();
  let pool=QS.filter(q=>cfg.mode==='all'||q.m===cfg.mode);
+ if(cfg.src==='wrong'){
+  const wrongIds=ls.g('isea_wrong_q',[]);
+  const filtered=pool.filter(q=>wrongIds.includes(q.id));
+  if(!filtered.length){toast('Belum ada riwayat soal salah di topik ini.');return;}
+  pool=filtered;
+ }else if(cfg.src==='saved'){
+  const savedIds=ls.g('isea_saved_q',[]);
+  const filtered=pool.filter(q=>savedIds.includes(q.id));
+  if(!filtered.length){toast('Belum ada soal tersimpan di topik ini.');return;}
+  pool=filtered;
+ }
  pool=sh(pool).slice(0,Math.min(cfg.n,pool.length));
  G={live:true,name,diff:cfg.diff,qs:pool.map(q=>({...q,opts:sh(q.o)})),i:0,score:0,ok:0,st:0,best:0,wrong:[],times:[],f50:false,fT:false};
  saveActiveQuizState();
  show('quiz');render();
- addLog(`Mulai kuis topik ${cfg.mode.toUpperCase()}`);
+ addLog(`Mulai kuis (${cfg.mode.toUpperCase()} · ${cfg.src})`);
 }
 
 function render(){
- G.ans=false;const q=G.qs[G.i];vis(q.m);
+ G.ans=false;const q=G.qs[G.i];vis(q.m==='gr'?'gr':(q.m==='ns'?'ns':'bh'));
  presence(`Soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`);
  saveActiveQuizState();
+ updateBookmarkButton();
 
- if($('qTag')){$('qTag').textContent=q.m==='bh'?'Black Hole':'Neutron Star';$('qTag').className='tag '+q.m;}
+ if($('qTag')){
+  $('qTag').textContent=q.m==='bh'?'Black Hole':(q.m==='gr'?'Gravastar':'Neutron Star');
+  $('qTag').className='tag '+(q.m==='bh'?'bh':(q.m==='gr'?'gr':'ns'));
+ }
  if($('qSt'))$('qSt').textContent='x'+G.st;
  if($('qSc'))$('qSc').textContent=G.score+' pts';
  if($('qCt'))$('qCt').textContent=`${G.i+1}/${G.qs.length}`;
@@ -832,16 +1200,21 @@ function answer(i){
  if(G.diff==='normal')mult=1.5;
  if(G.diff==='hard')mult=2.5;
 
+ let wrongIds=ls.g('isea_wrong_q',[]);
+
  if(right){
   bs[i].classList.add('ok');G.ok++;G.st++;G.best=Math.max(G.best,G.st);
+  wrongIds=wrongIds.filter(id=>id!==q.id);
+  ls.s('isea_wrong_q',wrongIds);
   const basePts=100+G.st*20+Math.floor(G.left*3);
   G.score+=Math.round(basePts*mult);
-  au.ok();vib(40);if(window.burst)window.burst(q.m==='bh'?'#ff8a3d':'#38bdf8');
+  au.ok();vib(40);if(window.burst)window.burst(q.m==='bh'?'#ff8a3d':(q.m==='gr'?'#c084fc':'#38bdf8'));
   if($('exT'))$('exT').textContent=G.left>15?'Cepat! (x'+mult+')':'Benar (x'+mult+')';
   if($('ex'))$('ex').style.borderLeftColor='var(--ok)';
   presence(`Benar Soal ${G.i+1} (${G.score} pts)`);
  }else{
   if(i>=0)bs[i].classList.add('no');if(bs[ci])bs[ci].classList.add('ok');G.st=0;G.wrong.push({q:q.q,a:q.o[0]});
+  if(!wrongIds.includes(q.id)){wrongIds.push(q.id);ls.s('isea_wrong_q',wrongIds);}
   au.no();vib([60,40,60]);
   if($('exT'))$('exT').textContent=i<0?'Waktu habis:':'Kurang tepat:';
   if($('ex'))$('ex').style.borderLeftColor='var(--no)';
@@ -1174,6 +1547,29 @@ if($('bSh'))$('bSh').onclick=async()=>{
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin.')}}catch(e){}
 };
 
+/* ===== CATATAN SINGKAT MATERI ===== */
+const NOTES={
+ bh:{title:'Black Hole',color:'rgba(255,138,61,.35)',body:'Wilayah dengan kelengkungan ruang-waktu ekstrem dan batas event horizon. Di dekat horizon terjadi dilatasi waktu gravitasi dan efek pasang surut (spaghettification).'},
+ ns:{title:'Neutron Star',color:'rgba(56,189,248,.35)',body:'Sisa inti bintang masif berdiameter ±20 km dengan kerapatan luar biasa. Varian cepatnya disebut pulsar, dan yang bermedan magnet ekstrem disebut magnetar.'},
+ gr:{title:'Gravastar (Hipotesis)',color:'rgba(192,132,252,.4)',body:'Model teoretis alternatif lubang hitam (Mazur–Mottola) yang memakai kulit materi tipis dan interior energi vakum bertekanan negatif tanpa singularitas pusat.'}
+};
+const noteChips=$('noteChips');
+if(noteChips){
+ noteChips.onclick=e=>{
+  const b=e.target.closest('button[data-nt]');
+  if(!b)return;
+  au.clk();
+  [...noteChips.children].forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const n=NOTES[b.dataset.nt];
+  if(n&&$('noteTitle')&&$('noteBody')&&$('noteCard')){
+   $('noteTitle').textContent=n.title;
+   $('noteBody').textContent=n.body;
+   $('noteCard').style.borderColor=n.color;
+  }
+ };
+}
+
 /* ===== MODE JELAJAH & FITUR TAMBAHAN ===== */
 const expModeSeg=$('expModeSeg');
 if(expModeSeg){
@@ -1184,6 +1580,7 @@ if(expModeSeg){
   [...expModeSeg.children].forEach(x=>x.classList.remove('on'));
   b.classList.add('on');
   const mode=b.dataset.em;
+  if($('expNotesBlock'))$('expNotesBlock').classList.toggle('hidden',mode!=='all'&&mode!=='objects');
   if($('expPlanetsBlock'))$('expPlanetsBlock').classList.toggle('hidden',mode!=='all'&&mode!=='planets');
   if($('expObjectsBlock'))$('expObjectsBlock').classList.toggle('hidden',mode!=='all'&&mode!=='objects');
   if($('expToolsBlock'))$('expToolsBlock').classList.toggle('hidden',mode!=='all'&&mode!=='tools');
@@ -1297,7 +1694,8 @@ const EX=[
 ['PSR','Pulsar',['±716 putaran/detik','Sinyal periodik'],'Bintang neutron berotasi cepat dengan berkas radiasi yang menyapu garis pandang pengamat.'],
 ['MAG','Magnetar',['±10¹⁴–10¹⁵ gauss','Medan magnet ekstrem'],'Bintang neutron bermedan magnet sangat kuat yang memicu letusan sinar-X atau gamma.'],
 ['KN','Kilonova',['GW170817 (2017)','Unsur berat'],'Penggabungan dua bintang neutron atau lubang hitam-bintang neutron yang melepas gelombang gravitasi dan sintesis unsur berat.'],
-['QSR','Quasar',['Inti galaksi aktif','Luminositas tinggi'],'Inti galaksi yang sangat terang akibat akresi materi ke lubang hitam supermasif.']
+['QSR','Quasar',['Inti galaksi aktif','Luminositas tinggi'],'Inti galaksi yang sangat terang akibat akresi materi ke lubang hitam supermasif.'],
+['GRV','Gravastar (Hipotesis)',['Objek hipotesis','Energi vakum','Tanpa singularitas'],'Model teoretis alternatif lubang hitam (Mazur–Mottola) dengan kulit materi padat tipis dan interior bertekanan negatif tanpa singularitas pusat.']
 ];
 const exg = $('exg');
 if(exg){
@@ -1312,10 +1710,13 @@ if(exg){
 const CORPUS=QS.map(q=>q.e).concat(EX.map(x=>x[1]+': '+x[3]),FACTS);
 function offline(q){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>3);let b=null,m=0;
  CORPUS.forEach(t=>{const l=t.toLowerCase(),n=w.filter(k=>l.includes(k)).length;if(n>m){m=n;b=t}});
+ if(q.toLowerCase().includes('gravastar')) {
+     return 'Gravastar (Gravitational Vacuum Star) adalah objek hipotesis yang diusulkan sebagai alternatif lubang hitam tanpa singularitas pusat, dengan bagian dalam energi vakum bertekanan negatif.';
+ }
  if(q.toLowerCase().includes('kov') || q.toLowerCase().includes('owner') || q.toLowerCase().includes('pembuat')) {
      return 'Web ini dibuat oleh KovTheGreat untuk ISEA Kuis Kosmos.';
  }
- return b||'Tanya saja topik astronomi seperti event horizon, pulsar, magnetar, atau planet.';
+ return b||'Tanya saja topik astronomi seperti event horizon, gravastar, pulsar, magnetar, atau planet.';
 }
 function msg(t,w){const chat=$('chat');if(!chat)return;const d=document.createElement('div');d.className='m '+w;d.textContent=t;chat.appendChild(d);chat.scrollTop=1e9;return d}
 let hist=[];
@@ -1335,7 +1736,7 @@ async function ask(q){
 
 const chips = $('chips');
 if(chips){
- ['Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana kondisi planet Mars?','Fakta kosmos','Perbedaan Pulsar dan Magnetar?','Apa itu Spaghettification?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
+ ['Apa itu Gravastar?','Siapa pembuat web ini?','Apa itu lubang hitam supermasif?','Bagaimana kondisi planet Mars?','Fakta kosmos','Perbedaan Pulsar dan Magnetar?','Apa itu Spaghettification?'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{au.clk();ask(t)};chips.appendChild(b)});
 }
 if($('aiGo'))$('aiGo').onclick=()=>ask($('aiIn').value);
 if($('aiIn'))$('aiIn').addEventListener('keydown',e=>e.key==='Enter'&&ask($('aiIn').value));
@@ -1348,7 +1749,7 @@ if($('aiK')&&aiModal&&modalKeyInput){
  $('modalSave').onclick = () => {ls.s('isea_key', modalKeyInput.value.trim());aiModal.classList.remove('active');toast('Tersimpan.');};
 }
 
-if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();openTab(b.dataset.t)};
+if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();vib(12);openTab(b.dataset.t)};
 
 /* ===== SAFETY LOADER BOOT ===== */
 let isBooted = false;
@@ -1365,6 +1766,9 @@ function launchApp(){
      void scr.start.offsetWidth;
      scr.start.classList.add('enter');
  }
+
+ au.ensureCtx();
+ if(au.c&&au.c.state==='running'){au.unlock();}
  
  initNameSystem();
 
