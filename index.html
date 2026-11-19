@@ -693,23 +693,6 @@ label.l{
 .msg-btn:hover{background:rgba(56,189,248,.32);color:#fff;transform:translate3d(0,-1px,0)}
 .msg-btn:active{transform:scale(.93)}
 
-.ren-btn{
-  background:rgba(192,132,252,.16);
-  border:1px solid rgba(192,132,252,.52);
-  color:#e9d5ff;
-  padding:7px 11px;
-  border-radius:12px;
-  font:700 .72rem/1 'Space Grotesk',sans-serif;
-  letter-spacing:.03em;
-  cursor:pointer;
-  white-space:nowrap;
-  flex-shrink:0;
-  transition:transform .26s var(--fl),background .2s var(--sp),color .2s var(--sp);
-  will-change:transform;
-}
-.ren-btn:hover{background:rgba(192,132,252,.32);color:#fff;transform:translate3d(0,-1px,0)}
-.ren-btn:active{transform:scale(.93)}
-
 .jail-btn{
   background:rgba(255,138,61,.18);
   border:1px solid rgba(255,138,61,.58);
@@ -1936,18 +1919,6 @@ label.l{
   </div>
 </div>
 
-<div class="modal-overlay" id="renameModal">
-  <div class="modal-box" style="border-color:rgba(192,132,252,.45)">
-    <div class="modal-title">Ganti Nama Member</div>
-    <div class="modal-desc" id="renameModalDesc">Masukkan nama baru untuk member ini.</div>
-    <input type="text" id="renameInput" class="modal-input" maxlength="25" placeholder="Nama baru..." autocomplete="off" />
-    <div class="modal-actions">
-      <button type="button" class="modal-btn cancel" id="renameCancel">Batal</button>
-      <button type="button" class="modal-btn submit" id="renameSave">Simpan</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-overlay" id="kickModal">
   <div class="modal-box" style="border-color:rgba(244,63,94,.45)">
     <div class="modal-title" style="background:linear-gradient(135deg,#fff,#fda4af);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Konfirmasi Kick</div>
@@ -2738,7 +2709,10 @@ function initNameSystem() {
         if(notice) notice.textContent = 'Title Owner aktif: KovTheGreat';
         updateMemberNameBanner('');
     } else {
-        let savedName = ls.g('isea_username', '');
+        let savedName = ls.g('isea_original_username', '') || ls.g('isea_username', '');
+        if(savedName && savedName.toLowerCase() !== 'kovthegreat'){
+          ls.s('isea_username', savedName);
+        }
         let lastChange = ls.g('isea_name_time', 0);
         let now = Date.now();
         let cooldownLeft = 15 * 24 * 60 * 60 * 1000 - (now - lastChange);
@@ -2785,6 +2759,7 @@ function initNameSystem() {
                     return;
                 }
 
+                ls.s('isea_original_username', val);
                 ls.s('isea_username', val);
                 ls.s('isea_name_time', Date.now());
                 updateMemberNameBanner(val);
@@ -2894,6 +2869,7 @@ function start(){
          if(nameInput) nameInput.focus();
          return;
      }
+     ls.s('isea_original_username', name);
      ls.s('isea_username', name);
      updateMemberNameBanner(name);
  }
@@ -3047,66 +3023,82 @@ function isOwnerEntryData(item){
  return Boolean(item.isOwner || k === 'kovthegreat');
 }
 
+function resolveMemberOriginalName(item){
+ if(!item || !item.n) return item;
+ if(isOwnerEntryData(item)) return { ...item, n: 'KovTheGreat', isOwner: true };
+ const orig = item.origName || item.originalName;
+ if(orig && String(orig).trim() && String(orig).trim().toLowerCase() !== 'kovthegreat'){
+  return { ...item, n: String(orig).trim() };
+ }
+ return { ...item, n: String(item.n).trim() };
+}
+
 function mergePlayerEntry(prev, incoming, mode='best'){
- if(!prev) return { ...incoming, s: Number(incoming.s) || 0, d: Number(incoming.d) || Date.now() };
- const prevScore = Number(prev.s ?? 0);
- const incScore = Number(incoming.s ?? 0);
- const prevDate = Number(prev.d ?? 0);
- const incDate = Number(incoming.d ?? 0);
+ const a = resolveMemberOriginalName(prev);
+ const b = resolveMemberOriginalName(incoming);
+ if(!a) return { ...b, s: Number(b.s) || 0, d: Number(b.d) || Date.now() };
+ const prevScore = Number(a.s ?? 0);
+ const incScore = Number(b.s ?? 0);
+ const prevDate = Number(a.d ?? 0);
+ const incDate = Number(b.d ?? 0);
 
  if(mode==='new'){
   const isNewer = incDate >= prevDate;
-  const newer = isNewer ? incoming : prev;
+  const newer = isNewer ? b : a;
   const topScore = Math.max(prevScore, incScore);
   return {
-   ...prev,
-   ...incoming,
-   n: incoming.n || prev.n,
+   ...a,
+   ...b,
+   n: b.n || a.n,
+   origName: b.origName || a.origName || b.n || a.n,
    s: isNewer ? incScore : prevScore,
    bestScore: topScore,
-   ok: isNewer ? (incoming.ok ?? prev.ok ?? 0) : (prev.ok ?? incoming.ok ?? 0),
-   t: isNewer ? (incoming.t ?? prev.t ?? 0) : (prev.t ?? incoming.t ?? 0),
-   p: isNewer ? (incoming.p ?? prev.p ?? 0) : (prev.p ?? incoming.p ?? 0),
-   diff: isNewer ? (incoming.diff || prev.diff || 'normal') : (prev.diff || incoming.diff || 'normal'),
+   ok: isNewer ? (b.ok ?? a.ok ?? 0) : (a.ok ?? b.ok ?? 0),
+   t: isNewer ? (b.t ?? a.t ?? 0) : (a.t ?? b.t ?? 0),
+   p: isNewer ? (b.p ?? a.p ?? 0) : (a.p ?? b.p ?? 0),
+   diff: isNewer ? (b.diff || a.diff || 'normal') : (a.diff || b.diff || 'normal'),
    d: Math.max(prevDate, incDate) || Date.now(),
-   isOwner: Boolean(prev.isOwner || incoming.isOwner || newer.isOwner)
+   isOwner: Boolean(a.isOwner || b.isOwner || newer.isOwner)
   };
  }
 
  if(incScore >= prevScore){
   return {
-   ...prev,
-   ...incoming,
-   n: incoming.n || prev.n,
+   ...a,
+   ...b,
+   n: b.n || a.n,
+   origName: b.origName || a.origName || b.n || a.n,
    s: incScore,
    bestScore: incScore,
-   ok: incoming.ok ?? prev.ok ?? 0,
-   t: incoming.t ?? prev.t ?? 0,
-   p: incoming.p ?? prev.p ?? 0,
-   diff: incoming.diff || prev.diff || 'normal',
+   ok: b.ok ?? a.ok ?? 0,
+   t: b.t ?? a.t ?? 0,
+   p: b.p ?? a.p ?? 0,
+   diff: b.diff || a.diff || 'normal',
    d: incDate || prevDate || Date.now(),
-   isOwner: Boolean(prev.isOwner || incoming.isOwner)
+   isOwner: Boolean(a.isOwner || b.isOwner)
   };
  }
 
  return {
-  ...prev,
-  n: incoming.n || prev.n,
+  ...a,
+  n: a.n || b.n,
+  origName: a.origName || b.origName || a.n || b.n,
   s: prevScore,
   bestScore: prevScore,
   d: Math.max(prevDate, incDate) || Date.now(),
-  isOwner: Boolean(prev.isOwner || incoming.isOwner)
+  isOwner: Boolean(a.isOwner || b.isOwner)
  };
 }
 
 function dedupePlayers(rawList, mode='best'){
  const map=new Map();
- (rawList||[]).forEach(item=>{
+ (rawList||[]).forEach(raw=>{
+  const item = resolveMemberOriginalName(raw);
   if(!item || !item.n) return;
   const trimmed=String(item.n).trim();
   const key=normPlayerKey(trimmed);
   if(!key) return;
-  const entry={...item, n: trimmed, s: Number(item.s ?? 0), d: Number(item.d ?? 0)};
+  const entry={...item, n: trimmed, origName: item.origName || trimmed, s: Number(item.s ?? 0), d: Number(item.d ?? 0)};
   if(!map.has(key)){
    map.set(key, entry);
   }else{
@@ -3171,16 +3163,27 @@ function results(){
  }
 
  G.rid=Date.now();
- const currentName = G.name || (isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah'));
+ const origMemberName = ls.g('isea_original_username', '') || ls.g('isea_username', 'Penjelajah');
+ const currentName = isOwnerDevice() ? 'KovTheGreat' : (G.name || origMemberName);
  const newScore = Number(G.score)||0;
- const newRecord = {n: currentName, s: newScore, p: pct, ok: G.ok, t: n, diff: G.diff, d: G.rid, isOwner: isOwnerDevice()};
+ const newRecord = {
+  n: currentName,
+  origName: currentName,
+  s: newScore,
+  p: pct,
+  ok: G.ok,
+  t: n,
+  diff: G.diff,
+  d: G.rid,
+  isOwner: isOwnerDevice()
+ };
 
  saveMemberSubmissionForOwner(newRecord);
 
  const existingLocal = ls.g('isea_lb',[]);
  const pKey = normPlayerKey(currentName);
  const safeKey = safeFirebaseKey(currentName);
- const prevLocal = existingLocal.find(x => x && normPlayerKey(x.n) === pKey);
+ const prevLocal = existingLocal.find(x => x && normPlayerKey(x.origName || x.n) === pKey);
  const prevBestScore = Math.max(Number(ls.g('isea_best',0))||0, Number(prevLocal?.s)||0);
 
  const updatedLocal = dedupePlayers([...existingLocal, newRecord], 'best');
@@ -3277,7 +3280,7 @@ function paint(rawList){
  });
 
  const frag=document.createDocumentFragment();
- const myNameKey = normPlayerKey(isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', ''));
+ const myNameKey = normPlayerKey(isOwnerDevice() ? 'KovTheGreat' : (ls.g('isea_original_username', '') || ls.g('isea_username', '')));
 
  // Baris paling atas khusus Owner: hanya OWNER (tanpa skor, jumlah benar, dan waktu)
  const liOwner = document.createElement('li');
@@ -3314,7 +3317,7 @@ function board(dir){
  au.clk();
  if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));
 
- const fallbackList = ls.g('isea_lb',[]);
+ const fallbackList = dedupePlayers(ls.g('isea_lb',[]), lbS === 'new' ? 'new' : 'best');
  const sortMode = lbS === 'new' ? 'new' : 'best';
 
  detachLiveBoard();
@@ -3378,7 +3381,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin.')}catch(e){toast('Gagal menyalin.')}
 };
 
-/* ===== ONLINE, OWNER LIVE MONITOR, DM, RENAME, JAILIN & KICK ENGINE ===== */
+/* ===== ONLINE, OWNER LIVE MONITOR, DM, JAILIN & KICK ENGINE ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -3393,7 +3396,6 @@ const firebaseConfig = {
 const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.s('isea_pid',pid);
 let db=null,meRef=null,cur='Di menu utama',curAnsState='',curAnsLabel='',OL={};
 let lastHandledDmTs = ls.g('isea_last_dm_ts', 0);
-let lastHandledRenameTs = ls.g('isea_last_rename_ts', 0);
 let lastHandledPrankTs = ls.g('isea_last_prank_ts', 0);
 
 function presence(st, ansState, ansLabel){
@@ -3401,7 +3403,7 @@ function presence(st, ansState, ansLabel){
  if(typeof ansState!=='undefined') curAnsState=ansState;
  if(typeof ansLabel!=='undefined') curAnsLabel=ansLabel;
  if(!db||!meRef)return;
- let currentName = isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah');
+ let currentName = isOwnerDevice() ? 'KovTheGreat' : (ls.g('isea_original_username', '') || ls.g('isea_username', 'Penjelajah'));
  meRef.update({
    n: currentName,
    st: st,
@@ -3414,7 +3416,6 @@ function presence(st, ansState, ansLabel){
 
 let pendingKick = null;
 let pendingDm = null;
-let pendingRename = null;
 let pendingJailTarget = null;
 
 function closeKickModal(){
@@ -3428,13 +3429,6 @@ function closeDmModal(){
   if(m) m.classList.remove('active');
   if($('dmInput')) $('dmInput').value = '';
   pendingDm = null;
-}
-
-function closeRenameModal(){
-  const m = $('renameModal');
-  if(m) m.classList.remove('active');
-  if($('renameInput')) $('renameInput').value = '';
-  pendingRename = null;
 }
 
 function closeJailModal(){
@@ -3575,91 +3569,6 @@ function initOwnerModals(){
   };
   if(dmSend) dmSend.onclick = submitDm;
   if(dmInput) dmInput.addEventListener('keydown', e => { if(e.key === 'Enter') submitDm(); });
-
-  const renCancel = $('renameCancel');
-  const renSave = $('renameSave');
-  const renOverlay = $('renameModal');
-  const renInput = $('renameInput');
-  if(renCancel) renCancel.onclick = () => { au.clk(); closeRenameModal(); };
-  if(renOverlay) renOverlay.onclick = (e) => { if(e.target === renOverlay) closeRenameModal(); };
-  const submitRename = () => {
-    if(!pendingRename || !renInput) return;
-    const newName = renInput.value.trim();
-    if(!newName) return toast('Nama baru tidak boleh kosong.');
-    if(newName.toLowerCase() === 'kovthegreat') return toast('Nama ini khusus owner.');
-    const { targetId, oldName } = pendingRename;
-    closeRenameModal();
-    if(!isOwnerDevice()) return toast('Aksi ditolak.');
-    if(!db) return toast('Database belum terhubung.');
-    const nowTs = Date.now();
-
-    db.ref('online/' + targetId).update({
-      n: newName,
-      forcedName: newName,
-      renameTs: nowTs
-    }).then(() => {
-      const oldKey = normPlayerKey(oldName);
-      const oldSafe = safeFirebaseKey(oldName);
-      const newSafe = safeFirebaseKey(newName);
-
-      if(oldSafe && newSafe){
-        const oldRef = db.ref('scores_by_user/' + oldSafe);
-        const newRef = db.ref('scores_by_user/' + newSafe);
-        oldRef.once('value').then(sn => {
-          const prevScore = sn.val();
-          if(prevScore){
-            newRef.once('value').then(nsn => {
-              const existingNew = nsn.val();
-              const merged = mergePlayerEntry(existingNew, { ...prevScore, n: newName }, 'best');
-              newRef.set(merged).catch(()=>{});
-            }).catch(()=>{});
-            if(oldSafe !== newSafe){
-              oldRef.remove().catch(()=>{});
-            }
-          }
-        }).catch(()=>{});
-
-        db.ref('scores').once('value').then(ssn => {
-          ssn.forEach(child => {
-            const cVal = child.val();
-            if(cVal && normPlayerKey(cVal.n) === oldKey){
-              child.ref.update({ n: newName }).catch(()=>{});
-            }
-          });
-        }).catch(()=>{});
-      }
-
-      const localLb = ls.g('isea_lb', []);
-      if(Array.isArray(localLb) && localLb.length){
-        const mappedLb = localLb.map(item => {
-          if(item && normPlayerKey(item.n) === oldKey){
-            return { ...item, n: newName };
-          }
-          return item;
-        });
-        ls.s('isea_lb', dedupePlayers(mappedLb, 'best'));
-      }
-
-      const localSubs = ls.g('isea_owner_submissions', []);
-      if(Array.isArray(localSubs) && localSubs.length){
-        const mappedSubs = localSubs.map(sub => {
-          if(sub && normPlayerKey(sub.n) === oldKey){
-            return { ...sub, n: newName };
-          }
-          return sub;
-        });
-        ls.s('isea_owner_submissions', mappedSubs);
-      }
-
-      au.clk();
-      toast(`Nama "${oldName}" diganti jadi "${newName}" di Rank.`);
-      if($('sLb') && !$('sLb').classList.contains('hidden')) board();
-    }).catch((error) => {
-      toast(`Gagal ganti nama: ${error.message}`);
-    });
-  };
-  if(renSave) renSave.onclick = submitRename;
-  if(renInput) renInput.addEventListener('keydown', e => { if(e.key === 'Enter') submitRename(); });
 }
 initOwnerModals();
 
@@ -3672,21 +3581,6 @@ function openDmModal(targetId, targetName){
     $('dmInput').value = '';
     if($('dmModal')) $('dmModal').classList.add('active');
     setTimeout(()=>$('dmInput').focus(), 40);
-  }
-}
-
-function openRenameModal(targetId, currentName){
-  if(!isOwnerDevice()) return toast('Aksi ditolak.');
-  au.clk();
-  pendingRename = { targetId, oldName: currentName };
-  if($('renameModalDesc')) $('renameModalDesc').textContent = `Ganti nama untuk "${currentName}":`;
-  if($('renameInput')){
-    $('renameInput').value = currentName;
-    if($('renameModal')) $('renameModal').classList.add('active');
-    setTimeout(()=>{
-      $('renameInput').focus();
-      $('renameInput').select();
-    }, 40);
   }
 }
 
@@ -3783,12 +3677,6 @@ function drawOn(){
           msgBtn.textContent = 'Pesan';
           msgBtn.onclick = () => openDmModal(k, userName);
 
-          const renBtn = document.createElement('button');
-          renBtn.type = 'button';
-          renBtn.className = 'ren-btn';
-          renBtn.textContent = 'Ganti Nama';
-          renBtn.onclick = () => openRenameModal(k, userName);
-
           const jailBtn = document.createElement('button');
           jailBtn.type = 'button';
           jailBtn.className = 'jail-btn';
@@ -3802,7 +3690,6 @@ function drawOn(){
           kickBtn.onclick = () => kickUser(k, userName);
 
           acts.appendChild(msgBtn);
-          acts.appendChild(renBtn);
           acts.appendChild(jailBtn);
           acts.appendChild(kickBtn);
           li.appendChild(acts);
@@ -3831,28 +3718,6 @@ function processMyOnlineNode(snapVal){
     toast(`${snapVal.dmFrom || 'KovTheGreat'}: ${dmText}`);
     au.ok();
     vib([35,25,35]);
-  }
-
-  const forcedName = snapVal.forcedName;
-  const renameTs = snapVal.renameTs || 0;
-  if(forcedName && String(forcedName).trim().toLowerCase() !== 'kovthegreat'){
-    const cleanForced = String(forcedName).trim();
-    const currentSaved = ls.g('isea_username', '');
-    if(currentSaved !== cleanForced || renameTs > lastHandledRenameTs){
-      lastHandledRenameTs = Math.max(lastHandledRenameTs, renameTs);
-      ls.s('isea_last_rename_ts', lastHandledRenameTs);
-      ls.s('isea_username', cleanForced);
-      if($('name')) $('name').value = cleanForced;
-      updateMemberNameBanner(cleanForced);
-      if(G && G.live) G.name = cleanForced;
-      initNameSystem();
-      if(snapVal.n !== cleanForced && meRef){
-        meRef.update({ n: cleanForced }).catch(()=>{});
-      }
-      if(renameTs > 0){
-        toast(`Nama kamu diubah menjadi "${cleanForced}".`);
-      }
-    }
   }
 
   const incomingItems = [];
@@ -3975,7 +3840,7 @@ if($('bGo'))$('bGo').onclick=start;
 if($('bAg'))$('bAg').onclick=start;
 if($('bHm'))$('bHm').onclick=()=>{au.clk();presence('Di menu utama','','');show('start')};
 if($('bSh'))$('bSh').onclick=async()=>{
- const myName = isOwnerDevice() ? 'KovTheGreat' : ls.g('isea_username', 'Penjelajah');
+ const myName = isOwnerDevice() ? 'KovTheGreat' : (ls.g('isea_original_username', '') || ls.g('isea_username', 'Penjelajah'));
  const t=`${myName} dapat ${G.score} pts (${G.ok}/${G.qs.length}) di Kuis Kosmos ISEA.`;
  try{if(navigator.share)await navigator.share({title:'Kuis Kosmos ISEA',text:t});else{await navigator.clipboard.writeText(t);toast('Skor disalin.')}}catch(e){}
 };
@@ -4485,23 +4350,26 @@ if(exg){
  if(!gctx)return;
 
  let gw=300, gh=340, running=false, rafId=null, lastTs=0;
- let shipX=150, shipY=292, hull=100, score=0, best=ls.g('isea_game_best',0)||0, speedLv=1;
- let moveLeft=false, moveRight=false, pointerTargetX=null;
- let meteors=[], lasers=[], stars=[], cores=[], particles=[], spawnAcc=0, coreAcc=0, fireAcc=0;
- let weaponType='pulse';
+ let score=0, best=ls.g('isea_game_best',0)||0, hull=100, speedLv=1;
+ let ship={x:150,y:285,w:32,h:36,vx:0};
+ let meteors=[], lasers=[], cores=[], particles=[];
+ let spawnTimer=0, coreTimer=0, fireTimer=0, keys={left:false,right:false};
+ let weapon='pulse'; // 'pulse' | 'twin' | 'nova'
 
- if($('gBest'))$('gBest').textContent=best;
-
- const WEAPONS={
-  pulse:{name:'Pulse Laser',badge:'Pulse Laser (Auto)',color:'#38bdf8',interval:0.22},
-  twin:{name:'Twin Plasma',badge:'Twin Plasma (Auto)',color:'#c084fc',interval:0.18},
-  nova:{name:'Solar Scatter',badge:'Solar Scatter (Auto)',color:'#fbbf24',interval:0.25}
- };
-
- function syncWeaponUI(){
-  const w=WEAPONS[weaponType]||WEAPONS.pulse;
-  if($('gWeaponBadge'))$('gWeaponBadge').textContent=w.badge;
-  if($('gWeaponInfo'))$('gWeaponInfo').textContent=`Auto-Fire ${w.name} aktif · Ambil Star Core buat ganti senjata`;
+ function updateWeaponUI(){
+  const badge=$('gWeaponBadge');
+  const info=$('gWeaponInfo');
+  if(!badge||!info)return;
+  if(weapon==='nova'){
+   badge.textContent='Nova Scatter (Auto)';
+   info.textContent='Hadiah Star Core: Tembakan menyebar 3 arah berdaya tinggi!';
+  }else if(weapon==='twin'){
+   badge.textContent='Twin Blaster (Auto)';
+   info.textContent='Hadiah Star Core: Tembakan ganda paralel aktif!';
+  }else{
+   badge.textContent='Pulse Laser (Auto)';
+   info.textContent='Auto-Fire Aktif · Ambil Star Core untuk upgrade meriam';
+  }
  }
 
  window.resizeSpaceGame=function(){
@@ -4511,433 +4379,386 @@ if(exg){
   gcv.width=Math.floor(gw*dpr);
   gcv.height=Math.floor(gh*dpr);
   gctx.setTransform(dpr,0,0,dpr,0,0);
-  shipY=gh-44;
-  if(!running)shipX=gw*0.5;
-  if(!stars.length){
-   stars=Array.from({length:48},()=>({x:Math.random()*gw,y:Math.random()*gh,s:Math.random()*1.7+0.5,v:Math.random()*35+20}));
-  }
+  ship.y=gh-48;
+  ship.x=Math.max(24,Math.min(gw-24,ship.x||gw/2));
  };
- window.resizeSpaceGame();
- addEventListener('resize',()=>window.resizeSpaceGame(),{passive:true});
 
- function spawnBurst(x,y,col,n=10){
+ function syncHud(){
+  if($('gScore'))$('gScore').textContent=Math.floor(score);
+  if($('gBest'))$('gBest').textContent=Math.floor(best);
+  if($('gHull'))$('gHull').textContent=Math.max(0,Math.round(hull))+'%';
+  if($('gWave'))$('gWave').textContent='Lv '+speedLv;
+  updateWeaponUI();
+ }
+
+ function spawnParticles(x,y,col,n=8){
   for(let i=0;i<n;i++){
    const a=Math.random()*Math.PI*2;
-   const sp=45+Math.random()*135;
-   particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1,col,r:1.8+Math.random()*2.4});
+   const sp=1.2+Math.random()*3.5;
+   particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1,c:col});
   }
  }
 
  function fireAutoWeapon(){
-  const w=WEAPONS[weaponType]||WEAPONS.pulse;
-  if(weaponType==='twin'){
-   lasers.push({x:shipX-11,y:shipY-18,vx:0,vy:-460,col:w.color,dmg:1});
-   lasers.push({x:shipX+11,y:shipY-18,vx:0,vy:-460,col:w.color,dmg:1});
-  }else if(weaponType==='nova'){
-   [-0.22,0,0.22].forEach(ang=>{
-    lasers.push({x:shipX,y:shipY-20,vx:Math.sin(ang)*440,vy:-Math.cos(ang)*440,col:w.color,dmg:1});
+  au.t(weapon==='nova'?620:(weapon==='twin'?520:440),'triangle',0.07,0.09);
+  if(weapon==='nova'){
+   [-0.24,0,0.24].forEach(ang=>{
+    lasers.push({x:ship.x,y:ship.y-18,vx:Math.sin(ang)*5.2,vy:-Math.cos(ang)*8.5,dmg:18,c:'#e879f9'});
+   });
+  }else if(weapon==='twin'){
+   [-9,9].forEach(ox=>{
+    lasers.push({x:ship.x+ox,y:ship.y-16,vx:0,vy:-8.8,dmg:16,c:'#38bdf8'});
    });
   }else{
-   lasers.push({x:shipX,y:shipY-20,vx:0,vy:-470,col:w.color,dmg:1});
+   lasers.push({x:ship.x,y:ship.y-18,vx:0,vy:-8.2,dmg:20,c:'#fde047'});
   }
-  au.t(weaponType==='nova'?760:640,'triangle',0.06,0.08);
  }
 
  function startGame(){
-  window.resizeSpaceGame();
   au.clk();
-  hull=100;score=0;speedLv=1;
-  shipX=gw*0.5;
+  window.resizeSpaceGame();
+  score=0;hull=100;speedLv=1;spawnTimer=0;coreTimer=0;fireTimer=0;weapon='pulse';
   meteors=[];lasers=[];cores=[];particles=[];
-  spawnAcc=0;coreAcc=0;fireAcc=0;
-  weaponType='pulse';
-  pointerTargetX=null;
+  ship.x=gw/2;ship.y=gh-48;
   running=true;
   ov.classList.add('hidden');
-  syncWeaponUI();
-  updateHud();
+  syncHud();
   lastTs=performance.now();
   if(rafId)cancelAnimationFrame(rafId);
-  rafId=requestAnimationFrame(stepGame);
-  addLog('Memulai Game Orbital Dodger');
+  rafId=requestAnimationFrame(loopGame);
  }
 
  function endGame(){
   running=false;
   if(rafId)cancelAnimationFrame(rafId);
-  if(score>best){best=score;ls.s('isea_game_best',best)}
-  updateHud();
+  if(score>best){best=Math.floor(score);ls.s('isea_game_best',best)}
+  syncHud();
   if($('gBadge'))$('gBadge').textContent='Misi Selesai';
-  if($('gTitle'))$('gTitle').textContent='Wahana Rusak!';
-  if($('gDesc'))$('gDesc').textContent=`Skor kamu ${score} pts · Rekor terbaik ${best} pts.`;
-  startBtn.textContent='Main Lagi';
+  if($('gTitle'))$('gTitle').textContent=`Skor Akhir: ${Math.floor(score)}`;
+  if($('gDesc'))$('gDesc').textContent=`Rekor terbaik: ${Math.floor(best)} · Tekan Mulai Misi untuk terbang lagi.`;
+  if(startBtn)startBtn.textContent='Main Lagi';
   ov.classList.remove('hidden');
   au.no();
-  addLog(`Selesai Game Orbital Dodger (Skor: ${score})`);
+  addLog(`Main Orbital Dodger · Skor ${Math.floor(score)}`);
  }
 
- function updateHud(){
-  if($('gScore'))$('gScore').textContent=score;
-  if($('gBest'))$('gBest').textContent=best;
-  if($('gHull'))$('gHull').textContent=Math.max(0,Math.round(hull))+'%';
-  if($('gWave'))$('gWave').textContent='Lv '+speedLv;
- }
-
- function stepGame(now){
+ function loopGame(now){
   if(!running)return;
-  const dt=Math.min(0.05,(now-lastTs)/1000);
+  const dt=Math.min(0.05,(now-lastTs)/1000)||0.016;
   lastTs=now;
+  const step=dt*60;
 
-  score+=Math.floor(dt*18*speedLv);
-  speedLv=1+Math.floor(score/250);
+  speedLv=1+Math.floor(score/220);
+  score+=dt*18*speedLv;
 
-  const steerSpeed=340;
-  if(moveLeft)shipX-=steerSpeed*dt;
-  if(moveRight)shipX+=steerSpeed*dt;
-  if(typeof pointerTargetX==='number'){
-   const diff=pointerTargetX-shipX;
-   shipX+=diff*Math.min(1,dt*14);
-  }
-  shipX=Math.max(24,Math.min(gw-24,shipX));
+  const moveSpd=6.2*step;
+  if(keys.left)ship.x-=moveSpd;
+  if(keys.right)ship.x+=moveSpd;
+  ship.x=Math.max(22,Math.min(gw-22,ship.x));
 
-  const w=WEAPONS[weaponType]||WEAPONS.pulse;
-  fireAcc+=dt;
-  if(fireAcc>=w.interval){
-   fireAcc=0;
+  // Tembakan otomatis
+  fireTimer+=dt;
+  const fireInterval=weapon==='pulse'?0.26:0.22;
+  if(fireTimer>=fireInterval){
+   fireTimer=0;
    fireAutoWeapon();
   }
 
-  spawnAcc+=dt;
-  const spawnInterval=Math.max(0.28,0.82-(speedLv-1)*0.05);
-  if(spawnAcc>=spawnInterval){
-   spawnAcc=0;
-   const r=11+Math.random()*13;
-   const hp=r>18?2:1;
+  // Spawn meteor
+  spawnTimer+=dt;
+  const interval=Math.max(0.32,0.85-(speedLv-1)*0.055);
+  if(spawnTimer>=interval){
+   spawnTimer=0;
+   const r=12+Math.random()*14;
    meteors.push({
     x:r+Math.random()*(gw-r*2),
     y:-r-8,
     r,
-    hp,
-    vy:115+speedLv*26+Math.random()*65,
-    vx:(Math.random()-0.5)*45,
-    rot:Math.random()*Math.PI*2,
-    vr:(Math.random()-0.5)*3.2
+    hp:r>20?40:20,
+    vy:(2.3+Math.random()*1.8)*(1+(speedLv-1)*0.12),
+    vx:(Math.random()-.5)*1.1,
+    rot:Math.random()*6.28,
+    vr:(Math.random()-.5)*0.06
    });
   }
 
-  coreAcc+=dt;
-  if(coreAcc>=4.8){
-   coreAcc=0;
-   const pool=['pulse','twin','nova'];
-   const nextW=pool[Math.floor(Math.random()*pool.length)];
-   cores.push({x:26+Math.random()*(gw-52),y:-16,r:11,vy:125,w:nextW,pulse:0});
+  // Spawn Star Core (hadiah senjata)
+  coreTimer+=dt;
+  if(coreTimer>=7.5){
+   coreTimer=0;
+   cores.push({
+    x:28+Math.random()*(gw-56),
+    y:-20,
+    r:12,
+    vy:2.1+Math.random()*0.7,
+    pulse:Math.random()*6.28
+   });
   }
 
-  gctx.clearRect(0,0,gw,gh);
-  gctx.fillStyle='#f8fafc';
-  stars.forEach(s=>{
-   s.y+=s.v*dt*(0.7+speedLv*0.12);
-   if(s.y>gh){s.y=-2;s.x=Math.random()*gw}
-   gctx.globalAlpha=0.55;
-   gctx.beginPath();gctx.arc(s.x,s.y,s.s,0,Math.PI*2);gctx.fill();
-  });
-  gctx.globalAlpha=1;
-
+  // Update laser
   for(let i=lasers.length-1;i>=0;i--){
    const l=lasers[i];
-   l.x+=l.vx*dt;
-   l.y+=l.vy*dt;
+   l.x+=l.vx*step;
+   l.y+=l.vy*step;
    if(l.y<-20||l.x<-20||l.x>gw+20){lasers.splice(i,1);continue}
-   gctx.strokeStyle=l.col;
-   gctx.lineWidth=3;
-   gctx.beginPath();
-   gctx.moveTo(l.x,l.y);
-   gctx.lineTo(l.x-l.vx*0.025,l.y-l.vy*0.025);
-   gctx.stroke();
-  }
-
-  for(let i=cores.length-1;i>=0;i--){
-   const c=cores[i];
-   c.y+=c.vy*dt;
-   c.pulse+=dt*6;
-   if(c.y>gh+24){cores.splice(i,1);continue}
-   const rad=c.r+Math.sin(c.pulse)*2;
-   gctx.save();
-   gctx.translate(c.x,c.y);
-   gctx.fillStyle='rgba(251,191,36,0.22)';
-   gctx.beginPath();gctx.arc(0,0,rad+5,0,Math.PI*2);gctx.fill();
-   gctx.fillStyle='#fbbf24';
-   gctx.beginPath();gctx.arc(0,0,rad,0,Math.PI*2);gctx.fill();
-   gctx.fillStyle='#0f172a';
-   gctx.font='800 9px "Space Grotesk",sans-serif';
-   gctx.textAlign='center';gctx.textBaseline='middle';
-   gctx.fillText('★',0,0.5);
-   gctx.restore();
-
-   if(Math.hypot(c.x-shipX,c.y-shipY)<c.r+18){
-    weaponType=c.w;
-    score+=35;
-    syncWeaponUI();
-    spawnBurst(c.x,c.y,'#fbbf24',12);
-    au.ok();
-    toast(`Hadiah senjata: ${WEAPONS[weaponType].name}!`);
-    cores.splice(i,1);
-   }
-  }
-
-  for(let i=meteors.length-1;i>=0;i--){
-   const m=meteors[i];
-   m.x+=m.vx*dt;m.y+=m.vy*dt;m.rot+=m.vr*dt;
-   if(m.x<m.r||m.x>gw-m.r)m.vx*=-1;
-
-   let destroyed=false;
-   for(let j=lasers.length-1;j>=0;j--){
-    const l=lasers[j];
-    if(Math.hypot(m.x-l.x,m.y-l.y)<m.r+6){
-     lasers.splice(j,1);
+   let hitMeteor=false;
+   for(let j=meteors.length-1;j>=0;j--){
+    const m=meteors[j];
+    if(Math.hypot(l.x-m.x,l.y-m.y)<m.r+6){
      m.hp-=l.dmg;
-     spawnBurst(l.x,l.y,l.col,5);
+     hitMeteor=true;
+     spawnParticles(l.x,l.y,l.c,4);
      if(m.hp<=0){
       score+=25;
-      spawnBurst(m.x,m.y,'#fdba74',12);
-      au.t(290,'sawtooth',0.07,0.08);
-      meteors.splice(i,1);
-      destroyed=true;
+      spawnParticles(m.x,m.y,'#fdba74',10);
+      au.t(310,'sine',0.09,0.08);
+      meteors.splice(j,1);
      }
      break;
     }
    }
-   if(destroyed)continue;
+   if(hitMeteor)lasers.splice(i,1);
+  }
 
-   if(m.y>gh+m.r+10){meteors.splice(i,1);continue}
+  // Update Star Core
+  for(let i=cores.length-1;i>=0;i--){
+   const c=cores[i];
+   c.y+=c.vy*step;
+   c.pulse+=dt*6;
+   if(Math.hypot(c.x-ship.x,c.y-ship.y)<c.r+18){
+    weapon = (weapon==='pulse') ? 'twin' : (weapon==='twin' ? 'nova' : 'twin');
+    score+=40;
+    spawnParticles(c.x,c.y,'#fde047',12);
+    au.ok();
+    toast(weapon==='nova'?'Hadiah: Nova Scatter aktif!':'Hadiah: Twin Blaster aktif!');
+    cores.splice(i,1);
+    continue;
+   }
+   if(c.y>gh+30)cores.splice(i,1);
+  }
 
-   gctx.save();
-   gctx.translate(m.x,m.y);gctx.rotate(m.rot);
-   gctx.fillStyle=m.hp>1?'#7c2d12':'#334155';
-   gctx.strokeStyle=m.hp>1?'#fb923c':'#94a3b8';
-   gctx.lineWidth=2;
-   gctx.beginPath();gctx.arc(0,0,m.r,0,Math.PI*2);gctx.fill();gctx.stroke();
-   gctx.restore();
-
-   const dist=Math.hypot(m.x-shipX,m.y-shipY);
+  // Update meteor & tabrakan wahana
+  for(let i=meteors.length-1;i>=0;i--){
+   const m=meteors[i];
+   m.x+=m.vx*step;m.y+=m.vy*step;m.rot+=m.vr*step;
+   if(m.x<m.r||m.x>gw-m.r)m.vx*=-1;
+   const dist=Math.hypot(m.x-ship.x,m.y-ship.y);
    if(dist<m.r+14){
-    hull-=24;
-    spawnBurst(m.x,m.y,'#f43f5e',14);
+    hull-=22;
+    spawnParticles(m.x,m.y,'#fb7185',12);
     meteors.splice(i,1);
     au.no();vib(45);
-    if(hull<=0){updateHud();endGame();return}
+    if(hull<=0){endGame();return}
+    continue;
    }
+   if(m.y>gh+40)meteors.splice(i,1);
   }
 
   for(let i=particles.length-1;i>=0;i--){
    const p=particles[i];
-   p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt*2.4;
-   if(p.l<=0){particles.splice(i,1);continue}
-   gctx.globalAlpha=Math.max(0,p.l);
-   gctx.fillStyle=p.col;
-   gctx.beginPath();gctx.arc(p.x,p.y,p.r,0,Math.PI*2);gctx.fill();
+   p.x+=p.vx*step;p.y+=p.vy*step;p.l-=dt*2.4;
+   if(p.l<=0)particles.splice(i,1);
   }
-  gctx.globalAlpha=1;
 
-  const wCol=(WEAPONS[weaponType]||WEAPONS.pulse).color;
+  // Gambar scene
+  gctx.clearRect(0,0,gw,gh);
+  gctx.fillStyle='rgba(226,232,240,0.55)';
+  for(let s=0;s<28;s++){
+   const sx=((s*97+now*0.02)%gw);
+   const sy=((s*53+now*0.08*(1+speedLv*0.15))%gh);
+   gctx.fillRect(sx,sy,1.6,1.6);
+  }
+
+  // Gambar laser
+  lasers.forEach(l=>{
+   gctx.strokeStyle=l.c;
+   gctx.lineWidth=3;
+   gctx.beginPath();
+   gctx.moveTo(l.x,l.y);
+   gctx.lineTo(l.x-l.vx*1.5,l.y+12);
+   gctx.stroke();
+  });
+
+  // Gambar Star Core
+  cores.forEach(c=>{
+   const glow=gctx.createRadialGradient(c.x,c.y,2,c.x,c.y,c.r*2.2);
+   glow.addColorStop(0,'rgba(253,224,71,0.95)');
+   glow.addColorStop(1,'rgba(253,224,71,0)');
+   gctx.fillStyle=glow;
+   gctx.beginPath();gctx.arc(c.x,c.y,c.r*2.2,0,Math.PI*2);gctx.fill();
+
+   gctx.fillStyle='#fde047';
+   gctx.beginPath();gctx.arc(c.x,c.y,c.r*0.75,0,Math.PI*2);gctx.fill();
+  });
+
+  // Gambar wahana
   gctx.save();
-  gctx.translate(shipX,shipY);
+  gctx.translate(ship.x,ship.y);
   gctx.fillStyle='#38bdf8';
   gctx.beginPath();
-  gctx.moveTo(0,-18);gctx.lineTo(14,14);gctx.lineTo(0,8);gctx.lineTo(-14,14);
-  gctx.closePath();gctx.fill();
-  gctx.fillStyle=wCol;
-  gctx.beginPath();gctx.arc(0,-2,4,0,Math.PI*2);gctx.fill();
+  gctx.moveTo(0,-18);
+  gctx.lineTo(15,14);
+  gctx.lineTo(0,8);
+  gctx.lineTo(-15,14);
+  gctx.closePath();
+  gctx.fill();
   gctx.fillStyle='#fb923c';
-  gctx.beginPath();gctx.arc(0,13,4+Math.random()*3,0,Math.PI*2);gctx.fill();
+  gctx.beginPath();gctx.arc(0,12,4+Math.sin(now*0.03)*1.5,0,Math.PI*2);gctx.fill();
   gctx.restore();
 
-  updateHud();
-  rafId=requestAnimationFrame(stepGame);
+  // Gambar meteor
+  meteors.forEach(m=>{
+   gctx.save();
+   gctx.translate(m.x,m.y);gctx.rotate(m.rot);
+   gctx.fillStyle='#475569';gctx.strokeStyle='#cbd5e1';gctx.lineWidth=1.5;
+   gctx.beginPath();
+   for(let k=0;k<7;k++){
+    const ang=k/7*Math.PI*2;
+    const rad=m.r*(0.8+(k%2)*0.24);
+    if(k===0)gctx.moveTo(Math.cos(ang)*rad,Math.sin(ang)*rad);
+    else gctx.lineTo(Math.cos(ang)*rad,Math.sin(ang)*rad);
+   }
+   gctx.closePath();gctx.fill();gctx.stroke();
+   gctx.restore();
+  });
+
+  // Gambar partikel
+  particles.forEach(p=>{
+   gctx.globalAlpha=Math.max(0,p.l);
+   gctx.fillStyle=p.c;
+   gctx.beginPath();gctx.arc(p.x,p.y,2.8,0,Math.PI*2);gctx.fill();
+  });
+  gctx.globalAlpha=1;
+
+  syncHud();
+  rafId=requestAnimationFrame(loopGame);
  }
 
- startBtn.addEventListener('click',startGame);
- const setPointerX=e=>{
+ box.addEventListener('pointermove',e=>{
   if(!running)return;
   const rect=box.getBoundingClientRect();
-  pointerTargetX=e.clientX-rect.left;
- };
- box.addEventListener('pointerdown',e=>{setPointerX(e)});
- box.addEventListener('pointermove',e=>{if(e.buttons>0||e.pointerType==='touch')setPointerX(e)});
- const bindHold=(id,setter)=>{
+  ship.x=Math.max(22,Math.min(gw-22,e.clientX-rect.left));
+ });
+ box.addEventListener('pointerdown',e=>{
+  if(!running)return;
+  const rect=box.getBoundingClientRect();
+  ship.x=Math.max(22,Math.min(gw-22,e.clientX-rect.left));
+ });
+
+ const bindHold=(id,dir)=>{
   const b=$(id);if(!b)return;
-  const down=e=>{e.preventDefault();pointerTargetX=null;setter(true)};
-  const up=()=>{setter(false)};
+  const down=e=>{e.preventDefault();keys[dir]=true};
+  const up=()=>{keys[dir]=false};
   b.addEventListener('pointerdown',down);
-  addEventListener('pointerup',up);
-  addEventListener('pointercancel',up);
+  b.addEventListener('pointerup',up);
+  b.addEventListener('pointerleave',up);
+  b.addEventListener('pointercancel',up);
  };
- bindHold('gLeftBtn',v=>moveLeft=v);
- bindHold('gRightBtn',v=>moveRight=v);
- addEventListener('keydown',e=>{
-  if(cs!=='game'||!running)return;
-  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){pointerTargetX=null;moveLeft=true}
-  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){pointerTargetX=null;moveRight=true}
- });
- addEventListener('keyup',e=>{
-  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')moveLeft=false;
-  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')moveRight=false;
- });
+ bindHold('gLeftBtn','left');
+ bindHold('gRightBtn','right');
+ addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.left=true;if(e.key==='ArrowRight'||e.key==='d')keys.right=true});
+ addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.left=false;if(e.key==='ArrowRight'||e.key==='d')keys.right=false});
+ addEventListener('resize',()=>{if(cs==='game')window.resizeSpaceGame()},{passive:true});
+
+ startBtn.onclick=startGame;
+ window.resizeSpaceGame();
+ syncHud();
 })();
 
-/* ===== KOSMO AI (LOKAL + OPSIONAL ANTHROPIC API) ===== */
-const KB=[
-['black hole','Event horizon adalah batas tanpa jalan kembali. Gravitasi di dekatnya melengkungkan ruang-waktu dan memperlambat waktu bagi pengamat luar.'],
-['neutron','Bintang neutron terbentuk dari runtuhan inti bintang masif saat supernova. Ukurannya sekitar 20 km namun massanya sekitar 1,4–2+ Matahari.'],
-['pulsar','Pulsar adalah bintang neutron yang berputar cepat dan memancarkan berkas radiasi seperti mercusuar.'],
-['magnetar','Magnetar adalah bintang neutron dengan medan magnet sangat kuat, sekitar seribu triliun kali medan magnet Bumi.'],
-['gravastar','Gravastar (Gravitational Vacuum Star) adalah objek hipotesis yang diusulkan sebagai alternatif lubang hitam tanpa singularitas pusat, dengan kulit tipis dan interior energi vakum bertekanan negatif.'],
-['hawking','Radiasi Hawking adalah radiasi teoretis di dekat event horizon akibat efek kuantum yang membuat lubang hitam perlahan kehilangan energi/massa.'],
-['spaghetti','Spaghettification terjadi karena gaya pasang surut: tarikan gravitasi pada bagian yang lebih dekat jauh lebih kuat daripada bagian yang lebih jauh.'],
-['kilonova','Kilonova terjadi saat dua bintang neutron bergabung, memancarkan gelombang gravitasi dan membentuk unsur berat seperti emas serta platinum.'],
-['sagittarius','Sagittarius A* adalah lubang hitam supermasif di pusat Bima Sakti dengan massa sekitar 4 juta kali Matahari.'],
-['m87','M87* adalah lubang hitam supermasif di galaksi Messier 87 yang citra bayangannya pertama kali dirilis Event Horizon Telescope pada 2019.'],
-['planet','Tata surya memiliki 8 planet: Merkurius, Venus, Bumi, Mars, Jupiter, Saturnus, Uranus, dan Neptunus.'],
-['gravitasi','Semakin dekat ke massa besar atau semakin besar massanya, kelengkungan ruang-waktu dan perlambatan waktu gravitasinya semakin kuat.']
-];
-const CHIPS=['Apa itu Black Hole?','Bintang neutron & pulsar','Apa itu Gravastar?','Radiasi Hawking','Spaghettification','Kilonova & emas','8 planet tata surya'];
-
-let aiBusy=false;
-
-function reply(t){
- const s=t.toLowerCase();
- for(const[k,v]of KB){if(s.includes(k))return v}
- return'Tanyakan saja mengenai black hole, bintang neutron, pulsar, magnetar, gravastar, radiasi Hawking, kilonova, atau planet di tata surya.';
+/* ===== AI KOSMO ===== */
+let key=ls.g('isea_key','');
+const CHIPS=['Apa itu Black Hole?','Apa itu Pulsar?','Apa itu Gravastar?','Spaghettification','Radiasi Hawking'];
+function addM(t,c){const d=document.createElement('div');d.className='m '+c;d.textContent=t;if($('chat')){$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight}}
+function localAI(q){const s=q.toLowerCase();
+ if(s.includes('gravastar'))return 'Gravastar adalah objek hipotesis alternatif lubang hitam dengan kulit energi tipis dan interior bertekanan negatif tanpa singularitas pusat.';
+ if(s.includes('pulsar'))return 'Pulsar adalah bintang neutron yang berputar cepat dan memancarkan berkas radiasi teratur seperti mercusuar.';
+ if(s.includes('magnetar'))return 'Magnetar adalah bintang neutron bermedan magnet sangat ekstrem yang bisa memicu letusan energi tinggi.';
+ if(s.includes('spaghett'))return 'Spaghettification terjadi karena perbedaan gaya pasang surut gravitasi yang sangat tajam di dekat lubang hitam.';
+ if(s.includes('hawking'))return 'Radiasi Hawking adalah radiasi teoretis di dekat event horizon akibat efek kuantum yang membuat lubang hitam perlahan kehilangan massa.';
+ if(s.includes('event horizon')||s.includes('horizon'))return 'Event Horizon adalah batas di sekitar lubang hitam di mana kecepatan lepas melampaui kecepatan cahaya.';
+ if(s.includes('kilonova')||s.includes('tabrakan'))return 'Tabrakan dua bintang neutron menghasilkan gelombang gravitasi serta unsur berat seperti emas dan platinum.';
+ if(s.includes('black hole')||s.includes('lubang hitam'))return 'Lubang hitam adalah wilayah dengan kelengkungan ruang-waktu ekstrem dan gravitasi sangat kuat di dekat batas horizon peristiwanya.';
+ return 'Topik yang bisa dibahas: Black Hole, Event Horizon, Spaghettification, Radiasi Hawking, Neutron Star, Pulsar, Magnetar, Kilonova, dan Gravastar.';
 }
-
-function addM(t,who){
- const c=$('chat');if(!c)return;
- const d=document.createElement('div');d.className='m '+who;d.textContent=t;c.appendChild(d);
- c.scrollTop=c.scrollHeight;
+async function askAI(q){
+ if(!q.trim()||isMemberLockedInQuiz())return;addM(q,'u');if($('aiIn'))$('aiIn').value='';
+ if(!key){setTimeout(()=>addM(localAI(q),'b'),240);return}
+ addM('...','b');const th=$('chat').lastChild;
+ try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:450,system:'Kamu adalah Kosmo, asisten astronomi ISEA. Jawab ringkas dan jelas dalam bahasa Indonesia.',messages:[{role:'user',content:q}]})});
+  const d=await r.json();th.textContent=d.content?.[0]?.text||d.error?.message||'Respons kosong.';
+ }catch(e){th.textContent='Gagal terhubung ke API. Menggunakan jawaban lokal:\n'+localAI(q)}
+ if($('chat'))$('chat').scrollTop=$('chat').scrollHeight;
 }
-
-if($('chips')){
- CHIPS.forEach(x=>{const b=document.createElement('button');b.type='button';b.textContent=x;b.onclick=()=>{
-  if(aiBusy)return;
-  au.clk();
-  [...$('chips').children].forEach(y=>y.classList.remove('on'));
-  b.classList.add('on');
-  sendAI(x);
- };$('chips').appendChild(b)});
-}
-
-async function sendAI(txt){
- if(aiBusy)return;
- const inp=$('aiIn'),t=(txt||(inp?inp.value:'')).trim();
- if(!t)return;
- if(inp)inp.value='';
- aiBusy=true;
- if($('aiGo'))$('aiGo').disabled=true;
- addM(t,'u');
- addLog(`Tanya Kosmo AI: ${t.slice(0,30)}`);
-
- const k=ls.g('isea_ak','');
- if(!k){
-  setTimeout(()=>{
-   addM(reply(t),'b');
-   aiBusy=false;
-   if($('aiGo'))$('aiGo').disabled=false;
-  },180);
-  return;
- }
-
- try{
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:450,system:'Kamu adalah Kosmo, asisten edukasi astronomi ISEA. Jawab ringkas, jelas, dan akurat dalam bahasa Indonesia.',messages:[{role:'user',content:t}]})});
-  const d=await r.json();
-  addM(d.content&&d.content[0]&&d.content[0].text||reply(t),'b');
- }catch(e){
-  addM(reply(t),'b');
- }finally{
-  aiBusy=false;
-  if($('aiGo'))$('aiGo').disabled=false;
- }
-}
-
-if($('aiGo'))$('aiGo').onclick=()=>sendAI();
-if($('aiIn'))$('aiIn').addEventListener('keydown',e=>{if(e.key==='Enter')sendAI()});
-if($('exAI'))$('exAI').onclick=()=>{au.clk();show('ai');addM('Jelaskan lebih lanjut: '+($('qTx')?$('qTx').textContent:'soal ini'),'u');setTimeout(()=>addM(($('exX')?$('exX').textContent:''),'b'),200)};
-
-function closeAiModal(){
-  const m=$('aiModal');
-  if(m)m.classList.remove('active');
-}
+function closeAiModal(){if($('aiModal'))$('aiModal').classList.remove('active')}
 if($('aiK'))$('aiK').onclick=()=>{
-  au.clk();
-  const m=$('aiModal'),inp=$('modalKeyInput');
-  if(inp)inp.value=ls.g('isea_ak','');
-  if(m)m.classList.add('active');
-  setTimeout(()=>{if(inp)inp.focus()},50);
+ au.clk();
+ if($('modalKeyInput'))$('modalKeyInput').value=key;
+ if($('aiModal'))$('aiModal').classList.add('active');
+ setTimeout(()=>$('modalKeyInput')&&$('modalKeyInput').focus(),50);
 };
 if($('modalCancel'))$('modalCancel').onclick=()=>{au.clk();closeAiModal()};
 if($('modalSave'))$('modalSave').onclick=()=>{
-  au.clk();
-  const inp=$('modalKeyInput');
-  const val=inp?inp.value.trim():'';
-  ls.s('isea_ak',val);
-  closeAiModal();
-  toast(val?'API Key tersimpan.':'API Key dikosongkan (mode lokal aktif).');
+ au.clk();
+ key=($('modalKeyInput')?$('modalKeyInput').value:'').trim();
+ ls.s('isea_key',key);
+ closeAiModal();
+ toast(key?'API Key tersimpan.':'Mode lokal aktif.');
 };
 if($('aiModal'))$('aiModal').onclick=e=>{if(e.target===$('aiModal'))closeAiModal()};
+if($('aiGo'))$('aiGo').onclick=()=>{au.clk();askAI($('aiIn')?$('aiIn').value:'')};
+if($('aiIn'))$('aiIn').onkeydown=e=>{if(e.key==='Enter')askAI($('aiIn').value)};
+if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');addM('Jelaskan lebih lanjut: '+q.q,'u');setTimeout(()=>addM(q.e,'b'),220)};
+if($('chips')){
+ const frag=document.createDocumentFragment();
+ CHIPS.forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>{au.clk();[...$('chips').children].forEach(x=>x.classList.remove('on'));b.classList.add('on');askAI(t)};frag.appendChild(b)});
+ $('chips').appendChild(frag);
+}
+addM('Halo, aku Kosmo. Ada pertanyaan seputar Black Hole, Neutron Star, Gravastar, atau astronomi?','b');
 
+/* ===== NAVIGASI BAWAH & INISIALISASI ===== */
 if($('nav'))$('nav').onclick=e=>{
- const b=e.target.closest('button');
- if(!b)return;
- if(isMemberLockedInQuiz()){
-  toast('Selesaikan kuis dulu sebelum pindah tab.');
+ const b=e.target.closest('button');if(!b)return;
+ if(isMemberLockedInQuiz()){toast('Selesaikan kuis dulu.');return;}
+ au.clk();vib(14);
+ openTab(b.dataset.t);
+};
+if($('fact'))$('fact').innerHTML='<b>Fakta singkat:</b> '+FACTS[Math.random()*FACTS.length|0];
+
+initNameSystem();
+initOnline();
+initGoogleOwnerAuth();
+
+memberTimeRate = isOwnerDevice() ? 1.0 : (ls.g('isea_member_time_rate', 1.0) || 1.0);
+
+(function checkResumeQuiz(){
+ if(isOwnerDevice()){
+  clearActiveQuizState();
   return;
  }
- au.clk();vib(12);openTab(b.dataset.t);
-};
+ const savedQuiz = ls.g('isea_active_quiz', null);
+ if(savedQuiz && savedQuiz.live && Array.isArray(savedQuiz.qs) && savedQuiz.qs.length > 0 && savedQuiz.i < savedQuiz.qs.length){
+  G = savedQuiz;
+  G.live = true;
+  show('quiz');
+  render();
+  toast('Sesi kuis dilanjutkan.');
+ }else{
+  clearActiveQuizState();
+ }
+})();
 
-/* ===== INISIALISASI ===== */
-if($('fact'))$('fact').innerHTML='<b>Fakta:</b> '+FACTS[Math.random()*FACTS.length|0];
-vis('bh');
-
-const savedRate = Number(ls.g('isea_member_time_rate', 1.0));
-if(savedRate && savedRate > 0 && !isOwnerDevice()){
-  memberTimeRate = savedRate;
-}
-
-const savedQuiz = ls.g('isea_active_quiz', null);
-if(savedQuiz && savedQuiz.live && Array.isArray(savedQuiz.qs) && savedQuiz.qs.length > 0){
-  if(isOwnerDevice()){
-    clearActiveQuizState();
-    initNameSystem();
-    initOnline();
-  }else{
-    G = savedQuiz;
-    G.name = ls.g('isea_username', G.name || 'Penjelajah');
-    updateMemberNameBanner(G.name);
-    initNameSystem();
-    initOnline();
-    show('quiz');
-    render();
-  }
-}else{
-  initNameSystem();
-  initOnline();
-}
-initGoogleOwnerAuth();
-addLog('Sesi ISEA dimulai');
-
-let loaderDismissed = false;
-function finishLoader(){
-  if(loaderDismissed) return;
-  loaderDismissed = true;
-  const ld = $('ld');
-  if(ld) ld.classList.add('out');
+window.addEventListener('load',()=>{
+ setTimeout(()=>{
+  if($('ld'))$('ld').classList.add('out');
   au.onLoaderComplete();
-}
-
-setTimeout(finishLoader, 1350);
-addEventListener('load', () => {
-  setTimeout(finishLoader, 450);
+  drainLocalPrankQueue();
+ },700);
 });
+setTimeout(()=>{
+ if($('ld')&&!$('ld').classList.contains('out'))$('ld').classList.add('out');
+ au.onLoaderComplete();
+ drainLocalPrankQueue();
+},2200);
 </script>
 </body>
 </html>
