@@ -175,6 +175,7 @@ canvas{
 .gb.a-bh{border-color:var(--bh)}
 .gb.a-ns{border-color:var(--ns)}
 .gb.a-gr{border-color:var(--gr)}
+.gb.locked-nav{opacity:.35;pointer-events:none}
 
 /* ===== SHELL & BRAND HEADER ===== */
 .shell{
@@ -449,6 +450,21 @@ label.l{
   transform:translate3d(0,-1.5px,0);
 }
 .sb:active{transform:scale(.974)}
+
+.owner-exit-quiz-btn{
+  width:100%;
+  margin-top:12px;
+  padding:12px 16px;
+  border-radius:16px;
+  border:1px solid rgba(244,63,94,.48);
+  background:rgba(244,63,94,.14);
+  color:#fda4af;
+  font:700 .84rem/1 inherit;
+  cursor:pointer;
+  transition:transform .28s var(--fl),background .2s var(--sp),color .2s var(--sp);
+}
+.owner-exit-quiz-btn:hover{background:rgba(244,63,94,.28);color:#fff;transform:translate3d(0,-1px,0)}
+.owner-exit-quiz-btn:active{transform:scale(.97)}
 
 /* ===== KUIS ===== */
 .qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
@@ -1280,6 +1296,7 @@ label.l{
     <div id="ops" class="ops"></div>
     <div id="ex" class="ex"><b id="exT"></b><span id="exX"></span><button id="exAI" class="sb" style="margin-top:14px">Tanya Kosmo soal ini</button></div>
     <button id="nx" class="pb">Lanjut</button>
+    <button id="bOwnerExitQuiz" class="owner-exit-quiz-btn hidden" type="button">Keluar Kuis (Owner)</button>
   </section>
 
   <section id="sRes" class="card hidden">
@@ -1959,7 +1976,7 @@ function drainLocalPrankQueue(){
   playBlackHoleHumanSuck(next.text || 'Tersedot ke Black Hole!');
 }
 
-/* ===== STATE & TRANSISI GANTI TAB BERSIH ===== */
+/* ===== STATE & KUNCI KELUAR KUIS UNTUK MEMBER (OWNER Punya Tombol Keluar) ===== */
 let G={}, cfg={mode:'all',src:'all',diff:'normal',n:10};
 const scr={start:$('sStart'),quiz:$('sQuiz'),res:$('sRes'),lb:$('sLb'),on:$('sOn'),exp:$('sExp'),ai:$('sAI')};
 const wrap=$('stageWrap');
@@ -1967,19 +1984,58 @@ let cs='start';
 const NAVMAP={start:'quiz',quiz:'quiz',res:'quiz',on:'quiz',exp:'exp',ai:'ai',lb:'lb'};
 const SWIPE_TABS=['quiz','exp','ai','lb'];
 
+function isMemberLockedInQuiz(){
+  return Boolean(G && G.live && !isOwnerDevice());
+}
+
+function syncQuizLockUI(){
+  const memberLocked = isMemberLockedInQuiz();
+  const exitBtn = $('bOwnerExitQuiz');
+  if(exitBtn){
+    exitBtn.classList.toggle('hidden', !(G && G.live && isOwnerDevice()));
+  }
+  const navEl = $('nav');
+  if(navEl){
+    navEl.classList.toggle('off', cs === 'quiz' || memberLocked);
+  }
+  ['bGAuth','bOn','bLb','bAu'].forEach(id => {
+    const el = $(id);
+    if(el) el.classList.toggle('locked-nav', memberLocked);
+  });
+}
+
+window.addEventListener('beforeunload', (e) => {
+  if(isMemberLockedInQuiz()){
+    saveActiveQuizState();
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  }
+});
+
 function openTab(t, dir){
+ if(isMemberLockedInQuiz()){
+  toast('Selesaikan kuis dulu sebelum pindah menu.');
+  return;
+ }
  if(t==='quiz')show(G.live?'quiz':'start', dir);
  else if(t==='lb')board(dir);
  else show(t, dir);
 }
 
 function show(k, dir){
- if(k===cs)return;
+ if(isMemberLockedInQuiz() && k !== 'quiz'){
+  toast('Selesaikan kuis dulu sebelum keluar.');
+  return;
+ }
+ if(k===cs){
+  syncQuizLockUI();
+  return;
+ }
  const c=scr[cs],n=scr[k];if(!n)return;
  const nextTab=NAVMAP[k]||'quiz';
 
  cs=k;
- if($('nav'))$('nav').classList.toggle('off',k==='quiz');
  if($('nav'))[...$('nav').children].forEach(b=>b.classList.toggle('on',b.dataset.t===nextTab));
 
  Object.values(scr).forEach(e=>{
@@ -1993,12 +2049,14 @@ function show(k, dir){
  n.classList.remove('hidden','leave','from-left','to-right','morph-in','morph-out','is-transitioning','enter');
  void n.offsetWidth;
  n.classList.add('enter');
+ syncQuizLockUI();
 }
 
 /* ===== FITUR GESER (SWIPE) ANTAR TAB ===== */
 (function initSwipe(){
  let sx=0,sy=0,active=false;
  document.addEventListener('touchstart',e=>{
+  if(isMemberLockedInQuiz())return;
   if(e.touches.length!==1)return;
   if(e.target&&e.target.closest('#modeSlider'))return;
   const tag=e.target&&e.target.tagName;
@@ -2011,6 +2069,7 @@ function show(k, dir){
  document.addEventListener('touchend',e=>{
   if(!active||!e.changedTouches.length)return;
   active=false;
+  if(isMemberLockedInQuiz())return;
   const dx=e.changedTouches[0].clientX-sx;
   const dy=e.changedTouches[0].clientY-sy;
   if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.35)return;
@@ -2113,7 +2172,10 @@ if($('fgr'))$('fgr').onclick=()=>{au.clk();vib(12);vis('gr')};
  });
 })();
 
-if($('bAu'))$('bAu').onclick=()=>$('bAu').textContent=au.toggle()?'Audio On':'Audio Off';
+if($('bAu'))$('bAu').onclick=()=>{
+ if(isMemberLockedInQuiz())return toast('Selesaikan kuis dulu.');
+ $('bAu').textContent=au.toggle()?'Audio On':'Audio Off';
+};
 
 (function initAutoAudioUnlock(){
  const unlockOnce=()=>{
@@ -2241,6 +2303,7 @@ function initNameSystem() {
                     ls.s('isea_username', 'KovTheGreat');
                     toast('Akses owner aktif.');
                     initNameSystem();
+                    syncQuizLockUI();
                     return;
                 }
 
@@ -2261,6 +2324,7 @@ function initNameSystem() {
             };
         }
     }
+    syncQuizLockUI();
 }
 
 function initGoogleOwnerAuth(){
@@ -2268,6 +2332,7 @@ function initGoogleOwnerAuth(){
   const gBtn = $('bGAuth');
   if(gBtn){
     gBtn.onclick = async () => {
+      if(isMemberLockedInQuiz()) return toast('Selesaikan kuis dulu.');
       try{
         au.clk();
         const provider = new firebase.auth.GoogleAuthProvider();
@@ -2316,6 +2381,19 @@ function saveActiveQuizState() {
 
 function clearActiveQuizState() {
     localStorage.removeItem('isea_active_quiz');
+}
+
+if($('bOwnerExitQuiz')){
+  $('bOwnerExitQuiz').onclick = () => {
+    if(!isOwnerDevice()) return;
+    au.clk();
+    clearInterval(G.iv);
+    G.live = false;
+    clearActiveQuizState();
+    presence('Di menu utama','','');
+    show('start');
+    toast('Keluar dari kuis (Mode Owner).');
+  };
 }
 
 function updateBookmarkButton(){
@@ -2384,6 +2462,7 @@ function render(){
  G.ans=false;const q=G.qs[G.i];vis(q.m==='gr'?'gr':(q.m==='ns'?'ns':'bh'));
  presence(`Soal ${G.i+1}/${G.qs.length} (${G.diff.toUpperCase()})`,'','');
  saveActiveQuizState();
+ syncQuizLockUI();
  updateBookmarkButton();
 
  if($('qTag')){
@@ -2637,6 +2716,7 @@ function paint(rawList){
 }
 
 function board(dir){
+ if(isMemberLockedInQuiz()) return toast('Selesaikan kuis dulu.');
  const reqId = ++lbSeq;
  au.clk();
  if($('segL'))[...$('segL').children].forEach(x=>x.classList.toggle('on',x.dataset.v===lbS));
@@ -3130,6 +3210,9 @@ function initOnline(){
 
    meRef.on('value', snap => {
        if(!snap.exists() && !isOwnerDevice() && cs !== 'start') {
+           G.live = false;
+           clearActiveQuizState();
+           syncQuizLockUI();
            toast('Sesi dihentikan oleh owner.');
            show('start');
            return;
@@ -3150,7 +3233,10 @@ function initOnline(){
  }catch(e){console.warn('Firebase init warning:',e)}
 }
 
-if($('bOn'))$('bOn').onclick=()=>{au.clk();drawOn();show('on')};
+if($('bOn'))$('bOn').onclick=()=>{
+ if(isMemberLockedInQuiz()) return toast('Selesaikan kuis dulu.');
+ au.clk();drawOn();show('on');
+};
 if($('bOnBack'))$('bOnBack').onclick=()=>{au.clk();show('start')};
 if($('bLb'))$('bLb').onclick=board;
 if($('bLb2'))$('bLb2').onclick=board;
@@ -3436,6 +3522,7 @@ function launchApp(){
  } else {
      presence('Di menu utama','','');
  }
+ syncQuizLockUI();
 
  addLog('Sesi dimulai.');
  if($('fact')) $('fact').innerHTML = '<b>Fakta:</b> ' + FACTS[Math.random() * FACTS.length | 0];
