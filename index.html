@@ -1504,13 +1504,14 @@ const au={
    this.master.gain.setTargetAtTime(MASTER_VOL,t,0.08);
    this.buildObjectAmb(this.mode,forceRebuild);
   };
-  if(this.c.state==='running'){
-   apply();
-  }else{
-   const pr=this.c.resume();
-   if(pr&&typeof pr.then==='function'){
-    pr.then(apply).catch(()=>{});
-   }
+  apply();
+  if(this.c.state!=='running'){
+   try{
+    const pr=this.c.resume();
+    if(pr&&typeof pr.then==='function'){
+     pr.then(apply).catch(()=>{});
+    }
+   }catch(e){}
   }
  },
 
