@@ -682,6 +682,23 @@ label.l{
 .ren-btn:hover{background:rgba(192,132,252,.32);color:#fff;transform:translate3d(0,-1px,0)}
 .ren-btn:active{transform:scale(.93)}
 
+.jail-btn{
+  background:rgba(255,138,61,.18);
+  border:1px solid rgba(255,138,61,.58);
+  color:#fdba74;
+  padding:7px 11px;
+  border-radius:12px;
+  font:700 .72rem/1 'Space Grotesk',sans-serif;
+  letter-spacing:.03em;
+  cursor:pointer;
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:transform .26s var(--fl),background .2s var(--sp),color .2s var(--sp);
+  will-change:transform;
+}
+.jail-btn:hover{background:rgba(255,138,61,.36);color:#fff;transform:translate3d(0,-1px,0)}
+.jail-btn:active{transform:scale(.93)}
+
 .ans-ok{color:#34d399;font-weight:800}
 .ans-no{color:#fb7185;font-weight:800}
 .owner-badge{
@@ -949,6 +966,49 @@ label.l{
 .modal-btn.cancel{background:rgba(15,23,42,.84);border:1px solid rgba(255,255,255,.12);color:var(--mu)}
 .modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff}
 .modal-btn.danger{background:linear-gradient(135deg,#e11d48,#f97316);color:#fff}
+
+/* ===== OVERLAY ANIMASI SEDOT BLACK HOLE ===== */
+#bhSuckOverlay{
+  position:fixed;
+  inset:0;
+  z-index:150;
+  background:rgba(3,4,8,.88);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .28s var(--sp),visibility .28s var(--sp);
+}
+#bhSuckOverlay.active{
+  opacity:1;
+  visibility:visible;
+}
+#bhSuckCanvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.bh-suck-caption{
+  position:fixed;
+  bottom:calc(48px + env(safe-area-inset-bottom));
+  left:50%;
+  transform:translate3d(-50%,0,0);
+  padding:10px 18px;
+  border-radius:999px;
+  background:rgba(15,23,42,.92);
+  border:1px solid rgba(255,138,61,.55);
+  color:#fed7aa;
+  font:700 .86rem/1.3 'Space Grotesk',sans-serif;
+  text-align:center;
+  white-space:nowrap;
+  box-shadow:0 12px 30px rgba(0,0,0,.65);
+  pointer-events:none;
+}
 
 /* ===== TOOL CARDS & FIXED KOVTHEGREAT FOOTER & TOAST ===== */
 .tool-card{
@@ -1365,6 +1425,11 @@ label.l{
   <button data-t="lb">Rank</button>
 </nav>
 
+<div id="bhSuckOverlay">
+  <canvas id="bhSuckCanvas"></canvas>
+  <div class="bh-suck-caption" id="bhSuckCaption">Tersedot ke Black Hole!</div>
+</div>
+
 <div class="modal-overlay" id="aiModal">
   <div class="modal-box">
     <div class="modal-title">Pengaturan API Key</div>
@@ -1717,6 +1782,155 @@ if(cv && cx){
   for(let i=sc.bp.length-1;i>=0;i--){const p=sc.bp[i];p.x+=p.vx*step;p.y+=p.vy*step;const damp=Math.pow(.95,step);p.vx*=damp;p.vy*=damp;p.l-=.025*step;if(p.l<=0){sc.bp.splice(i,1);continue}cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,3.2*p.l,0,6.283);cx.fill();cx.globalAlpha=1}
   requestAnimationFrame(loop);
  })(performance.now());
+}
+
+/* ===== ANIMASI MANUSIA TERSEDOT KE BLACK HOLE ===== */
+let bhSuckTimer = null;
+let bhSuckRaf = null;
+
+function playBlackHoleHumanSuck(customCaption){
+  const ov = $('bhSuckOverlay');
+  const scv = $('bhSuckCanvas');
+  const cap = $('bhSuckCaption');
+  if(!ov || !scv) return;
+
+  const sctx = scv.getContext('2d');
+  if(!sctx) return;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const sw = window.innerWidth;
+  const sh = window.innerHeight;
+  scv.width = Math.max(1, Math.floor(sw * dpr));
+  scv.height = Math.max(1, Math.floor(sh * dpr));
+  sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  if(cap){
+    cap.textContent = customCaption || 'Tersedot ke Black Hole!';
+  }
+
+  clearTimeout(bhSuckTimer);
+  if(bhSuckRaf) cancelAnimationFrame(bhSuckRaf);
+
+  ov.classList.add('active');
+  vib([70, 40, 90, 40, 120]);
+  au.t(150, 'sine', 0.45, 0.25);
+
+  const cx0 = sw * 0.5;
+  const cy0 = sh * 0.46;
+  const duration = 2600;
+  const tStart = performance.now();
+
+  const drawHumanSilhouette = (ctx, stretchX, stretchY, alpha) => {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+    ctx.scale(stretchX, stretchY);
+    ctx.fillStyle = '#f8fafc';
+    ctx.strokeStyle = '#fdba74';
+    ctx.lineWidth = 1.6;
+
+    // Kepala
+    ctx.beginPath();
+    ctx.arc(0, -24, 6.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Badan
+    ctx.beginPath();
+    ctx.roundRect(-5.5, -16, 11, 20, 4);
+    ctx.fill();
+
+    // Tangan terentang panik
+    ctx.lineWidth = 4.2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#f8fafc';
+    ctx.beginPath();
+    ctx.moveTo(-5, -13);
+    ctx.lineTo(-15, -21);
+    ctx.moveTo(5, -13);
+    ctx.lineTo(15, -21);
+    ctx.stroke();
+
+    // Kaki
+    ctx.beginPath();
+    ctx.moveTo(-3, 4);
+    ctx.lineTo(-6, 18);
+    ctx.moveTo(3, 4);
+    ctx.lineTo(6, 18);
+    ctx.stroke();
+
+    ctx.restore();
+  };
+
+  const stepAnim = (now) => {
+    const p = Math.min(1, (now - tStart) / duration);
+    sctx.clearRect(0, 0, sw, sh);
+
+    // Cahaya piringan akresi black hole
+    const aura = sctx.createRadialGradient(cx0, cy0, 18, cx0, cy0, 190);
+    aura.addColorStop(0, 'rgba(0,0,0,1)');
+    aura.addColorStop(0.32, 'rgba(255,138,61,0.55)');
+    aura.addColorStop(0.68, 'rgba(168,85,247,0.22)');
+    aura.addColorStop(1, 'rgba(0,0,0,0)');
+    sctx.fillStyle = aura;
+    sctx.beginPath();
+    sctx.arc(cx0, cy0, 190, 0, Math.PI * 2);
+    sctx.fill();
+
+    // Garis spiral pusaran gravitasi
+    sctx.save();
+    sctx.translate(cx0, cy0);
+    for(let k = 0; k < 3; k++){
+      sctx.strokeStyle = `rgba(253,186,116,${0.28 - k * 0.06})`;
+      sctx.lineWidth = 1.5;
+      sctx.beginPath();
+      const baseR = 42 + k * 24;
+      sctx.ellipse(0, 0, baseR * 1.35, baseR * 0.42, -0.22 + now * 0.0012 * (k % 2 === 0 ? 1 : -1), 0, Math.PI * 2);
+      sctx.stroke();
+    }
+
+    // Event horizon hitam pekat
+    sctx.fillStyle = '#020307';
+    sctx.beginPath();
+    sctx.arc(0, 0, 34, 0, Math.PI * 2);
+    sctx.fill();
+    sctx.strokeStyle = 'rgba(255,215,160,0.85)';
+    sctx.lineWidth = 2;
+    sctx.beginPath();
+    sctx.arc(0, 0, 35, 0, Math.PI * 2);
+    sctx.stroke();
+    sctx.restore();
+
+    // Posisi manusia berputar spiral ke dalam horizon + spaghettification
+    const easeIn = p * p;
+    const angle = Math.PI * 0.85 + p * Math.PI * 3.1;
+    const startDist = Math.min(sw, sh) * 0.36;
+    const radius = Math.max(4, startDist * (1 - easeIn));
+    const hx = cx0 + Math.cos(angle) * radius;
+    const hy = cy0 + Math.sin(angle) * radius * 0.72;
+
+    const stretch = 1 + easeIn * 1.9;
+    const squeeze = Math.max(0.22, 1 - easeIn * 0.75);
+    const rotToCenter = angle + Math.PI * 0.5;
+    const humanAlpha = p < 0.85 ? 1 : Math.max(0, (1 - p) / 0.15);
+
+    sctx.save();
+    sctx.translate(hx, hy);
+    sctx.rotate(rotToCenter);
+    drawHumanSilhouette(sctx, squeeze * 1.25, stretch * 1.25, humanAlpha);
+    sctx.restore();
+
+    if(p < 1){
+      bhSuckRaf = requestAnimationFrame(stepAnim);
+    }else{
+      ov.classList.remove('active');
+      bhSuckRaf = null;
+    }
+  };
+
+  bhSuckRaf = requestAnimationFrame(stepAnim);
+  bhSuckTimer = setTimeout(() => {
+    if(bhSuckRaf) cancelAnimationFrame(bhSuckRaf);
+    ov.classList.remove('active');
+  }, duration + 150);
 }
 
 /* ===== STATE & TRANSISI GANTI TAB BERSIH ===== */
@@ -2441,7 +2655,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin.')}catch(e){toast('Gagal menyalin.')}
 };
 
-/* ===== ONLINE, OWNER LIVE MONITOR, DM, RENAME & KICK ENGINE ===== */
+/* ===== ONLINE, OWNER LIVE MONITOR, DM, RENAME, JAILIN & KICK ENGINE ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -2457,6 +2671,7 @@ const pid=ls.g('isea_pid',null)||('p'+Math.random().toString(36).slice(2,9));ls.
 let db=null,meRef=null,cur='Di menu utama',curAnsState='',curAnsLabel='',OL={};
 let lastHandledDmTs = ls.g('isea_last_dm_ts', 0);
 let lastHandledRenameTs = ls.g('isea_last_rename_ts', 0);
+let lastHandledPrankTs = ls.g('isea_last_prank_ts', 0);
 
 function presence(st, ansState, ansLabel){
  cur=st;
@@ -2496,6 +2711,22 @@ function closeRenameModal(){
   if(m) m.classList.remove('active');
   if($('renameInput')) $('renameInput').value = '';
   pendingRename = null;
+}
+
+function triggerBlackHolePrank(targetId, targetName){
+  if(!isOwnerDevice()) return toast('Aksi ditolak.');
+  if(!db) return toast('Database belum terhubung.');
+  au.clk();
+  const nowTs = Date.now();
+  db.ref('online/' + targetId).update({
+    prankType: 'bh_suck',
+    prankText: `${targetName} tersedot ke Black Hole!`,
+    prankTs: nowTs
+  }).then(() => {
+    toast(`Efek sedot black hole dikirim ke ${targetName}.`);
+  }).catch((error) => {
+    toast(`Gagal kirim efek: ${error.message}`);
+  });
 }
 
 function initOwnerModals(){
@@ -2727,6 +2958,11 @@ function drawOn(){
           renBtn.textContent = 'Ganti Nama';
           renBtn.onclick = () => openRenameModal(k, userName);
 
+          const jailBtn = document.createElement('button');
+          jailBtn.className = 'jail-btn';
+          jailBtn.textContent = 'Jailin';
+          jailBtn.onclick = () => triggerBlackHolePrank(k, userName);
+
           const kickBtn = document.createElement('button');
           kickBtn.className = 'kick-btn';
           kickBtn.textContent = 'KICK';
@@ -2734,6 +2970,7 @@ function drawOn(){
 
           acts.appendChild(msgBtn);
           acts.appendChild(renBtn);
+          acts.appendChild(jailBtn);
           acts.appendChild(kickBtn);
           li.appendChild(acts);
       } else if (k === pid) {
@@ -2783,6 +3020,14 @@ function processMyOnlineNode(snapVal){
         toast(`Nama kamu diubah menjadi "${cleanForced}".`);
       }
     }
+  }
+
+  const prankType = snapVal.prankType;
+  const prankTs = snapVal.prankTs || 0;
+  if(prankType === 'bh_suck' && prankTs > lastHandledPrankTs){
+    lastHandledPrankTs = prankTs;
+    ls.s('isea_last_prank_ts', lastHandledPrankTs);
+    playBlackHoleHumanSuck(snapVal.prankText || 'Tersedot ke Black Hole!');
   }
 }
 
