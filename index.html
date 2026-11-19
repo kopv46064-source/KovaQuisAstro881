@@ -611,7 +611,8 @@ label.l{
 .lb li{
   display:flex;
   align-items:center;
-  gap:14px;
+  flex-wrap:wrap;
+  gap:12px;
   padding:14px 16px;
   border-radius:18px;
   background:rgba(15,23,42,.72);
@@ -624,10 +625,46 @@ label.l{
 .lb li:hover{transform:translate3d(3px,0,0);border-color:rgba(125,211,252,.3);background:rgba(21,31,56,.86)}
 .lb li span:first-child{width:28px;text-align:center}
 .lb li em{margin-left:auto;font-style:normal;color:#fbbf24;font-family:'Space Grotesk',sans-serif}
-.lb li div{min-width:0}
+.lb li div{flex:1;min-width:140px}
 .lb li b{display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lb li small{display:block;color:var(--mu);font-weight:600;font-size:.74rem;margin-top:3px}
 .lb li.me{border-color:rgba(192,132,252,.65);background:linear-gradient(135deg,rgba(168,85,247,.16),rgba(56,189,248,.08))}
+
+.owner-acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-left:auto}
+
+.msg-btn{
+  background:rgba(56,189,248,.16);
+  border:1px solid rgba(56,189,248,.52);
+  color:#7dd3fc;
+  padding:7px 11px;
+  border-radius:12px;
+  font:700 .72rem/1 'Space Grotesk',sans-serif;
+  letter-spacing:.03em;
+  cursor:pointer;
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:transform .26s var(--fl),background .2s var(--sp),color .2s var(--sp);
+  will-change:transform;
+}
+.msg-btn:hover{background:rgba(56,189,248,.32);color:#fff;transform:translate3d(0,-1px,0)}
+.msg-btn:active{transform:scale(.93)}
+
+.ren-btn{
+  background:rgba(192,132,252,.16);
+  border:1px solid rgba(192,132,252,.52);
+  color:#e9d5ff;
+  padding:7px 11px;
+  border-radius:12px;
+  font:700 .72rem/1 'Space Grotesk',sans-serif;
+  letter-spacing:.03em;
+  cursor:pointer;
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:transform .26s var(--fl),background .2s var(--sp),color .2s var(--sp);
+  will-change:transform;
+}
+.ren-btn:hover{background:rgba(192,132,252,.32);color:#fff;transform:translate3d(0,-1px,0)}
+.ren-btn:active{transform:scale(.93)}
 
 .ans-ok{color:#34d399;font-weight:800}
 .ans-no{color:#fb7185;font-weight:800}
@@ -649,12 +686,11 @@ label.l{
   background:rgba(244,63,94,.16);
   border:1px solid rgba(244,63,94,.52);
   color:#fda4af;
-  padding:7px 13px;
+  padding:7px 11px;
   border-radius:12px;
-  font:700 .74rem/1 'Space Grotesk',sans-serif;
+  font:700 .72rem/1 'Space Grotesk',sans-serif;
   letter-spacing:.04em;
   cursor:pointer;
-  margin-left:auto;
   white-space:nowrap;
   flex-shrink:0;
   transition:transform .26s var(--fl),background .2s var(--sp),color .2s var(--sp);
@@ -1324,6 +1360,30 @@ label.l{
   </div>
 </div>
 
+<div class="modal-overlay" id="dmModal">
+  <div class="modal-box" style="border-color:rgba(56,189,248,.45)">
+    <div class="modal-title">Kirim Pesan ke Member</div>
+    <div class="modal-desc" id="dmModalDesc">Tulis pesan untuk member terpilih.</div>
+    <input type="text" id="dmInput" class="modal-input" maxlength="200" placeholder="Misal: semangat vall" autocomplete="off" />
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="dmCancel">Batal</button>
+      <button class="modal-btn submit" id="dmSend">Kirim</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="renameModal">
+  <div class="modal-box" style="border-color:rgba(192,132,252,.45)">
+    <div class="modal-title">Ganti Nama Member</div>
+    <div class="modal-desc" id="renameModalDesc">Masukkan nama baru untuk member ini.</div>
+    <input type="text" id="renameInput" class="modal-input" maxlength="25" placeholder="Nama baru..." autocomplete="off" />
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="renameCancel">Batal</button>
+      <button class="modal-btn submit" id="renameSave">Simpan</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="kickModal">
   <div class="modal-box" style="border-color:rgba(244,63,94,.45)">
     <div class="modal-title" style="background:linear-gradient(135deg,#fff,#fda4af);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Konfirmasi Kick</div>
@@ -1394,7 +1454,7 @@ function toast(t){
  e.textContent=t;
  e.classList.add('v');
  clearTimeout(toastTimer);
- toastTimer=setTimeout(()=>e.classList.remove('v'),2100);
+ toastTimer=setTimeout(()=>e.classList.remove('v'),2400);
 }
 
 const MASTER_VOL=1.0;
@@ -2345,7 +2405,7 @@ if($('bRk'))$('bRk').onclick=async()=>{
  try{await navigator.clipboard.writeText(t);toast('Rekap disalin.')}catch(e){toast('Gagal menyalin.')}
 };
 
-/* ===== ONLINE, OWNER LIVE MONITOR & KICK ENGINE ===== */
+/* ===== ONLINE, OWNER LIVE MONITOR, DM, RENAME & KICK ENGINE ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyBz3CnpNGDDvaZrHXBFkDnldqkR9P18VQQ",
   authDomain: "isea-e9e03.firebaseapp.com",
@@ -2377,6 +2437,8 @@ function presence(st, ansState, ansLabel){
 }
 
 let pendingKick = null;
+let pendingDm = null;
+let pendingRename = null;
 
 function closeKickModal(){
   const m = $('kickModal');
@@ -2384,7 +2446,21 @@ function closeKickModal(){
   pendingKick = null;
 }
 
-function initKickModal(){
+function closeDmModal(){
+  const m = $('dmModal');
+  if(m) m.classList.remove('active');
+  if($('dmInput')) $('dmInput').value = '';
+  pendingDm = null;
+}
+
+function closeRenameModal(){
+  const m = $('renameModal');
+  if(m) m.classList.remove('active');
+  if($('renameInput')) $('renameInput').value = '';
+  pendingRename = null;
+}
+
+function initOwnerModals(){
   const cancelBtn = $('kickCancel');
   const confirmBtn = $('kickConfirm');
   const overlay = $('kickModal');
@@ -2402,8 +2478,123 @@ function initKickModal(){
       toast(`Gagal: ${error.message}`);
     });
   };
+
+  const dmCancel = $('dmCancel');
+  const dmSend = $('dmSend');
+  const dmOverlay = $('dmModal');
+  const dmInput = $('dmInput');
+  if(dmCancel) dmCancel.onclick = () => { au.clk(); closeDmModal(); };
+  if(dmOverlay) dmOverlay.onclick = (e) => { if(e.target === dmOverlay) closeDmModal(); };
+  const submitDm = () => {
+    if(!pendingDm || !dmInput) return;
+    const text = dmInput.value.trim();
+    if(!text) return toast('Tulis pesan dulu.');
+    const { targetId, targetName } = pendingDm;
+    closeDmModal();
+    if(!isOwnerDevice()) return toast('Aksi ditolak.');
+    if(!db) return toast('Database belum terhubung.');
+    db.ref('dm/' + targetId).set({
+      from: 'KovTheGreat',
+      toName: targetName,
+      text: text,
+      ts: Date.now()
+    }).then(() => {
+      au.clk();
+      toast(`Pesan terkirim ke ${targetName}.`);
+    }).catch((error) => {
+      toast(`Gagal kirim: ${error.message}`);
+    });
+  };
+  if(dmSend) dmSend.onclick = submitDm;
+  if(dmInput) dmInput.addEventListener('keydown', e => { if(e.key === 'Enter') submitDm(); });
+
+  const renCancel = $('renameCancel');
+  const renSave = $('renameSave');
+  const renOverlay = $('renameModal');
+  const renInput = $('renameInput');
+  if(renCancel) renCancel.onclick = () => { au.clk(); closeRenameModal(); };
+  if(renOverlay) renOverlay.onclick = (e) => { if(e.target === renOverlay) closeRenameModal(); };
+  const submitRename = () => {
+    if(!pendingRename || !renInput) return;
+    const newName = renInput.value.trim();
+    if(!newName) return toast('Nama baru tidak boleh kosong.');
+    if(newName.toLowerCase() === 'kovthegreat') return toast('Nama ini khusus owner.');
+    const { targetId, oldName } = pendingRename;
+    closeRenameModal();
+    if(!isOwnerDevice()) return toast('Aksi ditolak.');
+    if(!db) return toast('Database belum terhubung.');
+
+    const updates = {};
+    updates['online/' + targetId + '/n'] = newName;
+    updates['renames/' + targetId] = {
+      name: newName,
+      ts: Date.now()
+    };
+
+    db.ref().update(updates).then(() => {
+      const oldKey = normPlayerKey(oldName);
+      const newKey = normPlayerKey(newName);
+      if(oldKey && newKey && oldKey !== newKey){
+        const oldRef = db.ref('scores_by_user/' + encodeURIComponent(oldKey));
+        const newRef = db.ref('scores_by_user/' + encodeURIComponent(newKey));
+        oldRef.once('value').then(sn => {
+          const prevScore = sn.val();
+          if(prevScore){
+            newRef.once('value').then(nsn => {
+              const existingNew = nsn.val();
+              const merged = mergePlayerEntry(existingNew, { ...prevScore, n: newName }, 'best');
+              newRef.set(merged).catch(()=>{});
+            }).catch(()=>{});
+          }
+        }).catch(()=>{});
+      }
+      const localLb = ls.g('isea_lb', []);
+      if(Array.isArray(localLb) && localLb.length){
+        const mappedLb = localLb.map(item => {
+          if(item && normPlayerKey(item.n) === oldKey){
+            return { ...item, n: newName };
+          }
+          return item;
+        });
+        ls.s('isea_lb', dedupePlayers(mappedLb, 'best'));
+      }
+      au.clk();
+      toast(`Nama "${oldName}" diganti jadi "${newName}".`);
+    }).catch((error) => {
+      toast(`Gagal ganti nama: ${error.message}`);
+    });
+  };
+  if(renSave) renSave.onclick = submitRename;
+  if(renInput) renInput.addEventListener('keydown', e => { if(e.key === 'Enter') submitRename(); });
 }
-initKickModal();
+initOwnerModals();
+
+function openDmModal(targetId, targetName){
+  if(!isOwnerDevice()) return toast('Aksi ditolak.');
+  au.clk();
+  pendingDm = { targetId, targetName };
+  if($('dmModalDesc')) $('dmModalDesc').textContent = `Kirim pesan ke ${targetName}:`;
+  if($('dmInput')){
+    $('dmInput').value = '';
+    if($('dmModal')) $('dmModal').classList.add('active');
+    setTimeout(()=>$('dmInput').focus(), 40);
+  }
+}
+
+function openRenameModal(targetId, currentName){
+  if(!isOwnerDevice()) return toast('Aksi ditolak.');
+  au.clk();
+  pendingRename = { targetId, oldName: currentName };
+  if($('renameModalDesc')) $('renameModalDesc').textContent = `Ganti nama untuk "${currentName}":`;
+  if($('renameInput')){
+    $('renameInput').value = currentName;
+    if($('renameModal')) $('renameModal').classList.add('active');
+    setTimeout(()=>{
+      $('renameInput').focus();
+      $('renameInput').select();
+    }, 40);
+  }
+}
 
 function kickUser(targetId, targetName) {
   if(!isOwnerDevice()) {
@@ -2487,11 +2678,28 @@ function drawOn(){
       }
 
       if(k !== pid && !isTargetOwner) {
+          const acts = document.createElement('div');
+          acts.className = 'owner-acts';
+
+          const msgBtn = document.createElement('button');
+          msgBtn.className = 'msg-btn';
+          msgBtn.textContent = 'Pesan';
+          msgBtn.onclick = () => openDmModal(k, userName);
+
+          const renBtn = document.createElement('button');
+          renBtn.className = 'ren-btn';
+          renBtn.textContent = 'Ganti Nama';
+          renBtn.onclick = () => openRenameModal(k, userName);
+
           const kickBtn = document.createElement('button');
           kickBtn.className = 'kick-btn';
           kickBtn.textContent = 'KICK';
           kickBtn.onclick = () => kickUser(k, userName);
-          li.appendChild(kickBtn);
+
+          acts.appendChild(msgBtn);
+          acts.appendChild(renBtn);
+          acts.appendChild(kickBtn);
+          li.appendChild(acts);
       } else if (k === pid) {
           const tagMe = document.createElement('em');
           tagMe.textContent = 'deve (owner)';
@@ -2506,6 +2714,8 @@ function drawOn(){
  });
  l.appendChild(frag);
 }
+
+let lastSeenDmTs = ls.g('isea_last_dm_ts', 0);
 
 function initOnline(){
  try{
@@ -2528,6 +2738,37 @@ function initOnline(){
            show('start');
        }
    });
+
+   if(!isOwnerDevice()){
+     db.ref('dm/' + pid).on('value', snap => {
+       const dm = snap.val();
+       if(!dm || !dm.text) return;
+       const ts = dm.ts || Date.now();
+       if(ts > lastSeenDmTs){
+         lastSeenDmTs = ts;
+         ls.s('isea_last_dm_ts', lastSeenDmTs);
+         toast(`${dm.from || 'KovTheGreat'}: ${dm.text}`);
+         au.ok();
+         vib([35,25,35]);
+       }
+     });
+
+     db.ref('renames/' + pid).on('value', snap => {
+       const ren = snap.val();
+       if(!ren || !ren.name) return;
+       const forcedName = String(ren.name).trim();
+       if(!forcedName || forcedName.toLowerCase() === 'kovthegreat') return;
+       const currentSaved = ls.g('isea_username', '');
+       if(currentSaved !== forcedName){
+         ls.s('isea_username', forcedName);
+         if($('name')) $('name').value = forcedName;
+         if(G && G.live) G.name = forcedName;
+         initNameSystem();
+         presence(cur);
+         toast(`Nama kamu diubah menjadi "${forcedName}".`);
+       }
+     });
+   }
 
    db.ref('online').on('value',x=>{
        OL=x.val()||{};
