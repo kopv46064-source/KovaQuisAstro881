@@ -88,8 +88,38 @@ label.l{display:block;font-size:.74rem;font-weight:800;letter-spacing:.09em;text
 .lb li small{display:block;color:var(--mu);font-weight:600;font-size:.74rem;margin-top:3px}
 .lb li.me{border-color:#a855f7;box-shadow:0 0 20px rgba(168,85,247,.3)}
 .owner-badge{display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;padding:2px 7px;border-radius:6px;background:linear-gradient(135deg,#f97316,#a855f7);color:#fff;font-weight:800;letter-spacing:.04em;box-shadow:0 0 10px rgba(168,85,247,.4);flex-shrink:0;margin-left:6px}
-.kick-btn{background:rgba(244,63,94,.2);border:1px solid #f43f5e;color:#f43f5e;padding:6px 10px;border-radius:10px;font-size:.72rem;font-weight:700;cursor:pointer;margin-left:auto;transition:background .2s}
-.kick-btn:hover{background:#f43f5e;color:#fff}
+.kick-btn{
+  background:rgba(244,63,94,.16);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(244,63,94,.55);
+  color:#fda4af;
+  padding:7px 12px;
+  border-radius:12px;
+  font:700 .74rem/1 'Space Grotesk',sans-serif;
+  letter-spacing:.03em;
+  cursor:pointer;
+  margin-left:auto;
+  white-space:nowrap;
+  flex-shrink:0;
+  box-shadow:0 0 14px rgba(244,63,94,.18);
+  transition:transform .28s var(--sp),background .22s,color .22s,border-color .22s,box-shadow .22s;
+}
+.kick-btn:hover{
+  background:rgba(244,63,94,.32);
+  border-color:#fb7185;
+  color:#fff;
+  box-shadow:0 0 22px rgba(244,63,94,.42);
+  transform:translateY(-1px);
+}
+.kick-btn:active{
+  transform:scale(.93);
+}
+.modal-btn.danger{
+  background:linear-gradient(135deg,#e11d48,#f97316);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(225,29,72,.35);
+}
 .foot{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important;position:relative;z-index:10;padding:12px 18px calc(20px + env(safe-area-inset-bottom));text-align:center;font-size:.78rem;color:var(--mu)}
 .foot div{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(10,14,28,.75);border:1px solid rgba(255,255,255,.09)}
 .cn{font-family:'Space Grotesk',sans-serif;font-weight:700;background:linear-gradient(90deg,#38bdf8,#c084fc,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -330,6 +360,17 @@ html{scroll-behavior:smooth}
     <div class="modal-actions">
       <button class="modal-btn cancel" id="modalCancel">Batal</button>
       <button class="modal-btn submit" id="modalSave">Simpan Kunci</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="kickModal">
+  <div class="modal-box" style="border-color:rgba(244,63,94,.45)">
+    <div class="modal-title" style="background:linear-gradient(135deg,#fff,#fda4af);-webkit-background-clip:text;-webkit-text-fill-color:transparent">👢 Konfirmasi Kick Member</div>
+    <div class="modal-desc" id="kickModalDesc">Yakin ingin mengeluarkan member ini dari stasiun ISEA?</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="kickCancel">Batal</button>
+      <button class="modal-btn danger" id="kickConfirm">Kick Sekarang</button>
     </div>
   </div>
 </div>
@@ -865,18 +906,46 @@ function presence(st){
  meRef.set({n: currentName, st: st, isOwner: isOwnerDevice(), t: firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
 }
 
+let pendingKick = null;
+
+function closeKickModal(){
+  const m = $('kickModal');
+  if(m) m.classList.remove('active');
+  pendingKick = null;
+}
+
+function initKickModal(){
+  const cancelBtn = $('kickCancel');
+  const confirmBtn = $('kickConfirm');
+  const overlay = $('kickModal');
+  if(cancelBtn) cancelBtn.onclick = () => { au.clk(); closeKickModal(); };
+  if(overlay) overlay.onclick = (e) => { if(e.target === overlay) closeKickModal(); };
+  if(confirmBtn) confirmBtn.onclick = () => {
+    if(!pendingKick) return;
+    const { targetId, targetName } = pendingKick;
+    closeKickModal();
+    if(!isOwnerDevice()) return toast('❌ Aksi ditolak! Anda bukan Owner sah.');
+    if(!db) return toast('❌ Database belum terhubung.');
+    db.ref('online/' + targetId).remove().then(() => {
+      toast(`👢 Berhasil menendang ${targetName}!`);
+    }).catch((error) => {
+      toast(`❌ Gagal ditolak server rules: ${error.message}`);
+    });
+  };
+}
+initKickModal();
+
 function kickUser(targetId, targetName) {
-    if(!isOwnerDevice()) {
-        toast('❌ Aksi ditolak! Anda bukan Owner sah.');
-        return;
-    }
-    if(confirm(`⚠️ Yakin ingin menendang (kick) "${targetName}" keluar dari stasiun ISEA?`)) {
-        db.ref('online/' + targetId).remove().then(() => {
-            toast(`👢 Berhasil menendang ${targetName}!`);
-        }).catch((error) => {
-            toast(`❌ Gagal ditolak server rules: ${error.message}`);
-        });
-    }
+  if(!isOwnerDevice()) {
+    toast('❌ Aksi ditolak! Anda bukan Owner sah.');
+    return;
+  }
+  au.clk();
+  pendingKick = { targetId, targetName };
+  if($('kickModalDesc')) {
+    $('kickModalDesc').textContent = `Yakin ingin menendang (kick) "${targetName}" keluar dari stasiun ISEA?`;
+  }
+  if($('kickModal')) $('kickModal').classList.add('active');
 }
 
 function drawOn(){
