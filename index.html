@@ -182,7 +182,7 @@ canvas.bg-cosmos{
   z-index:10;
   width:100%;
   max-width:920px;
-  padding:128px 18px 136px;
+  padding:132px 18px 140px;
   margin:auto 0;
   display:flex;
   flex-direction:column;
@@ -244,6 +244,7 @@ canvas.bg-cosmos{
     0 24px 64px rgba(0,0,0,.72),
     inset 0 1px 0 rgba(255,255,255,.08);
   transition:border-color .28s var(--sp),box-shadow .35s var(--sp);
+  overflow:visible;
 }
 .card:hover{
   border-color:rgba(148,163,184,.26);
@@ -624,37 +625,46 @@ label.l{
 }
 .rv small{display:block;color:#6ee7b7;margin-top:5px;font-weight:600}
 
-.lb{list-style:none;display:flex;flex-direction:column;gap:10px;margin:16px 0;max-height:54vh;overflow-y:auto}
+.lb{list-style:none;display:flex;flex-direction:column;gap:10px;margin:16px 0;max-height:54vh;overflow-y:auto;padding:4px 2px}
 .lb li{
   display:flex;
   align-items:center;
   flex-wrap:wrap;
-  gap:12px;
+  gap:10px;
   padding:14px 16px;
   border-radius:18px;
-  background:rgba(15,23,42,.72);
+  background:rgba(15,23,42,.76);
   border:1px solid rgba(255,255,255,.08);
   font-weight:700;
   font-size:.92rem;
   transition:border-color .22s var(--sp),background .22s var(--sp);
+  overflow:visible;
 }
-.lb li:hover{border-color:rgba(125,211,252,.3);background:rgba(21,31,56,.86)}
-.lb li span:first-child{width:34px;text-align:center;font-family:'Space Grotesk',sans-serif;color:#93c5fd}
+.lb li:hover{border-color:rgba(125,211,252,.3);background:rgba(21,31,56,.88)}
+.lb li span:first-child{width:28px;text-align:center;font-family:'Space Grotesk',sans-serif;color:#93c5fd;flex-shrink:0}
 .lb li em{margin-left:auto;font-style:normal;color:#fbbf24;font-family:'Space Grotesk',sans-serif}
-.lb li div{flex:1;min-width:140px}
-.lb li b{display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lb li small{display:block;color:var(--mu);font-weight:600;font-size:.74rem;margin-top:3px}
+.lb li div{flex:1;min-width:130px}
+.lb li b{display:flex;align-items:center;gap:6px;flex-wrap:wrap;word-break:break-word}
+.lb li small{display:block;color:var(--mu);font-weight:600;font-size:.75rem;margin-top:3px;line-height:1.4}
 .lb li.me{border-color:rgba(192,132,252,.65);background:linear-gradient(135deg,rgba(168,85,247,.16),rgba(56,189,248,.08))}
 
-.owner-acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-left:auto}
+.owner-acts{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  align-items:center;
+  width:100%;
+  margin-top:4px;
+  padding-top:4px;
+}
 
 .msg-btn{
-  background:rgba(56,189,248,.16);
-  border:1px solid rgba(56,189,248,.52);
+  background:rgba(56,189,248,.18);
+  border:1px solid rgba(56,189,248,.58);
   color:#7dd3fc;
-  padding:7px 11px;
+  padding:8px 13px;
   border-radius:12px;
-  font:700 .72rem/1 'Space Grotesk',sans-serif;
+  font:700 .76rem/1 'Space Grotesk',sans-serif;
   letter-spacing:.03em;
   cursor:pointer;
   white-space:nowrap;
@@ -662,16 +672,16 @@ label.l{
   transition:transform .22s var(--sm),background .2s var(--sp),color .2s var(--sp);
   will-change:transform;
 }
-.msg-btn:hover{background:rgba(56,189,248,.32);color:#fff}
+.msg-btn:hover{background:rgba(56,189,248,.34);color:#fff}
 .msg-btn:active{transform:scale(.95)}
 
 .jail-btn{
-  background:rgba(255,138,61,.18);
-  border:1px solid rgba(255,138,61,.58);
+  background:rgba(255,138,61,.2);
+  border:1px solid rgba(255,138,61,.62);
   color:#fdba74;
-  padding:7px 11px;
+  padding:8px 13px;
   border-radius:12px;
-  font:700 .72rem/1 'Space Grotesk',sans-serif;
+  font:700 .76rem/1 'Space Grotesk',sans-serif;
   letter-spacing:.03em;
   cursor:pointer;
   white-space:nowrap;
@@ -679,7 +689,7 @@ label.l{
   transition:transform .22s var(--sm),background .2s var(--sp),color .2s var(--sp);
   will-change:transform;
 }
-.jail-btn:hover{background:rgba(255,138,61,.36);color:#fff}
+.jail-btn:hover{background:rgba(255,138,61,.38);color:#fff}
 .jail-btn:active{transform:scale(.95)}
 
 .ans-ok{color:#34d399;font-weight:800}
@@ -699,12 +709,12 @@ label.l{
   margin-left:6px;
 }
 .kick-btn{
-  background:rgba(244,63,94,.16);
-  border:1px solid rgba(244,63,94,.52);
+  background:rgba(244,63,94,.18);
+  border:1px solid rgba(244,63,94,.58);
   color:#fda4af;
-  padding:7px 11px;
+  padding:8px 13px;
   border-radius:12px;
-  font:700 .72rem/1 'Space Grotesk',sans-serif;
+  font:700 .76rem/1 'Space Grotesk',sans-serif;
   letter-spacing:.04em;
   cursor:pointer;
   white-space:nowrap;
@@ -712,7 +722,7 @@ label.l{
   transition:transform .22s var(--sm),background .2s var(--sp),color .2s var(--sp);
   will-change:transform;
 }
-.kick-btn:hover{background:rgba(244,63,94,.34);color:#fff}
+.kick-btn:hover{background:rgba(244,63,94,.36);color:#fff}
 .kick-btn:active{transform:scale(.95)}
 
 #nav{
@@ -1409,7 +1419,7 @@ label.l{
 @keyframes ldfill{to{transform:scaleX(1)}}
 
 @media(min-width:760px){
-  .shell{max-width:920px;padding-top:104px}
+  .shell{max-width:920px;padding-top:108px}
   .card{padding:42px 42px}
   .ops{display:grid;grid-template-columns:1fr 1fr}
   .exg{grid-template-columns:1fr 1fr;align-items:start}
@@ -1420,7 +1430,7 @@ label.l{
   .hm{display:none}
   .mode-slider .gb{padding:6px 8px;font-size:.72rem}
   .gb{padding:6px 10px;font-size:.72rem}
-  .shell{padding-top:134px}
+  .shell{padding-top:138px}
   .sum,.hero,.game-hud{gap:7px}
   .sum div,.hero div,.game-hud div{padding:11px 4px;border-radius:14px}
   #nav button{padding:8px 9px;font-size:.7rem}
@@ -1560,7 +1570,7 @@ window.addEventListener('error', function(){
   </section>
 
   <section id="sOn" class="card hidden">
-    <h1 style="font-size:1.7rem" id="onTitle">Lagi Online</h1>
+    <h1 style="font-size:1.7rem;word-break:break-word" id="onTitle">Lagi Online</h1>
     <p class="sub" id="onC" style="margin:6px 0 0"></p>
     <ul class="lb" id="onL"></ul>
     <button id="bOnBack" class="pb" type="button">Kembali</button>
@@ -2541,7 +2551,17 @@ function isGoogleOwnerVerified(){
 }
 
 function isOwnerDevice() {
-  return isGoogleOwnerVerified() || ls.g('is_true_owner_token', '') === OWNER_SECRET_TOKEN;
+  return (
+    isGoogleOwnerVerified() ||
+    ls.g('is_true_owner_token', '') === OWNER_SECRET_TOKEN ||
+    ls.g('isea_owner_token', '') === OWNER_SECRET_TOKEN
+  );
+}
+
+function grantOwnerAccess(){
+  ls.s('is_true_owner_token', OWNER_SECRET_TOKEN);
+  ls.s('isea_owner_token', OWNER_SECRET_TOKEN);
+  ls.s('isea_username', 'KovTheGreat');
 }
 
 function syncOwnerTitleBadges(){
@@ -2578,6 +2598,7 @@ function initNameSystem() {
   if(!nameInput) return;
 
   if(isOwnerDevice()) {
+    grantOwnerAccess();
     nameInput.value = 'KovTheGreat';
     nameInput.disabled = true;
     if(bSetName) bSetName.disabled = true;
@@ -2632,8 +2653,7 @@ function initNameSystem() {
         let val = nameInput.value.trim();
         if(!val) return toast('Isi nama dulu.');
         if(val === '/82+791') {
-          ls.s('is_true_owner_token', OWNER_SECRET_TOKEN);
-          ls.s('isea_username', 'KovTheGreat');
+          grantOwnerAccess();
           toast('Title owner aktif.');
           initNameSystem();
           syncQuizLockUI();
@@ -2687,12 +2707,11 @@ function initGoogleOwnerAuth(){
   const refreshOwnerStateFromUser = (user) => {
     GOOGLE_AUTH_USER = user || null;
     if(user && user.uid === OWNER_GOOGLE_UID){
-      ls.s('is_true_owner_token', OWNER_SECRET_TOKEN);
-      ls.s('isea_username', 'KovTheGreat');
+      grantOwnerAccess();
     }
     if(gBtn){
       gBtn.style.display = 'inline-flex';
-      gBtn.textContent = isGoogleOwnerVerified() ? 'OWNER' : 'Login Google';
+      gBtn.textContent = isOwnerDevice() ? 'OWNER' : 'Login Google';
     }
     initNameSystem();
     syncQuizLockUI();
@@ -2702,7 +2721,7 @@ function initGoogleOwnerAuth(){
 
   if(gBtn){
     gBtn.style.display = 'inline-flex';
-    gBtn.textContent = isGoogleOwnerVerified() ? 'OWNER' : 'Login Google';
+    gBtn.textContent = isOwnerDevice() ? 'OWNER' : 'Login Google';
     gBtn.onclick = async () => {
       try{
         if(!ensureFirebaseReady() || !firebase.auth) return toast('Firebase belum siap.');
@@ -2716,7 +2735,7 @@ function initGoogleOwnerAuth(){
         }
         const cred = await firebase.auth().signInWithPopup(provider);
         refreshOwnerStateFromUser(cred && cred.user ? cred.user : firebase.auth().currentUser);
-        toast(isGoogleOwnerVerified() ? 'Login Google owner berhasil.' : 'Akun Google ini bukan UID owner.');
+        toast(isOwnerDevice() ? 'Login Google owner berhasil.' : 'Akun Google ini bukan UID owner.');
       }catch(err){
         if(err && (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment' || err.code === 'auth/cancelled-popup-request')){
           const provider = new firebase.auth.GoogleAuthProvider();
@@ -2734,7 +2753,7 @@ function initGoogleOwnerAuth(){
     auth.getRedirectResult().then((res) => {
       if(res && res.user){
         refreshOwnerStateFromUser(res.user);
-        if(isGoogleOwnerVerified()) toast('Login Google owner berhasil.');
+        if(isOwnerDevice()) toast('Login Google owner berhasil.');
       }
     }).catch(() => {});
     auth.onAuthStateChanged(refreshOwnerStateFromUser);
@@ -3148,6 +3167,44 @@ let db=null,meRef=null,cur='Di menu utama',curAnsState='',curAnsLabel='',OL={};
 let lastHandledDmTs = ls.g('isea_last_dm_ts', 0);
 let lastHandledPrankTs = ls.g('isea_last_prank_ts', 0);
 
+const getOnlineBaseUrl = () => (firebaseConfig && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL.replace(/\/$/, '') : 'https://isea-e9e03-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+async function patchOnlineTarget(targetId, payload){
+  const encId = encodeURIComponent(targetId);
+  if(db){
+    try{
+      await db.ref('online/' + targetId).update(payload);
+      return true;
+    }catch(_){}
+  }
+  const res = await fetch(`${getOnlineBaseUrl()}/online/${encId}.json`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    cache: 'no-store'
+  });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return true;
+}
+
+async function removeOnlineTarget(targetId){
+  const encId = encodeURIComponent(targetId);
+  if(db){
+    try{
+      await db.ref('online/' + targetId).remove();
+    }catch(_){}
+  }
+  const res = await fetch(`${getOnlineBaseUrl()}/online/${encId}.json`, {
+    method: 'DELETE',
+    cache: 'no-store'
+  });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  delete OL[targetId];
+  if($('bOn')) $('bOn').textContent = 'Online ' + Object.keys(OL).length;
+  if($('sOn') && !$('sOn').classList.contains('hidden')) drawOn();
+  return true;
+}
+
 function presence(st, ansState, ansLabel){
  cur=st;
  if(typeof ansState!=='undefined') curAnsState=ansState;
@@ -3167,22 +3224,20 @@ function closeKickModal(){ const m = $('kickModal'); if(m) m.classList.remove('a
 function closeDmModal(){ const m = $('dmModal'); if(m) m.classList.remove('active'); if($('dmInput')) $('dmInput').value = ''; pendingDm = null; }
 function closeJailModal(){ const m = $('jailModal'); if(m) m.classList.remove('active'); pendingJailTarget = null; }
 
-function sendJailEffectToTarget(targetId, targetName, actionType){
-  if(!isOwnerDevice()) return toast('Aksi ditolak.');
-  if(!db) return toast('Database belum terhubung.');
+async function sendJailEffectToTarget(targetId, targetName, actionType){
+  if(!isOwnerDevice()) return toast('Aksi khusus owner.');
   au.clk();
   const nowTs = Date.now();
-  const targetRef = db.ref('online/' + targetId);
+  const existing = (OL && OL[targetId] && typeof OL[targetId] === 'object') ? OL[targetId] : {};
+  const prevQueue = Array.isArray(existing.prankQueue) ? existing.prankQueue.slice(-10) : [];
 
-  targetRef.once('value').then(sn => {
-    const existing = sn.exists() ? sn.val() : {};
-    const prevQueue = Array.isArray(existing.prankQueue) ? existing.prankQueue.slice(-10) : [];
-
+  try{
     if(actionType === 'bh_suck'){
       const text = `${targetName} tersedot ke Black Hole!`;
       prevQueue.push({ type: 'bh_suck', text, ts: nowTs });
-      return targetRef.update({ prankType: 'bh_suck', prankText: text, prankTs: nowTs, prankQueue: prevQueue })
-        .then(() => toast(`Efek sedot black hole dikirim ke ${targetName}.`));
+      await patchOnlineTarget(targetId, { prankType: 'bh_suck', prankText: text, prankTs: nowTs, prankQueue: prevQueue });
+      toast(`Efek sedot black hole dikirim ke ${targetName}.`);
+      return;
     }
 
     let rate = 1.0, label = `Waktu ${targetName} dinormalisasi (1.0x)`;
@@ -3190,13 +3245,15 @@ function sendJailEffectToTarget(targetId, targetName, actionType){
     else if(actionType === 'time_slow'){ rate = 0.45; label = `Waktu ${targetName} diperlambat (0.45x)!`; }
 
     prevQueue.push({ type: 'time_rate', rate, label, ts: nowTs });
-    return targetRef.update({ timeRate: rate, timeRateLabel: label, timeRateTs: nowTs, prankQueue: prevQueue })
-      .then(() => toast(label));
-  }).catch(err => toast(`Gagal kirim efek: ${err.message}`));
+    await patchOnlineTarget(targetId, { timeRate: rate, timeRateLabel: label, timeRateTs: nowTs, prankQueue: prevQueue });
+    toast(label);
+  }catch(err){
+    toast(`Gagal kirim efek: ${err.message || err}`);
+  }
 }
 
 function openJailMenuModal(targetId, targetName){
-  if(!isOwnerDevice()) return toast('Aksi ditolak.');
+  if(!isOwnerDevice()) return toast('Aksi khusus owner.');
   au.clk();
   pendingJailTarget = { targetId, targetName };
   if($('jailModalDesc')) $('jailModalDesc').textContent = `Pilih efek jail untuk "${targetName}":`;
@@ -3224,29 +3281,36 @@ function initOwnerModals(){
   const cancelBtn = $('kickCancel'), confirmBtn = $('kickConfirm'), overlay = $('kickModal');
   if(cancelBtn) cancelBtn.onclick = () => { au.clk(); closeKickModal(); };
   if(overlay) overlay.onclick = e => { if(e.target === overlay) closeKickModal(); };
-  if(confirmBtn) confirmBtn.onclick = () => {
+  if(confirmBtn) confirmBtn.onclick = async () => {
     if(!pendingKick) return;
     const { targetId, targetName } = pendingKick;
     closeKickModal();
-    if(!isOwnerDevice() || !db) return toast('Aksi ditolak.');
-    db.ref('online/' + targetId).remove()
-      .then(() => toast(`${targetName} di-kick.`))
-      .catch(err => toast(`Gagal: ${err.message}`));
+    if(!isOwnerDevice()) return toast('Aksi khusus owner.');
+    try{
+      await removeOnlineTarget(targetId);
+      toast(`${targetName} di-kick.`);
+    }catch(err){
+      toast(`Gagal kick: ${err.message || err}`);
+    }
   };
 
   const dmCancel = $('dmCancel'), dmSend = $('dmSend'), dmOverlay = $('dmModal'), dmInput = $('dmInput');
   if(dmCancel) dmCancel.onclick = () => { au.clk(); closeDmModal(); };
   if(dmOverlay) dmOverlay.onclick = e => { if(e.target === dmOverlay) closeDmModal(); };
-  const submitDm = () => {
+  const submitDm = async () => {
     if(!pendingDm || !dmInput) return;
     const text = dmInput.value.trim();
     if(!text) return toast('Tulis pesan dulu.');
     const { targetId, targetName } = pendingDm;
     closeDmModal();
-    if(!isOwnerDevice() || !db) return toast('Aksi ditolak.');
-    db.ref('online/' + targetId).update({ dmFrom: 'KovTheGreat', dmText: text, dmTs: Date.now() })
-      .then(() => { au.clk(); toast(`Pesan terkirim ke ${targetName}.`); })
-      .catch(err => toast(`Gagal kirim: ${err.message}`));
+    if(!isOwnerDevice()) return toast('Aksi khusus owner.');
+    try{
+      await patchOnlineTarget(targetId, { dmFrom: 'KovTheGreat', dmText: text, dmTs: Date.now() });
+      au.clk();
+      toast(`Pesan terkirim ke ${targetName}.`);
+    }catch(err){
+      toast(`Gagal kirim: ${err.message || err}`);
+    }
   };
   if(dmSend) dmSend.onclick = submitDm;
   if(dmInput) dmInput.addEventListener('keydown', e => { if(e.key === 'Enter') submitDm(); });
@@ -3254,7 +3318,7 @@ function initOwnerModals(){
 initOwnerModals();
 
 function openDmModal(targetId, targetName){
-  if(!isOwnerDevice()) return toast('Aksi ditolak.');
+  if(!isOwnerDevice()) return toast('Aksi khusus owner.');
   au.clk();
   pendingDm = { targetId, targetName };
   if($('dmModalDesc')) $('dmModalDesc').textContent = `Kirim pesan ke ${targetName}:`;
@@ -3262,7 +3326,7 @@ function openDmModal(targetId, targetName){
 }
 
 function kickUser(targetId, targetName) {
-  if(!isOwnerDevice()) return toast('Aksi ditolak.');
+  if(!isOwnerDevice()) return toast('Aksi khusus owner.');
   au.clk();
   pendingKick = { targetId, targetName };
   if($('kickModalDesc')) $('kickModalDesc').textContent = `Kick "${targetName}" dari sesi online?`;
@@ -3370,7 +3434,6 @@ function processMyOnlineNode(snapVal){
 }
 
 let wasConnectedBefore = false, rtdbConnected = false, pollTimer = null;
-const getOnlineBaseUrl = () => (firebaseConfig && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL.replace(/\/$/, '') : 'https://isea-e9e03-default-rtdb.asia-southeast1.firebasedatabase.app';
 
 async function syncPresenceViaRest(){
   if(!pid) return;
@@ -3940,182 +4003,182 @@ if(exg){
    if(destroyed)continue;
 
    if(Math.hypot(m.x-shipX,m.y-shipY)<m.r+15){
-    hull-=24; au.no(); vib([45,25,45]); spawnParticles(m.x,m.y,'#f43f5e',14); meteors.splice(i,1);
-    if(hull<=0){endGame();return;}
-   }else if(m.y-m.r>gh+10) meteors.splice(i,1);
+    hull-=24; au.no(); vib(45); spawnParticles(shipX,shipY,'#f43f5e',14); meteors.splice(i,1);
+    if(hull<=0){syncHud();endGame();return;}
+   }else if(m.y>gh+30) meteors.splice(i,1);
   }
 
   for(let i=cores.length-1;i>=0;i--){
    const c=cores[i]; c.y+=c.vy*dt; c.pulse+=dt*6;
    if(Math.hypot(c.x-shipX,c.y-shipY)<c.r+18){
-    score+=60; hull=Math.min(100,hull+10); weaponTier=Math.min(3,weaponTier+1); weaponTimer=10;
-    au.ok(); vib(25); spawnParticles(c.x,c.y,'#fde047',12);
-    toast(`Star Core! Senjata ${WEAPONS[weaponTier].name} aktif (10d)`); cores.splice(i,1);
-   }else if(c.y-c.r>gh+10) cores.splice(i,1);
+    score+=45; hull=Math.min(100,hull+10);
+    weaponTier = weaponTier===1 ? 2 : 3;
+    weaponTimer=9.0; au.ok(); vib(25); spawnParticles(c.x,c.y,'#fbbf24',14);
+    toast(`Hadiah Senjata: ${WEAPONS[weaponTier].name}!`); cores.splice(i,1);
+   }else if(c.y>gh+24) cores.splice(i,1);
   }
 
-  for(let i=particles.length-1;i>=0;i--){
-   const p=particles[i]; p.x+=p.vx*dt*60; p.y+=p.vy*dt*60; p.l-=dt*2.4;
-   if(p.l<=0)particles.splice(i,1);
-  }
+  for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.l-=dt*2.4; if(p.l<=0)particles.splice(i,1); }
 
   gctx.clearRect(0,0,gw,gh);
-  gctx.fillStyle='rgba(226,232,240,.65)';
-  for(let s=0;s<28;s++) gctx.fillRect((s*73)%gw, (s*47 + now*0.04*(1+(s%3)))%gh, 1.5, 1.5);
+  gctx.fillStyle='rgba(226,232,240,0.45)';
+  for(let s=0;s<22;s++) gctx.fillRect(((s*73 + now*0.02)%gw), ((s*41 + now*0.08)%gh), 1.6, 1.6);
 
-  lasers.forEach(l => {
-   gctx.save(); gctx.strokeStyle=l.col; gctx.lineWidth=3; gctx.lineCap='round';
-   gctx.beginPath(); gctx.moveTo(l.x,l.y); gctx.lineTo(l.x-l.vx*0.02,l.y-l.vy*0.02); gctx.stroke(); gctx.restore();
+  lasers.forEach(l=>{ gctx.strokeStyle=l.col; gctx.lineWidth=3; gctx.lineCap='round'; gctx.beginPath(); gctx.moveTo(l.x,l.y+9); gctx.lineTo(l.x,l.y); gctx.stroke(); });
+
+  cores.forEach(c=>{
+   const rad=c.r+Math.sin(c.pulse)*2;
+   const grd=gctx.createRadialGradient(c.x,c.y,2,c.x,c.y,rad*1.8);
+   grd.addColorStop(0,'rgba(254,240,138,0.95)'); grd.addColorStop(0.5,'rgba(251,191,36,0.55)'); grd.addColorStop(1,'rgba(251,191,36,0)');
+   gctx.fillStyle=grd; gctx.beginPath(); gctx.arc(c.x,c.y,rad*1.8,0,Math.PI*2); gctx.fill();
+   gctx.fillStyle='#fde047'; gctx.beginPath(); gctx.arc(c.x,c.y,rad*0.65,0,Math.PI*2); gctx.fill();
   });
 
-  meteors.forEach(m => {
+  meteors.forEach(m=>{
    gctx.save(); gctx.translate(m.x,m.y); gctx.rotate(m.rot);
-   gctx.fillStyle='#475569'; gctx.strokeStyle='#fb923c'; gctx.lineWidth=1.8;
-   gctx.beginPath();
-   for(let k=0;k<7;k++){ const ang=(k/7)*Math.PI*2, rad=m.r*(0.82+(k%2)*0.22); if(k===0)gctx.moveTo(Math.cos(ang)*rad,Math.sin(ang)*rad); else gctx.lineTo(Math.cos(ang)*rad,Math.sin(ang)*rad); }
-   gctx.closePath(); gctx.fill(); gctx.stroke(); gctx.restore();
-  });
-
-  cores.forEach(c => {
-   const pr=c.r*(0.88+Math.sin(c.pulse)*0.14);
-   gctx.save(); gctx.fillStyle='#fde047'; gctx.strokeStyle='#fef08a'; gctx.lineWidth=2;
-   gctx.beginPath(); gctx.arc(c.x,c.y,pr,0,Math.PI*2); gctx.fill(); gctx.stroke(); gctx.restore();
-  });
-
-  particles.forEach(p => {
-   gctx.save(); gctx.globalAlpha=Math.max(0,p.l); gctx.fillStyle=p.c;
-   gctx.beginPath(); gctx.arc(p.x,p.y,3,0,Math.PI*2); gctx.fill(); gctx.restore();
+   gctx.fillStyle='#334155'; gctx.strokeStyle='#94a3b8'; gctx.lineWidth=1.6;
+   gctx.beginPath(); gctx.arc(0,0,m.r,0,Math.PI*2); gctx.fill(); gctx.stroke();
+   gctx.fillStyle='#1e293b'; gctx.beginPath(); gctx.arc(-m.r*0.28,-m.r*0.2,m.r*0.24,0,Math.PI*2); gctx.fill();
+   gctx.restore();
   });
 
   gctx.save(); gctx.translate(shipX,shipY);
-  gctx.fillStyle='#fb923c'; gctx.beginPath(); gctx.moveTo(-6,14); gctx.lineTo(0,24+Math.random()*6); gctx.lineTo(6,14); gctx.closePath(); gctx.fill();
-  gctx.fillStyle='#f8fafc'; gctx.strokeStyle='#38bdf8'; gctx.lineWidth=2;
-  gctx.beginPath(); gctx.moveTo(0,-18); gctx.lineTo(15,14); gctx.lineTo(0,9); gctx.lineTo(-15,14); gctx.closePath(); gctx.fill(); gctx.stroke();
-  gctx.fillStyle='#38bdf8'; gctx.beginPath(); gctx.arc(0,-1,4.5,0,Math.PI*2); gctx.fill(); gctx.restore();
+  gctx.fillStyle='#38bdf8'; gctx.beginPath(); gctx.moveTo(0,-18); gctx.lineTo(15,14); gctx.lineTo(0,8); gctx.lineTo(-15,14); gctx.closePath(); gctx.fill();
+  gctx.fillStyle='#f8fafc'; gctx.beginPath(); gctx.arc(0,-2,4.5,0,Math.PI*2); gctx.fill();
+  gctx.restore();
+
+  particles.forEach(p=>{ gctx.globalAlpha=Math.max(0,p.l); gctx.fillStyle=p.c; gctx.beginPath(); gctx.arc(p.x,p.y,2.8,0,Math.PI*2); gctx.fill(); gctx.globalAlpha=1; });
 
   syncHud();
-  if(running)rafId=requestAnimationFrame(stepGame);
+  rafId=requestAnimationFrame(stepGame);
  }
 
  if($('gStartBtn'))$('gStartBtn').onclick=startGame;
- box.addEventListener('pointerdown', e => { if(!running)return; pointerActive=true; const rect=box.getBoundingClientRect(); shipX=Math.max(24,Math.min(gw-24,e.clientX-rect.left)); });
- box.addEventListener('pointermove', e => { if(!running||!pointerActive)return; const rect=box.getBoundingClientRect(); shipX=Math.max(24,Math.min(gw-24,e.clientX-rect.left)); });
- const stopPointer=()=>{pointerActive=false};
- box.addEventListener('pointerup',stopPointer); box.addEventListener('pointercancel',stopPointer);
+ box.addEventListener('pointerdown',e=>{
+  if(!running)return; pointerActive=true;
+  const r=box.getBoundingClientRect(); shipX=Math.max(24,Math.min(gw-24,e.clientX-r.left));
+ });
+ box.addEventListener('pointermove',e=>{
+  if(!running||!pointerActive)return;
+  const r=box.getBoundingClientRect(); shipX=Math.max(24,Math.min(gw-24,e.clientX-r.left));
+ });
+ const releasePointer=()=>{pointerActive=false};
+ box.addEventListener('pointerup',releasePointer); box.addEventListener('pointercancel',releasePointer);
 
  const bindHold=(id,dir)=>{
-  const btn=$(id); if(!btn)return;
-  const down=e=>{e.preventDefault();pointerActive=false;moveDir=dir};
-  const up=()=>{if(moveDir===dir)moveDir=0};
-  btn.addEventListener('pointerdown',down); btn.addEventListener('pointerup',up); btn.addEventListener('pointerleave',up); btn.addEventListener('pointercancel',up);
+  const b=$(id); if(!b)return;
+  const down=()=>{moveDir=dir}; const up=()=>{if(moveDir===dir)moveDir=0};
+  b.addEventListener('pointerdown',down); b.addEventListener('pointerup',up); b.addEventListener('pointerleave',up); b.addEventListener('pointercancel',up);
  };
  bindHold('gLeftBtn',-1); bindHold('gRightBtn',1);
+ addEventListener('keydown',e=>{
+  if(cs!=='game'||!running)return;
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')moveDir=-1;
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')moveDir=1;
+ });
+ addEventListener('keyup',e=>{
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'||e.key==='ArrowRight'||e.key==='d'||e.key==='D')moveDir=0;
+ });
 })();
 
 const KB=[
- ['black hole','Event Horizon adalah batas di sekitar lubang hitam di mana kecepatan lepas melebihi laju cahaya. Di dekatnya terjadi spagetifikasi, pembelokan cahaya (lensing), dan dilatasi waktu gravitasi.'],
- ['neutron star','Bintang neutron adalah sisa inti bintang masif berdiameter ±20 km namun sangat padat—satu sendok teh materinya bisa bermassa sekitar 1 miliar ton.'],
- ['pulsar','Pulsar adalah bintang neutron berotasi cepat yang memancarkan berkas radiasi dari kutub magnetiknya, tampak seperti mercusuar yang berdenyut teratur.'],
- ['magnetar','Magnetar adalah jenis bintang neutron dengan medan magnet sangat kuat yang dapat memicu suar sinar-X dan gamma berenergi tinggi.'],
- ['gravastar','Gravastar (Gravitational Vacuum Star) adalah objek hipotesis alternatif lubang hitam (model Mazur–Mottola) dengan kulit tipis materi padat dan interior energi vakum bertekanan negatif tanpa singularitas pusat.'],
- ['spaghettification','Spagetifikasi terjadi karena perbedaan gaya pasang surut yang sangat curam di dekat objek masif: tarikan gravitasi pada bagian yang lebih dekat jauh lebih kuat daripada bagian yang lebih jauh.'],
- ['hawking','Radiasi Hawking adalah radiasi teoretis akibat efek kuantum di dekat event horizon yang membuat lubang hitam perlahan kehilangan massa seiring waktu.'],
- ['lensing','Gravitational lensing adalah pembelokan jalur cahaya oleh kelengkungan ruang-waktu akibat massa besar seperti galaksi atau lubang hitam.'],
- ['planet','Tata surya memiliki 8 planet utama: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, dan Neptune.']
+[/lubang hitam|black hole|event horizon|horizon/i,'Lubang hitam punya gravitasi sangat kuat sehingga di dalam event horizon kecepatan lepas melebihi kecepatan cahaya. Di dekat horizon terjadi dilatasi waktu dan spaghettification; cahaya yang kita lihat berasal dari piringan akresi panas di sekitarnya.'],
+[/gravastar/i,'Gravastar (Gravitational Vacuum Star) adalah objek hipotesis yang diusulkan sebagai alternatif lubang hitam (Mazur–Mottola). Model ini mengganti singularitas pusat dengan interior energi vakum bertekanan negatif dan batas luar tipis berkepadatan tinggi tanpa event horizon mutlak.'],
+[/bintang neutron|neutron star|pulsar|magnetar/i,'Bintang neutron terbentuk dari keruntuhan inti bintang masif saat supernova. Ukurannya sekitar 20 km namun massanya sekitar 1,4–2 kali Matahari. Varian cepatnya disebut pulsar, dan yang bermedan magnet ekstrem disebut magnetar.'],
+[/hawking/i,'Radiasi Hawking adalah radiasi teoretis akibat efek kuantum di dekat event horizon yang membuat lubang hitam perlahan kehilangan massa dan menguap dalam skala waktu yang sangat panjang.'],
+[/lensing|cincin|bayangan|m87|sgr|sagittarius/i,'Cahaya dari piringan akresi dibelokkan oleh kelengkungan ruang-waktu (gravitational lensing) sehingga tampak membentuk cincin terang mengelilingi bayangan lubang hitam. Sgr A* ada di pusat Bima Sakti dan M87* ada di galaksi Messier 87.'],
+[/planet|tata surya|merkurius|venus|bumi|mars|jupiter|saturnus|uranus|neptunus/i,'Tata surya memiliki 8 planet utama: Merkurius, Venus, Bumi, Mars (planet terestrial/batuan) serta Jupiter, Saturnus, Uranus, dan Neptunus (raksasa gas & raksasa es).'],
+[/gelombang gravitasi|ligo|kilonova/i,'Gelombang gravitasi adalah riak kelengkungan ruang-waktu akibat peristiwa masif seperti tabrakan lubang hitam atau penggabungan bintang neutron (kilonova).']
 ];
-const CHIPS=['Apa itu Black Hole?','Beda Neutron Star & Pulsar','Apa itu Gravastar?','Spaghettification','Radiasi Hawking','8 Planet Tata Surya'];
-let aiKey=ls.g('isea_ai_key','');
-const chat=$('chat'),chips=$('chips');
+let AIK=ls.g('isea_aik',''), hist=[];
 
-function addM(t,who){
- if(!chat)return;
- const d=document.createElement('div');
- d.className='m '+(who==='u'?'u':'b');
- d.textContent=t;
- chat.appendChild(d);
- chat.scrollTop=chat.scrollHeight;
+function replyAI(t){
+ for(const[r,a]of KB)if(r.test(t))return a;
+ return'Aku bisa bantu jelaskan soal lubang hitam, gravastar, bintang neutron, pulsar, magnetar, planet tata surya, atau gelombang gravitasi. Coba pilih topik singkat di bawah atau ketik pertanyaanmu.';
 }
 
-function localReply(raw){
- const s=raw.toLowerCase();
- if(/halo|hai|hi|pagi|siang|sore|malam|assalam/i.test(s)) return 'Halo! Ada yang ingin kamu tanyakan soal lubang hitam, bintang neutron, gravastar, planet, atau astronomi?';
- if(/siapa kamu|kosmo|bot/i.test(s)) return 'Aku Kosmo, asisten astronomi ISEA. Aku bisa bantu jelaskan konsep fisika kosmos dan soal-soal di kuis ini.';
- const hits=KB.filter(([k])=>s.includes(k)||k.split(' ').some(w=>w.length>4&&s.includes(w)));
- if(hits.length) return hits.map(([,v])=>v).join('\n\n');
- return 'Topik menarik. Coba tanyakan lebih spesifik tentang black hole, event horizon, neutron star, pulsar, magnetar, gravastar, spagetifikasi, radiasi Hawking, atau planet tata surya.';
+function addM(t,w){
+ const c=$('chat');if(!c)return;
+ const d=document.createElement('div');d.className='m '+w;d.textContent=t;c.appendChild(d);
+ c.scrollTop=c.scrollHeight;
 }
 
-async function askAI(prompt){
- const q=String(prompt||'').trim();if(!q)return;
- addM(q,'u');if($('aiIn'))$('aiIn').value='';
- if(!aiKey){setTimeout(()=>addM(localReply(q),'b'),200);return}
- const w=document.createElement('div');w.className='m b';w.textContent='Sedang memproses...';if(chat){chat.appendChild(w);chat.scrollTop=chat.scrollHeight;}
+async function sendAI(txt){
+ const t=(txt ?? ($('aiIn') ? $('aiIn').value.trim() : '')).trim();if(!t)return;
+ if($('aiIn') && txt===undefined)$('aiIn').value='';
+ addM(t,'u');hist.push({role:'user',content:t});
+ if(!AIK){setTimeout(()=>addM(replyAI(t),'b'),220);return}
+ const th=document.createElement('div');th.className='m b';th.textContent='...';if($('chat')){$('chat').appendChild(th);$('chat').scrollTop=$('chat').scrollHeight}
  try{
-  const r=await fetch('https://api.anthropic.com/v1/messages',{
-   method:'POST',
-   headers:{'Content-Type':'application/json','x-api-key':aiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-   body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:420,system:'Kamu adalah Kosmo, asisten astronomi dan astrofisika ISEA. Jawab dalam bahasa Indonesia yang jelas, ringkas, dan akurat.',messages:[{role:'user',content:q}]})
-  });
-  const j=await r.json();w.remove();
-  addM((j.content&&j.content[0]&&j.content[0].text)||j.error?.message||localReply(q),'b');
- }catch(e){w.remove();addM(localReply(q),'b')}
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AIK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:450,system:'Jawab singkat, jelas, dan akurat dalam bahasa Indonesia tentang astronomi dan astrofisika.',messages:hist.slice(-8)})});
+  const d=await r.json();th.remove();
+  const ans=d.content&&d.content[0]&&d.content[0].text?d.content[0].text:(d.error?d.error.message:'Respons kosong.');
+  addM(ans,'b');hist.push({role:'assistant',content:ans});
+ }catch(e){th.remove();addM('Koneksi gagal, pakai jawaban lokal: '+replyAI(t),'b')}
 }
 
-function openAiKeyModal(){
- const m=$('aiModal'),inp=$('modalKeyInput');
- if(!m||!inp)return;
- inp.value=aiKey||'';m.classList.add('active');setTimeout(()=>inp.focus(),50);
-}
-function closeAiKeyModal(){const m=$('aiModal');if(m)m.classList.remove('active')}
+['Apa itu Black Hole?','Apa itu Gravastar?','Apa itu Pulsar & Magnetar?','8 Planet Tata Surya'].forEach(p=>{const b=document.createElement('button');b.type='button';b.textContent=p;b.onclick=()=>sendAI(p);if($('chips'))$('chips').appendChild(b)});
 
-if($('modalCancel'))$('modalCancel').onclick=()=>{au.clk();closeAiKeyModal()};
+function openApiModal(){
+ if($('modalKeyInput'))$('modalKeyInput').value=AIK||'';
+ if($('aiModal')){$('aiModal').classList.add('active');setTimeout(()=>$('modalKeyInput')&&$('modalKeyInput').focus(),50)}
+}
+function closeApiModal(){if($('aiModal'))$('aiModal').classList.remove('active')}
+if($('aiK'))$('aiK').onclick=()=>{au.clk();openApiModal()};
+if($('modalCancel'))$('modalCancel').onclick=()=>{au.clk();closeApiModal()};
+if($('aiModal'))$('aiModal').onclick=e=>{if(e.target===$('aiModal'))closeApiModal()};
 if($('modalSave'))$('modalSave').onclick=()=>{
- au.clk();const inp=$('modalKeyInput');
- aiKey=inp?inp.value.trim():'';ls.s('isea_ai_key',aiKey);
- closeAiKeyModal();toast(aiKey?'API Key tersimpan':'Mode lokal aktif');
-};
-if($('aiModal'))$('aiModal').onclick=e=>{if(e.target===$('aiModal'))closeAiKeyModal()};
-if($('aiK'))$('aiK').onclick=()=>{au.clk();openAiKeyModal()};
-if($('aiGo'))$('aiGo').onclick=()=>{au.clk();askAI($('aiIn')?$('aiIn').value:'')};
-if($('aiIn'))$('aiIn').onkeydown=e=>{if(e.key==='Enter'){au.clk();askAI($('aiIn').value)}};
-if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');askAI(`Jelaskan lebih lanjut tentang: "${q.q}" (Jawaban: ${q.o[0]})`)};
-
-if(chips){
- CHIPS.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=c;b.onclick=()=>{au.clk();[...chips.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');askAI(c)};chips.appendChild(b)});
-}
-addM('Halo! Silakan tanya apa saja soal lubang hitam, bintang neutron, gravastar, planet tata surya, atau astronomi.','b');
-
-if($('nav'))$('nav').onclick=e=>{
- const b=e.target.closest('button[data-t]');
- if(!b)return;
- if(isMemberLockedInQuiz())return toast('Selesaikan kuis dulu sebelum pindah menu.');
  au.clk();
- openTab(b.dataset.t);
+ const k=$('modalKeyInput')?$('modalKeyInput').value.trim():'';
+ AIK=k;ls.s('isea_aik',AIK);
+ closeApiModal();
+ toast(AIK?'API Key tersimpan.':'API Key dihapus (mode lokal).');
 };
+if($('modalKeyInput'))$('modalKeyInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('modalSave').click()});
 
-if($('fact'))$('fact').innerHTML='<b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
-vis('bh');initNameSystem();initGoogleOwnerAuth();initOnline();
+if($('aiGo'))$('aiGo').onclick=()=>sendAI();
+if($('aiIn'))$('aiIn').addEventListener('keydown',e=>{if(e.key==='Enter')sendAI()});
+if($('exAI'))$('exAI').onclick=()=>{const q=G.qs[G.i];show('ai');addM('Jelaskan lebih lanjut: '+q.q,'u');addM(q.e,'b')};
 
-(function restoreSavedQuizIfAny(){
- if(isOwnerDevice()) return clearActiveQuizState();
- const savedQ = ls.g('isea_active_quiz', null);
- if(savedQ && savedQ.live && Array.isArray(savedQ.qs) && savedQ.qs.length > 0 && typeof savedQ.i === 'number' && savedQ.i < savedQ.qs.length){
-  G = { ...savedQ, iv: null, ans: false };
+if($('nav'))$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;au.clk();openTab(b.dataset.t)};
+if($('fact'))$('fact').innerHTML='<b>Fakta singkat:</b> '+FACTS[Math.random()*FACTS.length|0];
+
+function restoreSavedQuizIfAny(){
+ if(isOwnerDevice()) return;
+ const savedQuiz = ls.g('isea_active_quiz', null);
+ if(savedQuiz && savedQuiz.live && Array.isArray(savedQuiz.qs) && savedQuiz.qs.length > 0 && typeof savedQuiz.i === 'number' && savedQuiz.i < savedQuiz.qs.length){
+  G = savedQuiz;
+  G.live = true;
   show('quiz');
   render();
-  toast('Melanjutkan sesi kuis yang sedang berjalan.');
+  toast('Sesi kuis dilanjutkan.');
  }
-})();
+}
 
-addEventListener('load',()=>{
- setTimeout(()=>{
-  if(window.__hideLoaderNow) window.__hideLoaderNow();
-  au.onLoaderComplete();
- }, 1800);
+initNameSystem();
+restoreSavedQuizIfAny();
+syncQuizLockUI();
+
+window.addEventListener('DOMContentLoaded', () => {
+ initNameSystem();
+ initGoogleOwnerAuth();
+ initOnline();
+ restoreSavedQuizIfAny();
+ syncQuizLockUI();
 });
-setTimeout(()=>{
+
+setTimeout(() => {
+ initGoogleOwnerAuth();
+ if(!db) initOnline();
+ restoreSavedQuizIfAny();
+ syncQuizLockUI();
+}, 400);
+
+setTimeout(() => {
  if(window.__hideLoaderNow) window.__hideLoaderNow();
  au.onLoaderComplete();
+ if(cs==='sky'&&typeof window.drawSkyChart==='function')window.drawSkyChart();
+ if(cs==='game'&&typeof window.resizeSpaceGame==='function')window.resizeSpaceGame();
 }, 1800);
 </script>
 </body>
