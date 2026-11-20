@@ -150,7 +150,7 @@ canvas.bg-cosmos{
 }
 .mode-slider .gb.a-bh,.mode-slider .gb.a-ns,.mode-slider .gb.a-gr{color:#fff;box-shadow:none}
 .mode-slider .gb:hover{background:transparent;transform:none;color:#e2e8f0}
-.mode-slider .gb:active{transform:scale(.94)}
+.mode-slider .gb:active{transform:scale(.96)}
 
 .gb{
   background:rgba(11,16,32,.88);
@@ -164,15 +164,14 @@ canvas.bg-cosmos{
   white-space:nowrap;
   cursor:pointer;
   box-shadow:0 8px 20px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.07);
-  transition:transform .32s var(--fl),border-color .24s var(--sp),background .24s var(--sp),color .24s var(--sp);
+  transition:transform .26s var(--sm),border-color .22s var(--sp),background .22s var(--sp),color .22s var(--sp);
   will-change:transform;
 }
 .gb:hover{
   border-color:var(--bd-hi);
   background:rgba(20,28,54,.92);
-  transform:translate3d(0,-1.5px,0);
 }
-.gb:active{transform:scale(.95)}
+.gb:active{transform:scale(.96)}
 .gb.a-bh{border-color:var(--bh)}
 .gb.a-ns{border-color:var(--ns)}
 .gb.a-gr{border-color:var(--gr)}
@@ -183,7 +182,7 @@ canvas.bg-cosmos{
   z-index:10;
   width:100%;
   max-width:920px;
-  padding:112px 18px 136px;
+  padding:128px 18px 136px;
   margin:auto 0;
   display:flex;
   flex-direction:column;
@@ -198,7 +197,7 @@ canvas.bg-cosmos{
   animation:brandFloatIn .65s var(--sm) both;
 }
 @keyframes brandFloatIn{
-  0%{opacity:0;transform:translate3d(0,10px,0)}
+  0%{opacity:0;transform:translate3d(0,8px,0)}
   100%{opacity:1;transform:translate3d(0,0,0)}
 }
 .acr{
@@ -265,7 +264,7 @@ canvas.bg-cosmos{
 }
 
 @keyframes ce{
-  0%{opacity:0;transform:translate3d(0,8px,0)}
+  0%{opacity:0;transform:translate3d(0,6px,0)}
   100%{opacity:1;transform:translate3d(0,0,0)}
 }
 
@@ -299,7 +298,8 @@ label.l{
   letter-spacing:.1em;
   text-transform:uppercase;
   color:var(--mu);
-  margin:20px 0 9px;
+  margin:22px 0 10px;
+  scroll-margin-top:120px;
 }
 
 .member-name-banner{
@@ -344,21 +344,22 @@ label.l{
   cursor:pointer;
   white-space:nowrap;
   box-shadow:0 8px 22px rgba(168,85,247,.26);
-  transition:transform .3s var(--fl),filter .2s var(--soft);
+  transition:transform .24s var(--sm),filter .2s var(--soft);
   will-change:transform;
 }
-#bSetName:hover:not(:disabled){transform:translate3d(0,-1.5px,0);filter:brightness(1.07)}
-#bSetName:active:not(:disabled){transform:scale(.95)}
+#bSetName:hover:not(:disabled){filter:brightness(1.07)}
+#bSetName:active:not(:disabled){transform:scale(.96)}
 #bSetName:disabled{opacity:.38;filter:grayscale(.55);cursor:not-allowed}
 
 .seg{
   display:flex;
   gap:8px;
   flex-wrap:wrap;
-  padding:4px;
+  padding:6px;
   border-radius:20px;
   background:rgba(7,11,22,.56);
   border:1px solid rgba(255,255,255,.06);
+  overflow:visible;
 }
 .seg button{
   flex:1;
@@ -370,16 +371,15 @@ label.l{
   color:var(--mu);
   font:700 .85rem/1.2 inherit;
   cursor:pointer;
-  transition:transform .28s var(--fl),border-color .22s var(--sp),color .22s var(--sp),background .24s var(--sp);
+  transition:transform .24s var(--sm),border-color .2s var(--sp),color .2s var(--sp),background .22s var(--sp);
   will-change:transform;
 }
 .seg button:hover{
   border-color:rgba(125,211,252,.25);
   color:#f1f5f9;
   background:rgba(255,255,255,.03);
-  transform:translate3d(0,-1px,0);
 }
-.seg button:active{transform:scale(.96)}
+.seg button:active{transform:scale(.97)}
 .seg button.on{
   color:#fff;
   border-color:rgba(192,132,252,.55);
@@ -395,10 +395,9 @@ label.l{
   font-size:.87rem;
   line-height:1.62;
   color:#cbd5e1;
-  transition:border-color .25s var(--sp),transform .3s var(--fl);
-  will-change:transform;
+  transition:border-color .25s var(--sp);
 }
-.fact:hover{border-color:rgba(125,211,252,.55);transform:translate3d(0,-1.5px,0)}
+.fact:hover{border-color:rgba(125,211,252,.55)}
 .fact b{color:#7dd3fc}
 
 .pb{
@@ -415,16 +414,15 @@ label.l{
   font:700 1.06rem/1 'Space Grotesk',sans-serif;
   cursor:pointer;
   box-shadow:0 12px 28px rgba(168,85,247,.3);
-  transition:transform .3s var(--fl),filter .22s var(--soft),background-position .5s var(--sp),box-shadow .3s var(--sp);
+  transition:transform .24s var(--sm),filter .2s var(--soft),background-position .5s var(--sp),box-shadow .3s var(--sp);
   will-change:transform;
 }
 .pb:hover{
-  transform:translate3d(0,-2px,0);
   filter:brightness(1.07);
   background-position:100% 0;
   box-shadow:0 16px 36px rgba(168,85,247,.4);
 }
-.pb:active{transform:scale(.972)}
+.pb:active{transform:scale(.975)}
 
 .sb{
   width:100%;
@@ -436,15 +434,14 @@ label.l{
   color:var(--tx);
   font:700 .94rem/1 inherit;
   cursor:pointer;
-  transition:transform .3s var(--fl),border-color .22s var(--sp),background .24s var(--sp);
+  transition:transform .24s var(--sm),border-color .22s var(--sp),background .24s var(--sp);
   will-change:transform;
 }
 .sb:hover{
   border-color:var(--bd-hi);
   background:rgba(24,36,62,.88);
-  transform:translate3d(0,-1.5px,0);
 }
-.sb:active{transform:scale(.974)}
+.sb:active{transform:scale(.975)}
 
 .owner-exit-quiz-btn{
   width:100%;
@@ -456,9 +453,9 @@ label.l{
   color:#fda4af;
   font:700 .84rem/1 inherit;
   cursor:pointer;
-  transition:transform .28s var(--fl),background .2s var(--sp),color .2s var(--sp);
+  transition:transform .24s var(--sm),background .2s var(--sp),color .2s var(--sp);
 }
-.owner-exit-quiz-btn:hover{background:rgba(244,63,94,.28);color:#fff;transform:translate3d(0,-1px,0)}
+.owner-exit-quiz-btn:hover{background:rgba(244,63,94,.28);color:#fff}
 .owner-exit-quiz-btn:active{transform:scale(.97)}
 
 .qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
@@ -485,11 +482,11 @@ label.l{
   color:var(--mu);
   font:700 .74rem/1 inherit;
   cursor:pointer;
-  transition:transform .28s var(--fl),border-color .22s var(--sp),color .22s var(--sp),background .24s var(--sp);
+  transition:transform .24s var(--sm),border-color .22s var(--sp),color .22s var(--sp),background .24s var(--sp);
   will-change:transform;
 }
-.bm-btn:hover{border-color:rgba(192,132,252,.5);color:#fff;transform:translate3d(0,-1px,0)}
-.bm-btn:active{transform:scale(.94)}
+.bm-btn:hover{border-color:rgba(192,132,252,.5);color:#fff}
+.bm-btn:active{transform:scale(.95)}
 .bm-btn.saved{border-color:#c084fc;background:rgba(168,85,247,.26);color:#f3e8ff}
 
 .st{display:flex;gap:12px;font-size:.88rem;font-weight:700;align-items:center}
@@ -519,21 +516,20 @@ label.l{
   gap:14px;
   opacity:0;
   animation:os .36s var(--sm) forwards;
-  transition:transform .3s var(--fl),background .25s var(--sp),border-color .25s var(--sp),opacity .3s var(--soft);
+  transition:transform .24s var(--sm),background .25s var(--sp),border-color .25s var(--sp),opacity .3s var(--soft);
   position:relative;
   z-index:5;
   will-change:transform,opacity;
 }
 @keyframes os{
-  0%{opacity:0;transform:translate3d(-10px,0,0)}
+  0%{opacity:0;transform:translate3d(-8px,0,0)}
   100%{opacity:1;transform:translate3d(0,0,0)}
 }
 .op:hover:not(:disabled):not(.gone){
-  transform:translate3d(4px,0,0);
   border-color:rgba(125,211,252,.48);
   background:rgba(26,38,64,.86);
 }
-.op:active:not(:disabled):not(.gone){transform:translate3d(2px,0,0) scale(.985)}
+.op:active:not(:disabled):not(.gone){transform:scale(.985)}
 .op.gone{opacity:.2!important;pointer-events:none;transform:scale(.975)}
 .op i{
   width:32px;
@@ -561,10 +557,10 @@ label.l{
   color:var(--tx);
   font:700 .8rem/1 inherit;
   cursor:pointer;
-  transition:transform .28s var(--fl),border-color .22s var(--sp),background .24s var(--sp);
+  transition:transform .24s var(--sm),border-color .22s var(--sp),background .24s var(--sp);
   will-change:transform;
 }
-.ll button:hover:not(:disabled){border-color:var(--bd-hi);background:rgba(25,37,64,.88);transform:translate3d(0,-1.5px,0)}
+.ll button:hover:not(:disabled){border-color:var(--bd-hi);background:rgba(25,37,64,.88)}
 .ll button:active:not(:disabled){transform:scale(.96)}
 .ll button:disabled{opacity:.36;cursor:not-allowed}
 
@@ -609,10 +605,9 @@ label.l{
   border-radius:18px;
   padding:13px 6px;
   text-align:center;
-  transition:transform .28s var(--fl),border-color .22s var(--sp),background .22s var(--sp);
-  will-change:transform;
+  transition:border-color .22s var(--sp),background .22s var(--sp);
 }
-.sum div:hover,.hero div:hover{transform:translate3d(0,-2px,0);border-color:rgba(125,211,252,.34);background:rgba(20,30,54,.82)}
+.sum div:hover,.hero div:hover{border-color:rgba(125,211,252,.34);background:rgba(20,30,54,.82)}
 .sum b{display:block;font:700 1.15rem 'Space Grotesk',sans-serif}
 .sum span{font-size:.68rem;color:var(--mu)}
 .hero b{display:block;font:700 1.2rem 'Space Grotesk',sans-serif;color:#7dd3fc}
@@ -626,10 +621,7 @@ label.l{
   border:1px solid rgba(244,63,94,.3);
   font-size:.84rem;
   line-height:1.55;
-  transition:transform .26s var(--fl);
-  will-change:transform;
 }
-.rv div:hover{transform:translate3d(3px,0,0)}
 .rv small{display:block;color:#6ee7b7;margin-top:5px;font-weight:600}
 
 .lb{list-style:none;display:flex;flex-direction:column;gap:10px;margin:16px 0;max-height:54vh;overflow-y:auto}
@@ -644,10 +636,9 @@ label.l{
   border:1px solid rgba(255,255,255,.08);
   font-weight:700;
   font-size:.92rem;
-  transition:transform .28s var(--fl),border-color .22s var(--sp),background .22s var(--sp);
-  will-change:transform;
+  transition:border-color .22s var(--sp),background .22s var(--sp);
 }
-.lb li:hover{transform:translate3d(3px,0,0);border-color:rgba(125,211,252,.3);background:rgba(21,31,56,.86)}
+.lb li:hover{border-color:rgba(125,211,252,.3);background:rgba(21,31,56,.86)}
 .lb li span:first-child{width:34px;text-align:center;font-family:'Space Grotesk',sans-serif;color:#93c5fd}
 .lb li em{margin-left:auto;font-style:normal;color:#fbbf24;font-family:'Space Grotesk',sans-serif}
 .lb li div{flex:1;min-width:140px}
@@ -668,11 +659,11 @@ label.l{
   cursor:pointer;
   white-space:nowrap;
   flex-shrink:0;
-  transition:transform .26s var(--fl),background .2s var(--sp),color .2s var(--sp);
+  transition:transform .22s var(--sm),background .2s var(--sp),color .2s var(--sp);
   will-change:transform;
 }
-.msg-btn:hover{background:rgba(56,189,248,.32);color:#fff;transform:translate3d(0,-1px,0)}
-.msg-btn:active{transform:scale(.93)}
+.msg-btn:hover{background:rgba(56,189,248,.32);color:#fff}
+.msg-btn:active{transform:scale(.95)}
 
 .jail-btn{
   background:rgba(255,138,61,.18);
@@ -685,11 +676,11 @@ label.l{
   cursor:pointer;
   white-space:nowrap;
   flex-shrink:0;
-  transition:transform .26s var(--fl),background .2s var(--sp),color .2s var(--sp);
+  transition:transform .22s var(--sm),background .2s var(--sp),color .2s var(--sp);
   will-change:transform;
 }
-.jail-btn:hover{background:rgba(255,138,61,.36);color:#fff;transform:translate3d(0,-1px,0)}
-.jail-btn:active{transform:scale(.93)}
+.jail-btn:hover{background:rgba(255,138,61,.36);color:#fff}
+.jail-btn:active{transform:scale(.95)}
 
 .ans-ok{color:#34d399;font-weight:800}
 .ans-no{color:#fb7185;font-weight:800}
@@ -718,11 +709,11 @@ label.l{
   cursor:pointer;
   white-space:nowrap;
   flex-shrink:0;
-  transition:transform .26s var(--fl),background .2s var(--sp),color .2s var(--sp);
+  transition:transform .22s var(--sm),background .2s var(--sp),color .2s var(--sp);
   will-change:transform;
 }
-.kick-btn:hover{background:rgba(244,63,94,.34);color:#fff;transform:translate3d(0,-1px,0)}
-.kick-btn:active{transform:scale(.93)}
+.kick-btn:hover{background:rgba(244,63,94,.34);color:#fff}
+.kick-btn:active{transform:scale(.95)}
 
 #nav{
   position:fixed;
@@ -758,15 +749,14 @@ label.l{
   gap:2px;
   white-space:nowrap;
   cursor:pointer;
-  transition:transform .28s var(--fl),color .22s var(--sp),background .24s var(--sp);
+  transition:transform .24s var(--sm),color .22s var(--sp),background .24s var(--sp);
   will-change:transform;
 }
-#nav button:hover:not(.on){color:#e2e8f0;transform:translate3d(0,-1px,0)}
-#nav button:active{transform:scale(.93)}
+#nav button:hover:not(.on){color:#e2e8f0}
+#nav button:active{transform:scale(.95)}
 #nav button.on{
   background:linear-gradient(135deg,rgba(249,115,22,.36),rgba(168,85,247,.36));
   color:#fff;
-  transform:translate3d(0,-1.5px,0);
 }
 
 .exg{display:grid;gap:14px;margin:16px 0}
@@ -775,10 +765,9 @@ label.l{
   background:rgba(15,23,42,.72);
   border:1px solid rgba(255,255,255,.08);
   overflow:hidden;
-  transition:border-color .24s var(--sp),transform .28s var(--fl),background .24s var(--sp);
-  will-change:transform;
+  transition:border-color .24s var(--sp),background .24s var(--sp);
 }
-.xi:hover{border-color:rgba(125,211,252,.28);background:rgba(18,28,50,.82);transform:translate3d(0,-1.5px,0)}
+.xi:hover{border-color:rgba(125,211,252,.28);background:rgba(18,28,50,.82)}
 .xi.open{border-color:rgba(125,211,252,.52);background:rgba(18,28,52,.88)}
 .xh{
   width:100%;
@@ -850,7 +839,14 @@ label.l{
 .m.u{align-self:flex-end;background:linear-gradient(135deg,#f97316,#a855f7);border-bottom-right-radius:6px}
 .m.b{align-self:flex-start;background:rgba(24,35,58,.92);border:1px solid var(--bd);border-bottom-left-radius:6px}
 
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}
+.chips{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:6px 4px 12px;
+  scroll-padding-left:6px;
+  scroll-padding-right:6px;
+}
 .chips button{
   flex-shrink:0;
   padding:9px 14px;
@@ -860,11 +856,11 @@ label.l{
   color:#cbd5e1;
   font:600 .8rem/1 inherit;
   cursor:pointer;
-  transition:transform .28s var(--fl),border-color .22s var(--sp),color .22s var(--sp),background .24s var(--sp);
+  transition:transform .22s var(--sm),border-color .22s var(--sp),color .22s var(--sp),background .24s var(--sp);
   will-change:transform;
 }
-.chips button:hover{border-color:rgba(125,211,252,.45);color:#fff;background:rgba(24,36,62,.9);transform:translate3d(0,-1.5px,0)}
-.chips button:active{transform:scale(.95)}
+.chips button:hover{border-color:rgba(125,211,252,.45);color:#fff;background:rgba(24,36,62,.9)}
+.chips button:active{transform:scale(.96)}
 .chips button.on{background:linear-gradient(135deg,rgba(249,115,22,.32),rgba(168,85,247,.32));border-color:#a855f7;color:#fff}
 
 .ci{display:flex;gap:10px;align-items:stretch}
@@ -1037,7 +1033,7 @@ label.l{
   transition:transform .18s var(--fl),background .2s var(--sp),border-color .2s var(--sp);
   border:1px solid transparent;
 }
-.cosmic-option:hover{background:rgba(56,189,248,.1);border-color:rgba(125,211,252,.24);transform:translateX(2px)}
+.cosmic-option:hover{background:rgba(56,189,248,.1);border-color:rgba(125,211,252,.24)}
 .cosmic-option.active{
   background:linear-gradient(90deg,rgba(16,185,129,.18),rgba(56,189,248,.12));
   border-color:rgba(52,211,153,.48);
@@ -1067,10 +1063,10 @@ label.l{
   letter-spacing:.02em;
   cursor:pointer;
   white-space:nowrap;
-  transition:transform .24s var(--fl),border-color .2s var(--sp),background .2s var(--sp),color .2s var(--sp);
+  transition:transform .22s var(--sm),border-color .2s var(--sp),background .2s var(--sp),color .2s var(--sp);
 }
-.sky-pill-btn:hover{border-color:rgba(125,211,252,.52);color:#fff;transform:translate3d(0,-1px,0)}
-.sky-pill-btn:active{transform:scale(.95)}
+.sky-pill-btn:hover{border-color:rgba(125,211,252,.52);color:#fff}
+.sky-pill-btn:active{transform:scale(.96)}
 .sky-pill-btn.on{
   border-color:#38bdf8;
   background:linear-gradient(135deg,rgba(56,189,248,.32),rgba(168,85,247,.26));
@@ -1168,10 +1164,10 @@ label.l{
   font:700 .9rem/1 inherit;
   cursor:pointer;
   border:0;
-  transition:transform .28s var(--fl),filter .2s var(--soft);
+  transition:transform .24s var(--sm),filter .2s var(--soft);
   will-change:transform;
 }
-.modal-btn:hover{transform:translate3d(0,-1.5px,0);filter:brightness(1.07)}
+.modal-btn:hover{filter:brightness(1.07)}
 .modal-btn:active{transform:scale(.96)}
 .modal-btn.cancel{background:rgba(15,23,42,.84);border:1px solid rgba(255,255,255,.12);color:var(--mu)}
 .modal-btn.submit{background:linear-gradient(135deg,#f97316,#a855f7);color:#fff}
@@ -1191,9 +1187,9 @@ label.l{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  transition:transform .26s var(--fl),border-color .2s var(--sp),background .2s var(--sp);
+  transition:border-color .2s var(--sp),background .2s var(--sp);
 }
-.jail-opt-btn:hover{border-color:#38bdf8;background:rgba(24,36,64,.95);transform:translate3d(2px,0,0)}
+.jail-opt-btn:hover{border-color:#38bdf8;background:rgba(24,36,64,.95)}
 .jail-opt-btn small{color:#94a3b8;font-weight:600;font-size:.75rem}
 
 #bhSuckOverlay{
@@ -1236,10 +1232,9 @@ label.l{
   border:1px solid rgba(125,211,252,.18);
   border-radius:22px;
   padding:18px;
-  transition:border-color .24s var(--sp),transform .28s var(--fl),background .24s var(--sp);
-  will-change:transform;
+  transition:border-color .24s var(--sp),background .24s var(--sp);
 }
-.tool-card:hover{border-color:rgba(125,211,252,.36);background:rgba(18,28,52,.84);transform:translate3d(0,-1.5px,0)}
+.tool-card:hover{border-color:rgba(125,211,252,.36);background:rgba(18,28,52,.84)}
 .tool-card h3{font:700 1.05rem/1.3 'Space Grotesk',sans-serif;margin-bottom:8px;color:#7dd3fc}
 .tool-card p{font-size:.85rem;color:var(--mu);margin-bottom:12px;line-height:1.55}
 
@@ -1252,11 +1247,11 @@ label.l{
   color:#cbd5e1;
   font:700 .74rem/1 inherit;
   cursor:pointer;
-  transition:transform .28s var(--fl),border-color .22s var(--sp),color .22s var(--sp),background .24s var(--sp);
+  transition:transform .22s var(--sm),border-color .22s var(--sp),color .22s var(--sp),background .24s var(--sp);
   will-change:transform;
 }
-.mini-presets button:hover{border-color:#38bdf8;color:#fff;background:rgba(56,189,248,.16);transform:translate3d(0,-1.5px,0)}
-.mini-presets button:active{transform:scale(.95)}
+.mini-presets button:hover{border-color:#38bdf8;color:#fff;background:rgba(56,189,248,.16)}
+.mini-presets button:active{transform:scale(.96)}
 
 .swipe-hint{font-size:.72rem;color:var(--mu);margin-top:8px;font-weight:600;opacity:.85}
 
@@ -1307,78 +1302,98 @@ label.l{
 }
 .toast.v{opacity:1;transform:translate3d(-50%,0,0) scale(1)}
 
+/* Loading 1.8s: Animasi Bintang Neutron + Nama KovTheGreat */
 #ld{
   position:fixed;
   inset:0;
   z-index:120;
-  background:#030408;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(56,189,248,.16),rgba(3,4,8,.98) 68%),
+    #030408;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:16px;
-  transition:opacity .5s var(--sp),visibility .5s var(--sp);
+  gap:14px;
+  transition:opacity .45s var(--sp),visibility .45s var(--sp);
   will-change:opacity;
 }
 #ld.out{opacity:0;visibility:hidden;pointer-events:none}
 
-.ld-rise{
-  opacity:0;
-  transform:translate3d(0,26px,0);
-  animation:ldRiseIn .85s var(--fl) forwards;
-  will-change:transform,opacity;
+.ns-loader-wrap{
+  position:relative;
+  width:136px;
+  height:136px;
+  display:grid;
+  place-items:center;
 }
-.ld-rise-1{animation-delay:.06s}
-.ld-rise-2{animation-delay:.16s}
-.ld-rise-3{animation-delay:.26s}
-.ld-rise-4{animation-delay:.36s}
-
-@keyframes ldRiseIn{
-  0%{opacity:0;transform:translate3d(0,28px,0)}
-  100%{opacity:1;transform:translate3d(0,0,0)}
+.ns-loader-aura{
+  position:absolute;
+  inset:8px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(186,230,253,.45) 0%,rgba(56,189,248,.2) 45%,rgba(168,85,247,0) 75%);
+  animation:nsPulse 1.8s ease-in-out infinite;
+}
+.ns-loader-ring{
+  position:absolute;
+  inset:14px;
+  border-radius:50%;
+  border:1.5px dashed rgba(125,211,252,.55);
+  animation:nsSpin 1.8s linear infinite;
+}
+.ns-loader-beam{
+  position:absolute;
+  width:10px;
+  height:126px;
+  border-radius:999px;
+  background:linear-gradient(180deg,rgba(56,189,248,0),rgba(186,230,253,.92) 50%,rgba(56,189,248,0));
+  filter:blur(.5px);
+  animation:nsBeamSpin 1.8s linear infinite;
+}
+.ns-loader-core{
+  position:relative;
+  z-index:2;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#ffffff;
+  box-shadow:0 0 18px #7dd3fc,0 0 36px #38bdf8;
+  animation:nsCoreBeat .9s ease-in-out infinite alternate;
 }
 
-.hi{display:flex;align-items:center;gap:8px;font:800 3.2rem/1 'Space Grotesk',sans-serif}
-.hi-l{
-  display:inline-block;
-  background:linear-gradient(90deg,#fdba74,#f8fafc,#93c5fd,#fdba74);
+@keyframes nsPulse{
+  0%,100%{transform:scale(.92);opacity:.75}
+  50%{transform:scale(1.08);opacity:1}
+}
+@keyframes nsSpin{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+@keyframes nsBeamSpin{
+  0%{transform:rotate(0deg) scaleY(.92)}
+  50%{transform:rotate(180deg) scaleY(1.06)}
+  100%{transform:rotate(360deg) scaleY(.92)}
+}
+@keyframes nsCoreBeat{
+  0%{transform:scale(.92)}
+  100%{transform:scale(1.12)}
+}
+
+.ns-loader-name{
+  font:800 clamp(1.45rem,5vw,1.95rem)/1.15 'Space Grotesk',sans-serif;
+  letter-spacing:.12em;
+  background:linear-gradient(90deg,#7dd3fc 0%,#ffffff 48%,#fdba74 100%);
   -webkit-background-clip:text;
-  background-clip:text;
   -webkit-text-fill-color:transparent;
-}
-.hi-w{
-  display:inline-block;
-  font-size:2.85rem;
-  transform-origin:70% 75%;
-  animation:hiWave 1.4s .35s var(--fl) infinite;
-  will-change:transform;
-}
-@keyframes hiWave{
-  0%,100%{transform:rotate(0)}
-  18%{transform:rotate(14deg)}
-  34%{transform:rotate(-8deg)}
-  50%{transform:rotate(12deg)}
-  68%{transform:rotate(-5deg)}
-  84%{transform:rotate(7deg)}
-}
-
-.ldt{
-  font:800 2.3rem 'Space Grotesk',sans-serif;
-  letter-spacing:.35em;
-  padding-left:.35em;
-  background:linear-gradient(90deg,#fdba74,#f8fafc,#7dd3fc,#c084fc);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  animation:nsNameIn .6s var(--sp) both;
 }
 .lds{
   font-size:.74rem;
-  letter-spacing:.26em;
+  letter-spacing:.22em;
   color:var(--mu);
   font-weight:700;
   text-transform:uppercase;
-  animation:pulseSub 1.6s ease-in-out infinite alternate;
 }
-@keyframes pulseSub{from{opacity:.55}to{opacity:1}}
 .ldbar{width:176px;height:4px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
 .ldbar i{
   display:block;
@@ -1387,14 +1402,14 @@ label.l{
   transform-origin:left center;
   transform:scaleX(0);
   border-radius:999px;
-  background:linear-gradient(90deg,#ff8a3d,#c084fc,#38bdf8);
-  animation:ldfill 1.3s var(--sp) forwards;
+  background:linear-gradient(90deg,#38bdf8,#c084fc,#fdba74);
+  animation:ldfill 1.8s var(--sp) forwards;
   will-change:transform;
 }
 @keyframes ldfill{to{transform:scaleX(1)}}
 
 @media(min-width:760px){
-  .shell{max-width:920px;padding-top:96px}
+  .shell{max-width:920px;padding-top:104px}
   .card{padding:42px 42px}
   .ops{display:grid;grid-template-columns:1fr 1fr}
   .exg{grid-template-columns:1fr 1fr;align-items:start}
@@ -1405,7 +1420,7 @@ label.l{
   .hm{display:none}
   .mode-slider .gb{padding:6px 8px;font-size:.72rem}
   .gb{padding:6px 10px;font-size:.72rem}
-  .shell{padding-top:116px}
+  .shell{padding-top:134px}
   .sum,.hero,.game-hud{gap:7px}
   .sum div,.hero div,.game-hud div{padding:11px 4px;border-radius:14px}
   #nav button{padding:8px 9px;font-size:.7rem}
@@ -1423,22 +1438,27 @@ window.__hideLoaderNow = function(){
     var ld = document.getElementById('ld');
     if(ld){
       ld.classList.add('out');
-      setTimeout(function(){ if(ld && ld.parentNode) ld.style.display = 'none'; }, 550);
+      setTimeout(function(){ if(ld && ld.parentNode) ld.style.display = 'none'; }, 480);
     }
   }catch(e){}
 };
-setTimeout(function(){ if(window.__hideLoaderNow) window.__hideLoaderNow(); }, 2200);
+setTimeout(function(){ if(window.__hideLoaderNow) window.__hideLoaderNow(); }, 1800);
 window.addEventListener('error', function(){
-  setTimeout(function(){ if(window.__hideLoaderNow) window.__hideLoaderNow(); }, 250);
+  setTimeout(function(){ if(window.__hideLoaderNow) window.__hideLoaderNow(); }, 400);
 });
 </script>
 </head>
 <body>
 <div id="ld">
-  <div class="hi ld-rise ld-rise-1"><span class="hi-l">H</span><span class="hi-l">i</span><span class="hi-w">👋</span></div>
-  <div class="ldt ld-rise ld-rise-2">ISEA</div>
-  <div class="lds ld-rise ld-rise-3">Memuat stasiun...</div>
-  <div class="ldbar ld-rise ld-rise-4"><i></i></div>
+  <div class="ns-loader-wrap">
+    <div class="ns-loader-aura"></div>
+    <div class="ns-loader-ring"></div>
+    <div class="ns-loader-beam"></div>
+    <div class="ns-loader-core"></div>
+  </div>
+  <div class="ns-loader-name">KovTheGreat</div>
+  <div class="lds">Neutron Star • ISEA</div>
+  <div class="ldbar"><i></i></div>
 </div>
 
 <canvas id="cv" class="bg-cosmos"></canvas>
@@ -3950,144 +3970,152 @@ if(exg){
 
   meteors.forEach(m => {
    gctx.save(); gctx.translate(m.x,m.y); gctx.rotate(m.rot);
-   gctx.fillStyle='#475569'; gctx.strokeStyle='#94a3b8'; gctx.lineWidth=1.5;
+   gctx.fillStyle='#475569'; gctx.strokeStyle='#fb923c'; gctx.lineWidth=1.8;
    gctx.beginPath();
    for(let k=0;k<7;k++){ const ang=(k/7)*Math.PI*2, rad=m.r*(0.82+(k%2)*0.22); if(k===0)gctx.moveTo(Math.cos(ang)*rad,Math.sin(ang)*rad); else gctx.lineTo(Math.cos(ang)*rad,Math.sin(ang)*rad); }
    gctx.closePath(); gctx.fill(); gctx.stroke(); gctx.restore();
   });
 
   cores.forEach(c => {
-   const rad=c.r*(1+Math.sin(c.pulse)*0.12);
-   gctx.save(); gctx.fillStyle='#fbbf24'; gctx.beginPath(); gctx.arc(c.x,c.y,rad,0,Math.PI*2); gctx.fill();
-   gctx.fillStyle='#fffbeb'; gctx.beginPath(); gctx.arc(c.x,c.y,rad*0.45,0,Math.PI*2); gctx.fill(); gctx.restore();
+   const pr=c.r*(0.88+Math.sin(c.pulse)*0.14);
+   gctx.save(); gctx.fillStyle='#fde047'; gctx.strokeStyle='#fef08a'; gctx.lineWidth=2;
+   gctx.beginPath(); gctx.arc(c.x,c.y,pr,0,Math.PI*2); gctx.fill(); gctx.stroke(); gctx.restore();
+  });
+
+  particles.forEach(p => {
+   gctx.save(); gctx.globalAlpha=Math.max(0,p.l); gctx.fillStyle=p.c;
+   gctx.beginPath(); gctx.arc(p.x,p.y,3,0,Math.PI*2); gctx.fill(); gctx.restore();
   });
 
   gctx.save(); gctx.translate(shipX,shipY);
-  const fl=10+Math.random()*8;
-  gctx.fillStyle=weaponTier===3?'#fde047':(weaponTier===2?'#c084fc':'#38bdf8');
-  gctx.beginPath(); gctx.moveTo(-6,15); gctx.lineTo(0,15+fl); gctx.lineTo(6,15); gctx.closePath(); gctx.fill();
-  gctx.fillStyle='#f8fafc'; gctx.strokeStyle='#7dd3fc'; gctx.lineWidth=1.8;
-  gctx.beginPath(); gctx.moveTo(0,-19); gctx.lineTo(15,14); gctx.lineTo(0,9); gctx.lineTo(-15,14); gctx.closePath(); gctx.fill(); gctx.stroke();
-  gctx.fillStyle='#0284c7'; gctx.beginPath(); gctx.arc(0,-2,4.5,0,Math.PI*2); gctx.fill();
-  gctx.restore();
-
-  particles.forEach(p => { gctx.save(); gctx.globalAlpha=Math.max(0,p.l); gctx.fillStyle=p.c; gctx.beginPath(); gctx.arc(p.x,p.y,3,0,Math.PI*2); gctx.fill(); gctx.restore(); });
+  gctx.fillStyle='#fb923c'; gctx.beginPath(); gctx.moveTo(-6,14); gctx.lineTo(0,24+Math.random()*6); gctx.lineTo(6,14); gctx.closePath(); gctx.fill();
+  gctx.fillStyle='#f8fafc'; gctx.strokeStyle='#38bdf8'; gctx.lineWidth=2;
+  gctx.beginPath(); gctx.moveTo(0,-18); gctx.lineTo(15,14); gctx.lineTo(0,9); gctx.lineTo(-15,14); gctx.closePath(); gctx.fill(); gctx.stroke();
+  gctx.fillStyle='#38bdf8'; gctx.beginPath(); gctx.arc(0,-1,4.5,0,Math.PI*2); gctx.fill(); gctx.restore();
 
   syncHud();
-  rafId=requestAnimationFrame(stepGame);
+  if(running)rafId=requestAnimationFrame(stepGame);
  }
 
  if($('gStartBtn'))$('gStartBtn').onclick=startGame;
- box.addEventListener('pointerdown',e=>{if(!running)return;pointerActive=true;const r=box.getBoundingClientRect();shipX=Math.max(24,Math.min(gw-24,e.clientX-r.left));box.setPointerCapture(e.pointerId)});
- box.addEventListener('pointermove',e=>{if(!running||!pointerActive)return;const r=box.getBoundingClientRect();shipX=Math.max(24,Math.min(gw-24,e.clientX-r.left))});
- const stopPointer=e=>{pointerActive=false;try{box.releasePointerCapture(e.pointerId)}catch(_){}};
+ box.addEventListener('pointerdown', e => { if(!running)return; pointerActive=true; const rect=box.getBoundingClientRect(); shipX=Math.max(24,Math.min(gw-24,e.clientX-rect.left)); });
+ box.addEventListener('pointermove', e => { if(!running||!pointerActive)return; const rect=box.getBoundingClientRect(); shipX=Math.max(24,Math.min(gw-24,e.clientX-rect.left)); });
+ const stopPointer=()=>{pointerActive=false};
  box.addEventListener('pointerup',stopPointer); box.addEventListener('pointercancel',stopPointer);
 
  const bindHold=(id,dir)=>{
   const btn=$(id); if(!btn)return;
   const down=e=>{e.preventDefault();pointerActive=false;moveDir=dir};
   const up=()=>{if(moveDir===dir)moveDir=0};
-  btn.addEventListener('pointerdown',down); btn.addEventListener('pointerup',up); btn.addEventListener('pointercancel',up); btn.addEventListener('pointerleave',up);
+  btn.addEventListener('pointerdown',down); btn.addEventListener('pointerup',up); btn.addEventListener('pointerleave',up); btn.addEventListener('pointercancel',up);
  };
  bindHold('gLeftBtn',-1); bindHold('gRightBtn',1);
- addEventListener('keydown',e=>{if(!running)return;if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){pointerActive=false;moveDir=-1}if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){pointerActive=false;moveDir=1}});
- addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'||e.key==='ArrowRight'||e.key==='d'||e.key==='D')moveDir=0});
 })();
 
-const KB={
- 'event horizon':'Event horizon adalah batas di sekitar lubang hitam di mana kecepatan lepas melampaui kecepatan cahaya.',
- 'lubang hitam':'Lubang hitam terbentuk ketika massa besar terkompresi hingga kelengkungan ruang-waktu menjadi sangat ekstrem, dengan event horizon sebagai batasnya.',
- 'spaghettification':'Spaghettification terjadi ketika gradien gaya pasang surut menarik bagian terdekat lebih kuat daripada bagian terjauh.',
- 'hawking':'Radiasi Hawking adalah radiasi teoretis akibat efek kuantum di dekat event horizon yang membuat lubang hitam perlahan kehilangan massa.',
- 'neutron':'Bintang neutron adalah sisa inti bintang masif berdiameter sekitar 20 km dengan kerapatan materi sangat tinggi.',
- 'pulsar':'Pulsar adalah bintang neutron berotasi cepat yang memancarkan berkas radiasi teratur seperti mercusuar.',
- 'magnetar':'Magnetar adalah bintang neutron dengan medan magnet sangat kuat yang dapat memicu suar sinar-X dan gamma.',
- 'gravastar':'Gravastar (Gravitational Vacuum Star) adalah objek hipotesis alternatif lubang hitam dengan kulit materi tipis dan interior energi vakum bertekanan negatif tanpa singularitas pusat.'
-};
-let AIK=ls.g('isea_aik','');
-const ch=$('chat'),chips=$('chips');
-function addM(t,u){if(!ch)return;const d=document.createElement('div');d.className='m '+(u?'u':'b');d.textContent=t;ch.appendChild(d);ch.scrollTop=ch.scrollHeight}
-addM('Halo, aku Kosmo. Tanya saja soal black hole, neutron star, gravastar, atau astronomi.');
-['Apa itu event horizon?','Apa itu gravastar?','Apa bedanya pulsar & magnetar?','Apa itu spaghettification?'].forEach(s=>{const b=document.createElement('button');b.type='button';b.textContent=s;b.onclick=()=>sendAI(s);if(chips)chips.appendChild(b)});
-function localAI(q){const s=q.toLowerCase();for(const[k,v]of Object.entries(KB))if(s.includes(k))return v;return'Topik menarik. Coba tanya spesifik soal event horizon, lubang hitam, bintang neutron, pulsar, magnetar, gravastar, atau spaghettification.'}
-async function sendAI(txt){
- const q=(txt||($('aiIn')&&$('aiIn').value)||'').trim();if(!q)return;
- if($('aiIn')&&!txt)$('aiIn').value='';
- addM(q,1);au.clk();
- if(!AIK){setTimeout(()=>addM(localAI(q)),260);return}
- addM('...');const last=ch&&ch.lastChild;
- try{
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AIK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:450,system:'Kamu adalah Kosmo, asisten astronomi ISEA. Jawab ringkas dan akurat dalam bahasa Indonesia.',messages:[{role:'user',content:q}]})});
-  const d=await r.json();if(last)last.textContent=d.content&&d.content[0]&&d.content[0].text||localAI(q);
- }catch(e){if(last)last.textContent=localAI(q)}
-}
-if($('aiGo'))$('aiGo').onclick=()=>sendAI();
-if($('aiIn'))$('aiIn').onkeydown=e=>{if(e.key==='Enter')sendAI()};
-if($('exAI'))$('exAI').onclick=()=>{const q=G.qs[G.i];if(!q)return;show('ai');sendAI(`Jelaskan lebih lanjut soal ini: "${q.q}" (Jawaban: ${q.o[0]})`)};
+const KB=[
+ ['black hole','Event Horizon adalah batas di sekitar lubang hitam di mana kecepatan lepas melebihi laju cahaya. Di dekatnya terjadi spagetifikasi, pembelokan cahaya (lensing), dan dilatasi waktu gravitasi.'],
+ ['neutron star','Bintang neutron adalah sisa inti bintang masif berdiameter ±20 km namun sangat padat—satu sendok teh materinya bisa bermassa sekitar 1 miliar ton.'],
+ ['pulsar','Pulsar adalah bintang neutron berotasi cepat yang memancarkan berkas radiasi dari kutub magnetiknya, tampak seperti mercusuar yang berdenyut teratur.'],
+ ['magnetar','Magnetar adalah jenis bintang neutron dengan medan magnet sangat kuat yang dapat memicu suar sinar-X dan gamma berenergi tinggi.'],
+ ['gravastar','Gravastar (Gravitational Vacuum Star) adalah objek hipotesis alternatif lubang hitam (model Mazur–Mottola) dengan kulit tipis materi padat dan interior energi vakum bertekanan negatif tanpa singularitas pusat.'],
+ ['spaghettification','Spagetifikasi terjadi karena perbedaan gaya pasang surut yang sangat curam di dekat objek masif: tarikan gravitasi pada bagian yang lebih dekat jauh lebih kuat daripada bagian yang lebih jauh.'],
+ ['hawking','Radiasi Hawking adalah radiasi teoretis akibat efek kuantum di dekat event horizon yang membuat lubang hitam perlahan kehilangan massa seiring waktu.'],
+ ['lensing','Gravitational lensing adalah pembelokan jalur cahaya oleh kelengkungan ruang-waktu akibat massa besar seperti galaksi atau lubang hitam.'],
+ ['planet','Tata surya memiliki 8 planet utama: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, dan Neptune.']
+];
+const CHIPS=['Apa itu Black Hole?','Beda Neutron Star & Pulsar','Apa itu Gravastar?','Spaghettification','Radiasi Hawking','8 Planet Tata Surya'];
+let aiKey=ls.g('isea_ai_key','');
+const chat=$('chat'),chips=$('chips');
 
-let pendingKeyCb = null;
-function openKeyModal(cb){
- pendingKeyCb = cb || null;
- const modal = $('aiModal'), inp = $('modalKeyInput');
- if(inp) inp.value = AIK || '';
- if(modal){ modal.classList.add('active'); setTimeout(()=>{ if(inp) inp.focus(); }, 50); }
+function addM(t,who){
+ if(!chat)return;
+ const d=document.createElement('div');
+ d.className='m '+(who==='u'?'u':'b');
+ d.textContent=t;
+ chat.appendChild(d);
+ chat.scrollTop=chat.scrollHeight;
 }
-function closeKeyModal(){ const modal = $('aiModal'); if(modal) modal.classList.remove('active'); pendingKeyCb = null; }
-if($('modalCancel')) $('modalCancel').onclick = () => { au.clk(); closeKeyModal(); };
-if($('aiModal')) $('aiModal').onclick = e => { if(e.target === $('aiModal')) closeKeyModal(); };
-if($('modalSave')) $('modalSave').onclick = () => {
- const inp = $('modalKeyInput'), k = inp ? inp.value.trim() : '';
- AIK = k; ls.s('isea_aik', k);
- au.clk(); closeKeyModal();
- toast(k ? 'API key tersimpan.' : 'API key dihapus.');
- if(pendingKeyCb) pendingKeyCb(k);
+
+function localReply(raw){
+ const s=raw.toLowerCase();
+ if(/halo|hai|hi|pagi|siang|sore|malam|assalam/i.test(s)) return 'Halo! Ada yang ingin kamu tanyakan soal lubang hitam, bintang neutron, gravastar, planet, atau astronomi?';
+ if(/siapa kamu|kosmo|bot/i.test(s)) return 'Aku Kosmo, asisten astronomi ISEA. Aku bisa bantu jelaskan konsep fisika kosmos dan soal-soal di kuis ini.';
+ const hits=KB.filter(([k])=>s.includes(k)||k.split(' ').some(w=>w.length>4&&s.includes(w)));
+ if(hits.length) return hits.map(([,v])=>v).join('\n\n');
+ return 'Topik menarik. Coba tanyakan lebih spesifik tentang black hole, event horizon, neutron star, pulsar, magnetar, gravastar, spagetifikasi, radiasi Hawking, atau planet tata surya.';
+}
+
+async function askAI(prompt){
+ const q=String(prompt||'').trim();if(!q)return;
+ addM(q,'u');if($('aiIn'))$('aiIn').value='';
+ if(!aiKey){setTimeout(()=>addM(localReply(q),'b'),200);return}
+ const w=document.createElement('div');w.className='m b';w.textContent='Sedang memproses...';if(chat){chat.appendChild(w);chat.scrollTop=chat.scrollHeight;}
+ try{
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+   method:'POST',
+   headers:{'Content-Type':'application/json','x-api-key':aiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+   body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:420,system:'Kamu adalah Kosmo, asisten astronomi dan astrofisika ISEA. Jawab dalam bahasa Indonesia yang jelas, ringkas, dan akurat.',messages:[{role:'user',content:q}]})
+  });
+  const j=await r.json();w.remove();
+  addM((j.content&&j.content[0]&&j.content[0].text)||j.error?.message||localReply(q),'b');
+ }catch(e){w.remove();addM(localReply(q),'b')}
+}
+
+function openAiKeyModal(){
+ const m=$('aiModal'),inp=$('modalKeyInput');
+ if(!m||!inp)return;
+ inp.value=aiKey||'';m.classList.add('active');setTimeout(()=>inp.focus(),50);
+}
+function closeAiKeyModal(){const m=$('aiModal');if(m)m.classList.remove('active')}
+
+if($('modalCancel'))$('modalCancel').onclick=()=>{au.clk();closeAiKeyModal()};
+if($('modalSave'))$('modalSave').onclick=()=>{
+ au.clk();const inp=$('modalKeyInput');
+ aiKey=inp?inp.value.trim():'';ls.s('isea_ai_key',aiKey);
+ closeAiKeyModal();toast(aiKey?'API Key tersimpan':'Mode lokal aktif');
 };
-if($('modalKeyInput')) $('modalKeyInput').onkeydown = e => { if(e.key === 'Enter' && $('modalSave')) $('modalSave').click(); };
-if($('aiK')) $('aiK').onclick = () => openKeyModal();
+if($('aiModal'))$('aiModal').onclick=e=>{if(e.target===$('aiModal'))closeAiKeyModal()};
+if($('aiK'))$('aiK').onclick=()=>{au.clk();openAiKeyModal()};
+if($('aiGo'))$('aiGo').onclick=()=>{au.clk();askAI($('aiIn')?$('aiIn').value:'')};
+if($('aiIn'))$('aiIn').onkeydown=e=>{if(e.key==='Enter'){au.clk();askAI($('aiIn').value)}};
+if($('exAI'))$('exAI').onclick=()=>{au.clk();const q=G.qs[G.i];show('ai');askAI(`Jelaskan lebih lanjut tentang: "${q.q}" (Jawaban: ${q.o[0]})`)};
+
+if(chips){
+ CHIPS.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=c;b.onclick=()=>{au.clk();[...chips.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');askAI(c)};chips.appendChild(b)});
+}
+addM('Halo! Silakan tanya apa saja soal lubang hitam, bintang neutron, gravastar, planet tata surya, atau astronomi.','b');
 
 if($('nav'))$('nav').onclick=e=>{
  const b=e.target.closest('button[data-t]');
  if(!b)return;
- if(isMemberLockedInQuiz()){ toast('Selesaikan kuis dulu sebelum pindah menu.'); return; }
+ if(isMemberLockedInQuiz())return toast('Selesaikan kuis dulu sebelum pindah menu.');
  au.clk();
  openTab(b.dataset.t);
 };
 
 if($('fact'))$('fact').innerHTML='<b>Tahukah kamu?</b> '+FACTS[Math.random()*FACTS.length|0];
-vis('bh');
+vis('bh');initNameSystem();initGoogleOwnerAuth();initOnline();
 
-window.addEventListener('DOMContentLoaded', () => {
-  initGoogleOwnerAuth();
-  initNameSystem();
-  initOnline();
-  const savedRate = Number(ls.g('isea_member_time_rate', 1.0)) || 1.0;
-  if(!isOwnerDevice() && savedRate !== 1.0){
-    memberTimeRate = savedRate;
-  }
-  const savedQuiz = ls.g('isea_active_quiz', null);
-  if(!isOwnerDevice() && savedQuiz && savedQuiz.live && Array.isArray(savedQuiz.qs) && savedQuiz.qs.length){
-    G = savedQuiz;
-    G.left = Math.max(2, Number(G.left) || TIME);
-    G.max = Math.max(G.left, Number(G.max) || TIME);
-    show('quiz');
-    render();
-    toast('Sesi kuis dilanjutkan.');
-  }
-  syncQuizLockUI();
-  addLog('Sistem ISEA siap digunakan');
-});
+(function restoreSavedQuizIfAny(){
+ if(isOwnerDevice()) return clearActiveQuizState();
+ const savedQ = ls.g('isea_active_quiz', null);
+ if(savedQ && savedQ.live && Array.isArray(savedQ.qs) && savedQ.qs.length > 0 && typeof savedQ.i === 'number' && savedQ.i < savedQ.qs.length){
+  G = { ...savedQ, iv: null, ans: false };
+  show('quiz');
+  render();
+  toast('Melanjutkan sesi kuis yang sedang berjalan.');
+ }
+})();
 
-window.addEventListener('load', () => {
-  initGoogleOwnerAuth();
-  initNameSystem();
-  setTimeout(() => {
-    if(window.__hideLoaderNow) window.__hideLoaderNow();
-    au.onLoaderComplete();
-  }, 550);
-});
-setTimeout(() => {
+addEventListener('load',()=>{
+ setTimeout(()=>{
   if(window.__hideLoaderNow) window.__hideLoaderNow();
   au.onLoaderComplete();
+ }, 1800);
+});
+setTimeout(()=>{
+ if(window.__hideLoaderNow) window.__hideLoaderNow();
+ au.onLoaderComplete();
 }, 1800);
 </script>
 </body>
